@@ -31,7 +31,7 @@ val generateResObject = tasks.register<GenerateResObject>("generateResObject") {
 kotlin {
     jvm("desktop")
     android {
-        compileSdk = 36
+        compileSdk = 37
         namespace = "com.abdownloadmanager.resources"
         minSdk = 26
     }

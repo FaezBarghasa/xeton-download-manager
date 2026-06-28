@@ -9,7 +9,7 @@ kotlin {
     jvm("desktop")
     android {
         namespace = "com.abdownloadmanager.updater"
-        compileSdk = 36
+        compileSdk = 37
         minSdk = 26
     }
     sourceSets {

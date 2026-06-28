@@ -7,7 +7,7 @@ plugins {
 kotlin {
     jvm("desktop")
     android {
-        compileSdk = 36
+        compileSdk = 37
         namespace = "com.xeton.util.startup"
         minSdk = 26
     }

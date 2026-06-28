@@ -9,7 +9,7 @@ plugins {
 kotlin {
     jvm("desktop")
     android {
-        compileSdk = 36
+        compileSdk = 37
         namespace = "com.xeton.downloader.monitor"
         minSdk = 26
     }

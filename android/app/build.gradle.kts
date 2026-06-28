@@ -31,12 +31,12 @@ repositories {
 android {
     defaultConfig {
         minSdk = 26
-        targetSdk = 36
+        targetSdk = 37
         applicationId = getApplicationPackageName()
         versionCode = getAppVersion().convertToVersionCode()
         versionName = getAppVersionString()
     }
-    compileSdk = 36
+    compileSdk = 37
     namespace = "com.abdownloadmanager.android"
     buildTypes {
         debug {

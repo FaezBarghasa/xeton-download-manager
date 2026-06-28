@@ -24,6 +24,7 @@ kotlin {
                 api(libs.okhttp.coroutines)
                 implementation(project(":shared:utils"))
                 api("io.lindstrom:m3u8-parser:0.29")
+                implementation(libs.jna.core)
                 // UniFFI generated bindings for xeton_core are located in src/commonMain/kotlin/ir/amirab/xeton_core_ffi
                 // and will be automatically picked up by the commonMain source set.
             }

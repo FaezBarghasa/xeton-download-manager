@@ -31,7 +31,7 @@ class GeckoTabState(
     private val downloadInterceptor: DownloadInterceptor,
     val tab: ABDMBrowserTab,
     private val onNewTabRequested: (url: String?, openedBy: ABDMBrowserTabId) -> Unit,
-    initialUrl: String? = null,
+    private val initialUrl: String? = null,
 ) {
     // ── public session ───────────────────────────────────────────────────────
 
@@ -64,46 +64,6 @@ class GeckoTabState(
     private val _isLoadingFlow = MutableStateFlow(false)
     val isLoadingFlow: StateFlow<Boolean> = _isLoadingFlow.asStateFlow()
 
-    // ── initialisation ───────────────────────────────────────────────────────
-
-    init {
-        session.navigationDelegate = navigationDelegate
-        session.progressDelegate = progressDelegate
-        session.contentDelegate = contentDelegate
-    }
-
-    // ── lifecycle ─────────────────────────────────────────────────────────────
-
-    /**
-     * Opens the Gecko session and optionally loads [initialUrl].
-     * Must be called on the main thread.
-     */
-    fun open(runtime: org.mozilla.geckoview.GeckoRuntime) {
-        if (!session.isOpen) {
-            session.open(runtime)
-        }
-        val url = initialUrl
-        if (!url.isNullOrBlank() && url != ABDMBrowserTab.blankPage) {
-            session.loadUri(url)
-        }
-    }
-
-    /**
-     * Closes the underlying [GeckoSession], releasing all associated resources.
-     * After this call the object must not be used again.
-     */
-    fun close() {
-        session.close()
-    }
-
-    // ── navigation helpers (called from WebViewHolder.navigator forwarding) ───
-
-    fun loadUrl(url: String) = session.loadUri(url)
-    fun goBack() = session.goBack()
-    fun goForward() = session.goForward()
-    fun reload() = session.reload()
-    fun stopLoading() = session.stop()
-
     // ── private delegates ─────────────────────────────────────────────────────
 
     private val navigationDelegate = object : NavigationDelegate {
@@ -111,7 +71,7 @@ class GeckoTabState(
         override fun onLocationChange(
             session: GeckoSession,
             url: String?,
-            perms: MutableList<NavigationDelegate.PermissionRequest>,
+            perms: MutableList<GeckoSession.PermissionDelegate.ContentPermission>,
             hasUserGesture: Boolean,
         ) {
             _urlFlow.value = url
@@ -128,15 +88,15 @@ class GeckoTabState(
         override fun onLoadRequest(
             session: GeckoSession,
             request: NavigationDelegate.LoadRequest,
-        ): GeckoResult<NavigationDelegate.AllowOrDeny>? {
+        ): GeckoResult<org.mozilla.geckoview.AllowOrDeny>? {
             val url = request.uri
             // Let the engine handle normal web pages.
             if (url.startsWith("http://") || url.startsWith("https://")) {
-                return GeckoResult.allow()
+                return GeckoResult.fromValue(org.mozilla.geckoview.AllowOrDeny.ALLOW)
             }
             // For any other scheme (tel:, mailto:, intent:, etc.) deny Gecko and let the
             // system handle it via an implicit intent — but that's outside this layer.
-            return GeckoResult.deny()
+            return GeckoResult.fromValue(org.mozilla.geckoview.AllowOrDeny.DENY)
         }
 
         override fun onNewSession(
@@ -223,5 +183,13 @@ class GeckoTabState(
                 )
             }
         }
+    }
+
+    // ── initialisation ───────────────────────────────────────────────────────
+
+    init {
+        session.navigationDelegate = navigationDelegate
+        session.progressDelegate = progressDelegate
+        session.contentDelegate = contentDelegate
     }
 }
