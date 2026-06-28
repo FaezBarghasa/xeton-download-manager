@@ -1,4 +1,4 @@
-import com.abdownloadmanager.updateapplier.UpdateInstaller
+import com.xetondownloadmanager.updateapplier.UpdateInstaller
 import com.xeton.util.osfileutil.FileUtils
 import java.io.File
 

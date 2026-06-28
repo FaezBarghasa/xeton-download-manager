@@ -1,7 +1,7 @@
-package com.abdownloadmanager.desktop.pages.poweractionalert
+package com.xetondownloadmanager.desktop.pages.poweractionalert
 
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.util.BaseComponent
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.util.BaseComponent
 import com.arkivanov.decompose.ComponentContext
 import com.xeton.util.compose.StringSource
 import com.xeton.util.compose.asStringSource

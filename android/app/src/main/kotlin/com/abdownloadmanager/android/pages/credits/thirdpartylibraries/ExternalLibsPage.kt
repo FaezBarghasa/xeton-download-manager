@@ -1,18 +1,18 @@
-package com.abdownloadmanager.android.pages.credits.thirdpartylibraries
+package com.xetondownloadmanager.android.pages.credits.thirdpartylibraries
 
 import androidx.activity.OnBackPressedDispatcher
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.background
-import com.abdownloadmanager.shared.util.ui.ProvideTextStyle
-import com.abdownloadmanager.shared.util.ui.theme.myTextSizes
-import com.abdownloadmanager.shared.util.ui.WithContentAlpha
+import com.xetondownloadmanager.shared.util.ui.ProvideTextStyle
+import com.xetondownloadmanager.shared.util.ui.theme.myTextSizes
+import com.xetondownloadmanager.shared.util.ui.WithContentAlpha
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import com.abdownloadmanager.shared.ui.widget.Text
+import com.xetondownloadmanager.shared.ui.widget.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -24,22 +24,22 @@ import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.abdownloadmanager.android.ui.page.FooterFade
-import com.abdownloadmanager.android.ui.page.HeaderFade
-import com.abdownloadmanager.android.ui.page.PageHeader
-import com.abdownloadmanager.resources.Res
+import com.xetondownloadmanager.android.ui.page.FooterFade
+import com.xetondownloadmanager.android.ui.page.HeaderFade
+import com.xetondownloadmanager.android.ui.page.PageHeader
+import com.xetondownloadmanager.resources.Res
 import com.mikepenz.aboutlibraries.Libs
 import com.mikepenz.aboutlibraries.entity.Library
-import com.abdownloadmanager.android.ui.page.PageTitle
-import com.abdownloadmanager.android.ui.page.PageTitleWithDescription
-import com.abdownloadmanager.android.ui.page.PageUi
-import com.abdownloadmanager.android.ui.page.rememberHeaderAlpha
-import com.abdownloadmanager.android.util.compose.useBack
-import com.abdownloadmanager.shared.ui.widget.TransparentIconActionButton
-import com.abdownloadmanager.shared.util.div
-import com.abdownloadmanager.shared.util.ui.icon.MyIcons
-import com.abdownloadmanager.shared.util.ui.myColors
-import com.abdownloadmanager.shared.util.ui.theme.mySpacings
+import com.xetondownloadmanager.android.ui.page.PageTitle
+import com.xetondownloadmanager.android.ui.page.PageTitleWithDescription
+import com.xetondownloadmanager.android.ui.page.PageUi
+import com.xetondownloadmanager.android.ui.page.rememberHeaderAlpha
+import com.xetondownloadmanager.android.util.compose.useBack
+import com.xetondownloadmanager.shared.ui.widget.TransparentIconActionButton
+import com.xetondownloadmanager.shared.util.div
+import com.xetondownloadmanager.shared.util.ui.icon.MyIcons
+import com.xetondownloadmanager.shared.util.ui.myColors
+import com.xetondownloadmanager.shared.util.ui.theme.mySpacings
 import com.xeton.util.compose.asStringSource
 import com.xeton.util.compose.dpToPx
 import com.xeton.util.compose.resources.myStringResource
@@ -244,7 +244,7 @@ private fun rememberLibs(): Libs {
     val resources = LocalResources.current
     return remember {
         val jsonContent = resources
-            .openRawResource(com.abdownloadmanager.android.R.raw.aboutlibraries)
+            .openRawResource(com.xetondownloadmanager.android.R.raw.aboutlibraries)
             .bufferedReader()
             .use { it.readText() }
         Libs.Builder().withJson(jsonContent).build()

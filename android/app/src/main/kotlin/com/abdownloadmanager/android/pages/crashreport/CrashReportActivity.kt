@@ -1,9 +1,9 @@
-package com.abdownloadmanager.android.pages.crashreport
+package com.xetondownloadmanager.android.pages.crashreport
 
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import com.abdownloadmanager.android.util.activity.ABDMActivity
+import com.xetondownloadmanager.android.util.activity.ABDMActivity
 
 class CrashReportActivity : ABDMActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

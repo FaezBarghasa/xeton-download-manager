@@ -1,4 +1,4 @@
-package com.abdownloadmanager.android.util
+package com.xetondownloadmanager.android.util
 
 object AndroidConstants {
     const val SERVICE_NOTIFICATION_ID = 1
@@ -9,7 +9,7 @@ object AndroidConstants {
     const val NOTIFICATION_CRASH_REPORT_CHANEL_NAME = "Crash Report"
 
     object Intents {
-        private const val prefix = "com.abdownloadmanager."
+        private const val prefix = "com.xetondownloadmanager."
         const val STOP_ALL_ACTION = prefix + "STOP_ALL"
         const val STOP_ACTION = prefix + "STOP"
         const val RESUME_ACTION = prefix + "RESUME"

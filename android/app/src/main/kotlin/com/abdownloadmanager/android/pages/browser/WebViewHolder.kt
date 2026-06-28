@@ -1,4 +1,4 @@
-package com.abdownloadmanager.android.pages.browser
+package com.xetondownloadmanager.android.pages.browser
 
 import android.content.Context
 import android.content.Intent
@@ -8,10 +8,10 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebSettings
 import android.webkit.WebView
-import com.abdownloadmanager.android.ui.widget.AccompanistWebChromeClient
-import com.abdownloadmanager.android.ui.widget.AccompanistWebViewClient
-import com.abdownloadmanager.android.ui.widget.WebContent
-import com.abdownloadmanager.android.ui.widget.WebViewNavigator
+import com.xetondownloadmanager.android.ui.widget.AccompanistWebChromeClient
+import com.xetondownloadmanager.android.ui.widget.AccompanistWebViewClient
+import com.xetondownloadmanager.android.ui.widget.WebContent
+import com.xetondownloadmanager.android.ui.widget.WebViewNavigator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

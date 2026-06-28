@@ -1,14 +1,14 @@
-package com.abdownloadmanager.shared.ui.widget.menu.custom
+package com.xetondownloadmanager.shared.ui.widget.menu.custom
 
-import com.abdownloadmanager.shared.util.ui.myColors
-import com.abdownloadmanager.shared.util.ui.theme.myTextSizes
+import com.xetondownloadmanager.shared.util.ui.myColors
+import com.xetondownloadmanager.shared.util.ui.theme.myTextSizes
 import com.xeton.util.ifThen
 import com.xeton.util.compose.action.MenuItem
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.*
-import com.abdownloadmanager.shared.ui.widget.Text
+import com.xetondownloadmanager.shared.ui.widget.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier

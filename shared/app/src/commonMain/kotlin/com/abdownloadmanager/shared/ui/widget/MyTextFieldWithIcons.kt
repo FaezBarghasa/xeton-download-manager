@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.ui.widget
+package com.xetondownloadmanager.shared.ui.widget
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -21,13 +21,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.unit.dp
-import com.abdownloadmanager.shared.util.div
-import com.abdownloadmanager.shared.util.ui.WithContentAlpha
-import com.abdownloadmanager.shared.util.ui.myColors
-import com.abdownloadmanager.shared.util.ui.theme.myShapes
-import com.abdownloadmanager.shared.util.ui.theme.mySpacings
-import com.abdownloadmanager.shared.util.ui.theme.myTextSizes
-import com.abdownloadmanager.shared.util.ui.widget.MyIcon
+import com.xetondownloadmanager.shared.util.div
+import com.xetondownloadmanager.shared.util.ui.WithContentAlpha
+import com.xetondownloadmanager.shared.util.ui.myColors
+import com.xetondownloadmanager.shared.util.ui.theme.myShapes
+import com.xetondownloadmanager.shared.util.ui.theme.mySpacings
+import com.xetondownloadmanager.shared.util.ui.theme.myTextSizes
+import com.xetondownloadmanager.shared.util.ui.widget.MyIcon
 import com.xeton.util.compose.IconSource
 import com.xeton.util.ifThen
 

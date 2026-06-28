@@ -1,10 +1,10 @@
-package com.abdownloadmanager.shared.ui.widget
+package com.xetondownloadmanager.shared.ui.widget
 
-import com.abdownloadmanager.shared.util.ui.widget.MyIcon
-import com.abdownloadmanager.shared.util.ui.icon.MyIcons
-import com.abdownloadmanager.shared.util.ui.myColors
-import com.abdownloadmanager.shared.util.ui.theme.myTextSizes
-import com.abdownloadmanager.shared.util.ui.WithContentAlpha
+import com.xetondownloadmanager.shared.util.ui.widget.MyIcon
+import com.xetondownloadmanager.shared.util.ui.icon.MyIcons
+import com.xetondownloadmanager.shared.util.ui.myColors
+import com.xetondownloadmanager.shared.util.ui.theme.myTextSizes
+import com.xetondownloadmanager.shared.util.ui.WithContentAlpha
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -14,8 +14,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.util.ui.theme.myShapes
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.util.ui.theme.myShapes
 import com.xeton.util.compose.resources.myStringResource
 
 @Composable

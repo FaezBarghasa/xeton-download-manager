@@ -1,4 +1,4 @@
-package com.abdownloadmanager.android.util
+package com.xetondownloadmanager.android.util
 
 import androidx.compose.runtime.AbstractApplier
 import androidx.compose.runtime.Composable

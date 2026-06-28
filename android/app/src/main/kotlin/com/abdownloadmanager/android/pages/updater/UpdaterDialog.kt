@@ -1,11 +1,11 @@
-package com.abdownloadmanager.android.pages.updater
+package com.xetondownloadmanager.android.pages.updater
 
 import androidx.compose.runtime.*
-import com.abdownloadmanager.shared.pages.updater.RenderUpdateNotifications
-import com.abdownloadmanager.shared.pages.updater.UpdateComponent
-import com.abdownloadmanager.shared.util.OnFullyDismissed
-import com.abdownloadmanager.shared.util.ResponsiveDialog
-import com.abdownloadmanager.shared.util.rememberResponsiveDialogState
+import com.xetondownloadmanager.shared.pages.updater.RenderUpdateNotifications
+import com.xetondownloadmanager.shared.pages.updater.UpdateComponent
+import com.xetondownloadmanager.shared.util.OnFullyDismissed
+import com.xetondownloadmanager.shared.util.ResponsiveDialog
+import com.xetondownloadmanager.shared.util.rememberResponsiveDialogState
 
 @Composable
 fun UpdaterSheet(

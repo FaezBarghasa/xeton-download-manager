@@ -1,8 +1,8 @@
-package com.abdownloadmanager.shared.ui.widget.table.customtable
+package com.xetondownloadmanager.shared.ui.widget.table.customtable
 
-import com.abdownloadmanager.shared.util.ui.myColors
-import com.abdownloadmanager.shared.ui.widget.resizeHandle
-import com.abdownloadmanager.shared.util.div
+import com.xetondownloadmanager.shared.util.ui.myColors
+import com.xetondownloadmanager.shared.ui.widget.resizeHandle
+import com.xetondownloadmanager.shared.util.div
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
@@ -12,7 +12,7 @@ import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.onClick
-import com.abdownloadmanager.shared.ui.widget.Text
+import com.xetondownloadmanager.shared.ui.widget.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,11 +22,11 @@ import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.abdownloadmanager.shared.ui.widget.sort.ComparatorProvider
-import com.abdownloadmanager.shared.ui.widget.sort.Sort
-import com.abdownloadmanager.shared.ui.widget.sort.SortIndicatorMode
-import com.abdownloadmanager.shared.ui.widget.sort.sorted
-import com.abdownloadmanager.shared.ui.widget.sort.toSortIndicatorMode
+import com.xetondownloadmanager.shared.ui.widget.sort.ComparatorProvider
+import com.xetondownloadmanager.shared.ui.widget.sort.Sort
+import com.xetondownloadmanager.shared.ui.widget.sort.SortIndicatorMode
+import com.xetondownloadmanager.shared.ui.widget.sort.sorted
+import com.xetondownloadmanager.shared.ui.widget.sort.toSortIndicatorMode
 import com.xeton.util.compose.StringSource
 import com.xeton.util.flow.mapStateFlow
 import com.xeton.util.swapped

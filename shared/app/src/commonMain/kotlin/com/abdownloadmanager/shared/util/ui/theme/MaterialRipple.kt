@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.abdownloadmanager.shared.util.ui.theme
+package com.xetondownloadmanager.shared.util.ui.theme
 
 import androidx.compose.foundation.Indication
 import androidx.compose.foundation.IndicationNodeFactory
@@ -38,8 +38,8 @@ import androidx.compose.ui.node.ObserverModifierNode
 import androidx.compose.ui.node.currentValueOf
 import androidx.compose.ui.node.observeReads
 import androidx.compose.ui.unit.Dp
-import com.abdownloadmanager.shared.util.ui.LocalContentColor
-import com.abdownloadmanager.shared.util.ui.LocalMyColors
+import com.xetondownloadmanager.shared.util.ui.LocalContentColor
+import com.xetondownloadmanager.shared.util.ui.LocalMyColors
 
 /**
  * Creates a Ripple using the provided values and values inferred from the theme.

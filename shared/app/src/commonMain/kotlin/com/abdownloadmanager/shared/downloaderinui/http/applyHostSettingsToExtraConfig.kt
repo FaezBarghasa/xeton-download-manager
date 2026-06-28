@@ -1,6 +1,6 @@
-package com.abdownloadmanager.shared.downloaderinui.http
+package com.xetondownloadmanager.shared.downloaderinui.http
 
-import com.abdownloadmanager.shared.util.perhostsettings.PerHostSettingsItem
+import com.xetondownloadmanager.shared.util.perhostsettings.PerHostSettingsItem
 import com.xeton.downloader.downloaditem.http.HttpDownloadCredentials
 import com.xeton.downloader.downloaditem.http.HttpDownloadItem
 

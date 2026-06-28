@@ -1,4 +1,4 @@
-package com.abdownloadmanager.desktop.window.custom.titlebar.mac
+package com.xetondownloadmanager.desktop.window.custom.titlebar.mac
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
@@ -15,17 +15,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.abdownloadmanager.desktop.window.custom.WindowCloseButtonTooltip
-import com.abdownloadmanager.desktop.window.custom.WindowMinimizeTooltip
-import com.abdownloadmanager.desktop.window.custom.WindowToggleMaximizeTooltip
-import com.abdownloadmanager.desktop.window.custom.isWindowFocused
-import com.abdownloadmanager.desktop.window.custom.isWindowMaximized
-import com.abdownloadmanager.desktop.window.custom.titlebar.SystemButtonType
-import com.abdownloadmanager.shared.util.darker
-import com.abdownloadmanager.shared.util.div
-import com.abdownloadmanager.shared.util.ui.icon.MyIcons
-import com.abdownloadmanager.shared.util.ui.myColors
-import com.abdownloadmanager.shared.util.ui.widget.MyIcon
+import com.xetondownloadmanager.desktop.window.custom.WindowCloseButtonTooltip
+import com.xetondownloadmanager.desktop.window.custom.WindowMinimizeTooltip
+import com.xetondownloadmanager.desktop.window.custom.WindowToggleMaximizeTooltip
+import com.xetondownloadmanager.desktop.window.custom.isWindowFocused
+import com.xetondownloadmanager.desktop.window.custom.isWindowMaximized
+import com.xetondownloadmanager.desktop.window.custom.titlebar.SystemButtonType
+import com.xetondownloadmanager.shared.util.darker
+import com.xetondownloadmanager.shared.util.div
+import com.xetondownloadmanager.shared.util.ui.icon.MyIcons
+import com.xetondownloadmanager.shared.util.ui.myColors
+import com.xetondownloadmanager.shared.util.ui.widget.MyIcon
 import com.xeton.util.compose.IconSource
 
 @Composable

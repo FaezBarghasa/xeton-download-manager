@@ -1,6 +1,6 @@
-package com.abdownloadmanager.shared.pages.adddownload.multiple
+package com.xetondownloadmanager.shared.pages.adddownload.multiple
 
-import com.abdownloadmanager.shared.util.category.CategorySelectionMode
+import com.xetondownloadmanager.shared.util.category.CategorySelectionMode
 import com.xeton.downloader.NewDownloadItemProps
 import kotlinx.coroutines.Deferred
 

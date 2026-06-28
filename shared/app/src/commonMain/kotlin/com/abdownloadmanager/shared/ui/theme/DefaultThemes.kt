@@ -1,7 +1,7 @@
-package com.abdownloadmanager.shared.ui.theme
+package com.xetondownloadmanager.shared.ui.theme
 
 import androidx.compose.ui.graphics.Color
-import com.abdownloadmanager.shared.util.ui.MyColors
+import com.xetondownloadmanager.shared.util.ui.MyColors
 
 object DefaultThemes {
     val dark = MyColors(

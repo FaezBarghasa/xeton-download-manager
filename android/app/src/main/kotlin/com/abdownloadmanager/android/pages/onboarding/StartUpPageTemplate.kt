@@ -1,4 +1,4 @@
-package com.abdownloadmanager.android.pages.onboarding
+package com.xetondownloadmanager.android.pages.onboarding
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
@@ -27,13 +27,13 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.ui.widget.Text
-import com.abdownloadmanager.shared.ui.widget.TransparentIconActionButton
-import com.abdownloadmanager.shared.util.ui.icon.MyIcons
-import com.abdownloadmanager.shared.util.ui.myColors
-import com.abdownloadmanager.shared.util.ui.theme.mySpacings
-import com.abdownloadmanager.shared.util.ui.theme.myTextSizes
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.ui.widget.Text
+import com.xetondownloadmanager.shared.ui.widget.TransparentIconActionButton
+import com.xetondownloadmanager.shared.util.ui.icon.MyIcons
+import com.xetondownloadmanager.shared.util.ui.myColors
+import com.xetondownloadmanager.shared.util.ui.theme.mySpacings
+import com.xetondownloadmanager.shared.util.ui.theme.myTextSizes
 import com.xeton.util.compose.StringSource
 import com.xeton.util.compose.asStringSource
 import com.xeton.util.compose.layout.RelativeAlignment

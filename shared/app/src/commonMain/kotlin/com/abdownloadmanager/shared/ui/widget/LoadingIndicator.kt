@@ -1,6 +1,6 @@
-package com.abdownloadmanager.shared.ui.widget
+package com.xetondownloadmanager.shared.ui.widget
 
-import com.abdownloadmanager.shared.util.ui.myColors
+import com.xetondownloadmanager.shared.util.ui.myColors
 import androidx.annotation.FloatRange
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas

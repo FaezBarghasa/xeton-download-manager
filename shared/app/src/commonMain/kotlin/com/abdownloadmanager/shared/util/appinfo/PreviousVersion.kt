@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.util.appinfo
+package com.xetondownloadmanager.shared.util.appinfo
 
 import io.github.z4kn4fein.semver.Version
 import java.io.File

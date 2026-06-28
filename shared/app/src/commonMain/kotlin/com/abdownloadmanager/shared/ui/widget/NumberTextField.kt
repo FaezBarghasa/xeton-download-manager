@@ -1,9 +1,9 @@
-package com.abdownloadmanager.shared.ui.widget
+package com.xetondownloadmanager.shared.ui.widget
 
-import com.abdownloadmanager.shared.util.ui.widget.MyIcon
-import com.abdownloadmanager.shared.util.ui.icon.MyIcons
+import com.xetondownloadmanager.shared.util.ui.widget.MyIcon
+import com.xetondownloadmanager.shared.util.ui.icon.MyIcons
 import com.xeton.util.ifThen
-import com.abdownloadmanager.shared.util.ui.WithContentAlpha
+import com.xetondownloadmanager.shared.util.ui.WithContentAlpha
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
@@ -27,8 +27,8 @@ import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.abdownloadmanager.shared.util.ui.theme.myShapes
-import com.abdownloadmanager.shared.util.ui.theme.mySpacings
+import com.xetondownloadmanager.shared.util.ui.theme.myShapes
+import com.xetondownloadmanager.shared.util.ui.theme.mySpacings
 import com.xeton.util.compose.IconSource
 
 private val DefaultShape

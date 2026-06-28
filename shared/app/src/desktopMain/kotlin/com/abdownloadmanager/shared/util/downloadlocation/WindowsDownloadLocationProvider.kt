@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.util.downloadlocation
+package com.xetondownloadmanager.shared.util.downloadlocation
 
 import com.sun.jna.platform.win32.KnownFolders
 import com.sun.jna.platform.win32.Shell32

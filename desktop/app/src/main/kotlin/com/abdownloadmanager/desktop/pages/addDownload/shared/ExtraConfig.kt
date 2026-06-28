@@ -1,12 +1,12 @@
-package com.abdownloadmanager.desktop.pages.addDownload.shared
+package com.xetondownloadmanager.desktop.pages.addDownload.shared
 
-import com.abdownloadmanager.shared.ui.configurable.RenderConfigurable
-import com.abdownloadmanager.desktop.window.custom.BaseOptionDialog
-import com.abdownloadmanager.shared.util.ui.myColors
-import com.abdownloadmanager.shared.ui.widget.Text
-import com.abdownloadmanager.shared.util.ui.WithContentColor
-import com.abdownloadmanager.shared.util.div
-import com.abdownloadmanager.desktop.window.moveSafe
+import com.xetondownloadmanager.shared.ui.configurable.RenderConfigurable
+import com.xetondownloadmanager.desktop.window.custom.BaseOptionDialog
+import com.xetondownloadmanager.shared.util.ui.myColors
+import com.xetondownloadmanager.shared.ui.widget.Text
+import com.xetondownloadmanager.shared.util.ui.WithContentColor
+import com.xetondownloadmanager.shared.util.div
+import com.xetondownloadmanager.desktop.window.moveSafe
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.window.WindowDraggableArea
@@ -20,11 +20,11 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.rememberDialogState
-import com.abdownloadmanager.shared.ui.configurable.Configurable
-import com.abdownloadmanager.shared.ui.configurable.ConfigurableUiProps
-import com.abdownloadmanager.shared.util.ui.MultiplatformVerticalScrollbar
-import com.abdownloadmanager.shared.util.ui.theme.LocalUiScale
-import com.abdownloadmanager.shared.util.ui.theme.myShapes
+import com.xetondownloadmanager.shared.ui.configurable.Configurable
+import com.xetondownloadmanager.shared.ui.configurable.ConfigurableUiProps
+import com.xetondownloadmanager.shared.util.ui.MultiplatformVerticalScrollbar
+import com.xetondownloadmanager.shared.util.ui.theme.LocalUiScale
+import com.xetondownloadmanager.shared.util.ui.theme.myShapes
 import com.xeton.util.desktop.screen.applyUiScale
 import java.awt.Dimension
 import java.awt.MouseInfo

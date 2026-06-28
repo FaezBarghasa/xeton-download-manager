@@ -1,7 +1,7 @@
-package com.abdownloadmanager.shared.pagemanager
+package com.xetondownloadmanager.shared.pagemanager
 
-import com.abdownloadmanager.shared.ui.widget.MessageDialogType
-import com.abdownloadmanager.shared.ui.widget.NotificationType
+import com.xetondownloadmanager.shared.ui.widget.MessageDialogType
+import com.xetondownloadmanager.shared.ui.widget.NotificationType
 import com.xeton.util.compose.StringSource
 
 interface NotificationSender {

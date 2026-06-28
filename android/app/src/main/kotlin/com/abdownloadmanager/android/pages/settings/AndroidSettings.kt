@@ -1,12 +1,12 @@
-package com.abdownloadmanager.android.pages.settings
+package com.xetondownloadmanager.android.pages.settings
 
-import com.abdownloadmanager.android.pages.onboarding.permissions.ABDMPermissions
-import com.abdownloadmanager.android.storage.AppSettingsStorage
-import com.abdownloadmanager.android.ui.configurable.android.item.PermissionConfigurable
-import com.abdownloadmanager.android.util.pagemanager.PermissionsPageManager
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.ui.configurable.item.BooleanConfigurable
-import com.abdownloadmanager.shared.ui.configurable.item.NavigatableConfigurable
+import com.xetondownloadmanager.android.pages.onboarding.permissions.ABDMPermissions
+import com.xetondownloadmanager.android.storage.AppSettingsStorage
+import com.xetondownloadmanager.android.ui.configurable.android.item.PermissionConfigurable
+import com.xetondownloadmanager.android.util.pagemanager.PermissionsPageManager
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.ui.configurable.item.BooleanConfigurable
+import com.xetondownloadmanager.shared.ui.configurable.item.NavigatableConfigurable
 import com.xeton.util.compose.asStringSource
 import kotlinx.coroutines.flow.MutableStateFlow
 

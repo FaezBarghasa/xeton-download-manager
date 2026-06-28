@@ -1,4 +1,4 @@
-package com.abdownloadmanager.android.ui.configurable.comon.renderer
+package com.xetondownloadmanager.android.ui.configurable.comon.renderer
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
@@ -17,18 +17,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.abdownloadmanager.android.ui.configurable.ConfigTemplate
-import com.abdownloadmanager.android.ui.configurable.TitleAndDescription
-import com.abdownloadmanager.shared.ui.configurable.ConfigurableRenderer
-import com.abdownloadmanager.shared.ui.configurable.ConfigurableUiProps
-import com.abdownloadmanager.shared.ui.configurable.RenderSpinner
-import com.abdownloadmanager.shared.ui.configurable.isConfigEnabled
-import com.abdownloadmanager.shared.ui.configurable.item.SpeedLimitConfigurable
-import com.abdownloadmanager.shared.ui.widget.CheckBox
-import com.abdownloadmanager.shared.ui.widget.DoubleTextField
-import com.abdownloadmanager.shared.ui.widget.Text
-import com.abdownloadmanager.shared.util.LocalSpeedUnit
-import com.abdownloadmanager.shared.util.ui.theme.mySpacings
+import com.xetondownloadmanager.android.ui.configurable.ConfigTemplate
+import com.xetondownloadmanager.android.ui.configurable.TitleAndDescription
+import com.xetondownloadmanager.shared.ui.configurable.ConfigurableRenderer
+import com.xetondownloadmanager.shared.ui.configurable.ConfigurableUiProps
+import com.xetondownloadmanager.shared.ui.configurable.RenderSpinner
+import com.xetondownloadmanager.shared.ui.configurable.isConfigEnabled
+import com.xetondownloadmanager.shared.ui.configurable.item.SpeedLimitConfigurable
+import com.xetondownloadmanager.shared.ui.widget.CheckBox
+import com.xetondownloadmanager.shared.ui.widget.DoubleTextField
+import com.xetondownloadmanager.shared.ui.widget.Text
+import com.xetondownloadmanager.shared.util.LocalSpeedUnit
+import com.xetondownloadmanager.shared.util.ui.theme.mySpacings
 import com.xeton.util.datasize.SizeConverter
 import com.xeton.util.datasize.SizeFactors
 import com.xeton.util.datasize.SizeUnit

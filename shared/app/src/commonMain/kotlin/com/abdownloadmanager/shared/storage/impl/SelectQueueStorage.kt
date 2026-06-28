@@ -1,10 +1,10 @@
-package com.abdownloadmanager.shared.storage.impl
+package com.xetondownloadmanager.shared.storage.impl
 
 import androidx.datastore.core.DataStore
-import com.abdownloadmanager.shared.storage.ILastSavedLocationsStorage
-import com.abdownloadmanager.shared.storage.ISelectQueueStorage
-import com.abdownloadmanager.shared.storage.SelectQueueSettings
-import com.abdownloadmanager.shared.util.ConfigBaseSettingsByJson
+import com.xetondownloadmanager.shared.storage.ILastSavedLocationsStorage
+import com.xetondownloadmanager.shared.storage.ISelectQueueStorage
+import com.xetondownloadmanager.shared.storage.SelectQueueSettings
+import com.xetondownloadmanager.shared.util.ConfigBaseSettingsByJson
 import kotlinx.coroutines.flow.MutableStateFlow
 
 class SelectQueueStorage(

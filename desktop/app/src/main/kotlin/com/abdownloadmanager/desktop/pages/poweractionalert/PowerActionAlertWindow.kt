@@ -1,4 +1,4 @@
-package com.abdownloadmanager.desktop.pages.poweractionalert
+package com.xetondownloadmanager.desktop.pages.poweractionalert
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
@@ -23,18 +23,18 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
-import com.abdownloadmanager.desktop.AppComponent
-import com.abdownloadmanager.desktop.window.custom.CustomWindow
-import com.abdownloadmanager.desktop.window.custom.WindowTitle
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.ui.widget.ActionButton
-import com.abdownloadmanager.shared.ui.widget.LoadingIndicatorWithBrush
-import com.abdownloadmanager.shared.ui.widget.Text
-import com.abdownloadmanager.shared.util.div
-import com.abdownloadmanager.shared.util.rememberChild
-import com.abdownloadmanager.shared.util.ui.myColors
-import com.abdownloadmanager.shared.util.ui.theme.LocalUiScale
-import com.abdownloadmanager.shared.util.ui.theme.myTextSizes
+import com.xetondownloadmanager.desktop.AppComponent
+import com.xetondownloadmanager.desktop.window.custom.CustomWindow
+import com.xetondownloadmanager.desktop.window.custom.WindowTitle
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.ui.widget.ActionButton
+import com.xetondownloadmanager.shared.ui.widget.LoadingIndicatorWithBrush
+import com.xetondownloadmanager.shared.ui.widget.Text
+import com.xetondownloadmanager.shared.util.div
+import com.xetondownloadmanager.shared.util.rememberChild
+import com.xetondownloadmanager.shared.util.ui.myColors
+import com.xetondownloadmanager.shared.util.ui.theme.LocalUiScale
+import com.xetondownloadmanager.shared.util.ui.theme.myTextSizes
 import com.xeton.util.compose.asStringSource
 import com.xeton.util.compose.resources.myStringResource
 import com.xeton.util.desktop.screen.applyUiScale

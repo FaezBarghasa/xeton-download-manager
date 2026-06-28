@@ -1,4 +1,4 @@
-package com.abdownloadmanager.android.util
+package com.xetondownloadmanager.android.util
 
 import android.content.Context
 import android.content.Intent

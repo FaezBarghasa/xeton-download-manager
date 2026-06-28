@@ -1,4 +1,4 @@
-package com.abdownloadmanager.android.ui.configurable
+package com.xetondownloadmanager.android.ui.configurable
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,12 +17,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.ui.configurable.Configurable
-import com.abdownloadmanager.shared.ui.widget.ActionButton
-import com.abdownloadmanager.shared.ui.widget.TransparentIconActionButton
-import com.abdownloadmanager.shared.util.ui.icon.MyIcons
-import com.abdownloadmanager.shared.util.ui.theme.mySpacings
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.ui.configurable.Configurable
+import com.xetondownloadmanager.shared.ui.widget.ActionButton
+import com.xetondownloadmanager.shared.ui.widget.TransparentIconActionButton
+import com.xetondownloadmanager.shared.util.ui.icon.MyIcons
+import com.xetondownloadmanager.shared.util.ui.theme.mySpacings
 import com.xeton.util.compose.StringSource
 import com.xeton.util.compose.asStringSource
 import com.xeton.util.compose.resources.myStringResource

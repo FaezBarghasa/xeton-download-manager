@@ -1,4 +1,4 @@
-package com.abdownloadmanager.android.pages.browser.bookmark
+package com.xetondownloadmanager.android.pages.browser.bookmark
 
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
@@ -16,22 +16,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.abdownloadmanager.android.storage.BrowserBookmark
-import com.abdownloadmanager.android.ui.SheetHeader
-import com.abdownloadmanager.android.ui.SheetTitle
-import com.abdownloadmanager.android.ui.SheetUI
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.ui.widget.Text
-import com.abdownloadmanager.shared.ui.widget.TransparentIconActionButton
-import com.abdownloadmanager.shared.util.ResponsiveDialog
-import com.abdownloadmanager.shared.util.div
-import com.abdownloadmanager.shared.util.rememberResponsiveDialogState
-import com.abdownloadmanager.shared.util.ui.LocalContentColor
-import com.abdownloadmanager.shared.util.ui.WithContentAlpha
-import com.abdownloadmanager.shared.util.ui.icon.MyIcons
-import com.abdownloadmanager.shared.util.ui.theme.mySpacings
-import com.abdownloadmanager.shared.util.ui.theme.myTextSizes
-import com.abdownloadmanager.shared.util.ui.widget.MyIcon
+import com.xetondownloadmanager.android.storage.BrowserBookmark
+import com.xetondownloadmanager.android.ui.SheetHeader
+import com.xetondownloadmanager.android.ui.SheetTitle
+import com.xetondownloadmanager.android.ui.SheetUI
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.ui.widget.Text
+import com.xetondownloadmanager.shared.ui.widget.TransparentIconActionButton
+import com.xetondownloadmanager.shared.util.ResponsiveDialog
+import com.xetondownloadmanager.shared.util.div
+import com.xetondownloadmanager.shared.util.rememberResponsiveDialogState
+import com.xetondownloadmanager.shared.util.ui.LocalContentColor
+import com.xetondownloadmanager.shared.util.ui.WithContentAlpha
+import com.xetondownloadmanager.shared.util.ui.icon.MyIcons
+import com.xetondownloadmanager.shared.util.ui.theme.mySpacings
+import com.xetondownloadmanager.shared.util.ui.theme.myTextSizes
+import com.xetondownloadmanager.shared.util.ui.widget.MyIcon
 import com.xeton.util.compose.asStringSource
 import com.xeton.util.compose.resources.myStringResource
 

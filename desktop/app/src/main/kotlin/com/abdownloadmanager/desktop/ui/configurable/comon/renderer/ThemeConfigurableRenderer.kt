@@ -1,4 +1,4 @@
-package com.abdownloadmanager.desktop.ui.configurable.comon.renderer
+package com.xetondownloadmanager.desktop.ui.configurable.comon.renderer
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -18,16 +18,16 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.dp
-import com.abdownloadmanager.desktop.ui.configurable.ConfigTemplate
-import com.abdownloadmanager.shared.ui.configurable.ConfigurableRenderer
-import com.abdownloadmanager.shared.ui.configurable.RenderSpinner
-import com.abdownloadmanager.desktop.ui.configurable.TitleAndDescription
-import com.abdownloadmanager.shared.ui.configurable.ConfigurableUiProps
-import com.abdownloadmanager.shared.ui.configurable.isConfigEnabled
-import com.abdownloadmanager.shared.ui.configurable.item.ThemeConfigurable
-import com.abdownloadmanager.shared.ui.widget.Text
-import com.abdownloadmanager.shared.util.ui.myColors
-import com.abdownloadmanager.shared.util.ui.theme.myTextSizes
+import com.xetondownloadmanager.desktop.ui.configurable.ConfigTemplate
+import com.xetondownloadmanager.shared.ui.configurable.ConfigurableRenderer
+import com.xetondownloadmanager.shared.ui.configurable.RenderSpinner
+import com.xetondownloadmanager.desktop.ui.configurable.TitleAndDescription
+import com.xetondownloadmanager.shared.ui.configurable.ConfigurableUiProps
+import com.xetondownloadmanager.shared.ui.configurable.isConfigEnabled
+import com.xetondownloadmanager.shared.ui.configurable.item.ThemeConfigurable
+import com.xetondownloadmanager.shared.ui.widget.Text
+import com.xetondownloadmanager.shared.util.ui.myColors
+import com.xetondownloadmanager.shared.util.ui.theme.myTextSizes
 import com.xeton.util.ifThen
 
 object ThemeConfigurableRenderer : ConfigurableRenderer<ThemeConfigurable> {

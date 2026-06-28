@@ -1,4 +1,4 @@
-package com.abdownloadmanager.android.pages.crashreport
+package com.xetondownloadmanager.android.pages.crashreport
 
 import kotlinx.serialization.Serializable
 

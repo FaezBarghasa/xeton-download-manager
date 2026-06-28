@@ -1,14 +1,14 @@
-package com.abdownloadmanager.android
+package com.xetondownloadmanager.android
 
 import android.app.Application
 import co.touchlab.kermit.Severity
-import com.abdownloadmanager.android.di.Di
-import com.abdownloadmanager.android.util.ABDMAppManager
-import com.abdownloadmanager.android.util.AndroidGlobalExceptionHandler
-import com.abdownloadmanager.android.util.AppInfo
-import com.abdownloadmanager.android.util.ApplicationBackgroundTracker
-import com.abdownloadmanager.shared.repository.BaseAppRepository
-import com.abdownloadmanager.shared.util.appinfo.PreviousVersion
+import com.xetondownloadmanager.android.di.Di
+import com.xetondownloadmanager.android.util.ABDMAppManager
+import com.xetondownloadmanager.android.util.AndroidGlobalExceptionHandler
+import com.xetondownloadmanager.android.util.AppInfo
+import com.xetondownloadmanager.android.util.ApplicationBackgroundTracker
+import com.xetondownloadmanager.shared.repository.BaseAppRepository
+import com.xetondownloadmanager.shared.util.appinfo.PreviousVersion
 import com.xeton.util.logger.AppLogger
 import kotlinx.coroutines.CoroutineScope
 import org.koin.core.component.KoinComponent

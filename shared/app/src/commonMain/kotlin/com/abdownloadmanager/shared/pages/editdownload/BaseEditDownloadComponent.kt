@@ -1,14 +1,14 @@
-package com.abdownloadmanager.shared.pages.editdownload
+package com.xetondownloadmanager.shared.pages.editdownload
 
 import arrow.core.identity
-import com.abdownloadmanager.shared.downloaderinui.DownloaderInUiRegistry
-import com.abdownloadmanager.shared.downloaderinui.edit.DownloadConflictDetector
-import com.abdownloadmanager.shared.downloaderinui.edit.EditDownloadInputs
-import com.abdownloadmanager.shared.pagemanager.DownloadErrorDialogManager
-import com.abdownloadmanager.shared.util.BaseComponent
-import com.abdownloadmanager.shared.util.DownloadSystem
-import com.abdownloadmanager.shared.util.FileIconProvider
-import com.abdownloadmanager.shared.util.downloaderror.DownloadErrorReason
+import com.xetondownloadmanager.shared.downloaderinui.DownloaderInUiRegistry
+import com.xetondownloadmanager.shared.downloaderinui.edit.DownloadConflictDetector
+import com.xetondownloadmanager.shared.downloaderinui.edit.EditDownloadInputs
+import com.xetondownloadmanager.shared.pagemanager.DownloadErrorDialogManager
+import com.xetondownloadmanager.shared.util.BaseComponent
+import com.xetondownloadmanager.shared.util.DownloadSystem
+import com.xetondownloadmanager.shared.util.FileIconProvider
+import com.xetondownloadmanager.shared.util.downloaderror.DownloadErrorReason
 import com.arkivanov.decompose.ComponentContext
 import com.xeton.downloader.downloaditem.DownloadJobExtraConfig
 import com.xeton.downloader.downloaditem.IDownloadCredentials

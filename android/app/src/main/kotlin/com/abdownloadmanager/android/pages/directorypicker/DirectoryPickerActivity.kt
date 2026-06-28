@@ -1,11 +1,11 @@
-package com.abdownloadmanager.android.pages.directorypicker
+package com.xetondownloadmanager.android.pages.directorypicker
 
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Environment
 import androidx.activity.result.contract.ActivityResultContract
-import com.abdownloadmanager.android.util.activity.ABDMActivity
+import com.xetondownloadmanager.android.util.activity.ABDMActivity
 import com.xeton.util.compose.StringSource
 import com.xeton.util.compose.asStringSource
 import okio.Path

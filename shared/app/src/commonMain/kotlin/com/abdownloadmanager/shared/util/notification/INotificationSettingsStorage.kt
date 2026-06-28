@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.util.notification
+package com.xetondownloadmanager.shared.util.notification
 
 import kotlinx.coroutines.flow.MutableStateFlow
 

@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.util.mvi
+package com.xetondownloadmanager.shared.util.mvi
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.BufferOverflow

@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.util
+package com.xetondownloadmanager.shared.util
 
 object ThreadCountLimitation {
     const val MAX_ALLOWED_THREAD_COUNT = 256

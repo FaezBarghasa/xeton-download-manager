@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.ui.widget.sort
+package com.xetondownloadmanager.shared.ui.widget.sort
 
 import kotlinx.serialization.Serializable
 

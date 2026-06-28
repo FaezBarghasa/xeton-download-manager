@@ -37,7 +37,7 @@ android {
         versionName = getAppVersionString()
     }
     compileSdk = 37
-    namespace = "com.abdownloadmanager.android"
+    namespace = "com.xetondownloadmanager.android"
     buildTypes {
         debug {
             applicationIdSuffix = ".debug"

@@ -1,7 +1,7 @@
-package com.abdownloadmanager.android.util.activity
+package com.xetondownloadmanager.android.util.activity
 
 import android.content.Intent
-import com.abdownloadmanager.shared.util.mvi.ContainsEffects
+import com.xetondownloadmanager.shared.util.mvi.ContainsEffects
 
 interface ActivityActions {
     fun startActivityAction(intent: Intent)

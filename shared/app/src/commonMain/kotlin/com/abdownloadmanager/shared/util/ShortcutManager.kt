@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.util
+package com.xetondownloadmanager.shared.util
 
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.input.key.KeyEvent

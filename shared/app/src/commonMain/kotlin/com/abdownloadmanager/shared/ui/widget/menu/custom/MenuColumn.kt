@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.ui.widget.menu.custom
+package com.xetondownloadmanager.shared.ui.widget.menu.custom
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
-import com.abdownloadmanager.shared.util.ui.myColors
+import com.xetondownloadmanager.shared.util.ui.myColors
 
 @Composable
 fun MenuColumn(

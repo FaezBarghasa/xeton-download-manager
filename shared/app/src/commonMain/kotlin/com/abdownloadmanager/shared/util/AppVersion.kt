@@ -1,6 +1,6 @@
-package com.abdownloadmanager.shared.util
+package com.xetondownloadmanager.shared.util
 
-import com.abdownloadmanager.shared.BuildConfig
+import com.xetondownloadmanager.shared.BuildConfig
 import io.github.z4kn4fein.semver.Version
 
 object AppVersion {

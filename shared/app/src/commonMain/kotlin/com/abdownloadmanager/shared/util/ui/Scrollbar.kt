@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.util.ui
+package com.xetondownloadmanager.shared.util.ui
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box

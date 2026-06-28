@@ -1,8 +1,8 @@
-package com.abdownloadmanager.desktop.window.custom.titlebar.linux
+package com.xetondownloadmanager.desktop.window.custom.titlebar.linux
 
-import com.abdownloadmanager.desktop.window.custom.titlebar.SystemButtonPositionProvider
-import com.abdownloadmanager.desktop.window.custom.titlebar.SystemButtonType
-import com.abdownloadmanager.desktop.window.custom.titlebar.SystemButtonsPosition
+import com.xetondownloadmanager.desktop.window.custom.titlebar.SystemButtonPositionProvider
+import com.xetondownloadmanager.desktop.window.custom.titlebar.SystemButtonType
+import com.xetondownloadmanager.desktop.window.custom.titlebar.SystemButtonsPosition
 import java.io.File
 
 object LinuxSystemButtonsProvider : SystemButtonPositionProvider {

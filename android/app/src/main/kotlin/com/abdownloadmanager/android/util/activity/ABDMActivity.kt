@@ -1,4 +1,4 @@
-package com.abdownloadmanager.android.util.activity
+package com.xetondownloadmanager.android.util.activity
 
 import android.content.Context
 import android.content.Intent
@@ -14,17 +14,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.view.WindowInsetsControllerCompat
-import com.abdownloadmanager.android.storage.AndroidOnBoardingStorage
-import com.abdownloadmanager.android.storage.HomePageStorage
-import com.abdownloadmanager.android.ui.ABDownloadManagerApplicationContent
-import com.abdownloadmanager.android.util.ABDMAppManager
-import com.abdownloadmanager.android.util.AndroidUi
-import com.abdownloadmanager.shared.repository.BaseAppRepository
-import com.abdownloadmanager.shared.storage.BaseAppSettingsStorage
-import com.abdownloadmanager.shared.ui.theme.ThemeManager
-import com.abdownloadmanager.shared.ui.widget.NotificationManager
-import com.abdownloadmanager.shared.util.perhostsettings.PerHostSettingsManager
-import com.abdownloadmanager.shared.util.ui.MyColors
+import com.xetondownloadmanager.android.storage.AndroidOnBoardingStorage
+import com.xetondownloadmanager.android.storage.HomePageStorage
+import com.xetondownloadmanager.android.ui.XetonDownloadManagerApplicationContent
+import com.xetondownloadmanager.android.util.ABDMAppManager
+import com.xetondownloadmanager.android.util.AndroidUi
+import com.xetondownloadmanager.shared.repository.BaseAppRepository
+import com.xetondownloadmanager.shared.storage.BaseAppSettingsStorage
+import com.xetondownloadmanager.shared.ui.theme.ThemeManager
+import com.xetondownloadmanager.shared.ui.widget.NotificationManager
+import com.xetondownloadmanager.shared.util.perhostsettings.PerHostSettingsManager
+import com.xetondownloadmanager.shared.util.ui.MyColors
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.retainedComponent
 import com.xeton.util.compose.IIconResolver
@@ -98,7 +98,7 @@ abstract class ABDMActivity : ComponentActivity(), KoinComponent {
         setContent {
             val theme by themeManager.currentThemeColor.collectAsState()
             UpdateSystemBarColors(theme)
-            ABDownloadManagerApplicationContent(
+            XetonDownloadManagerApplicationContent(
                 languageManager = languageManager,
                 themeManager = themeManager,
                 appSettingsStorage = appSettingsStorage,

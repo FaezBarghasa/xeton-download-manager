@@ -1,14 +1,14 @@
-package com.abdownloadmanager.desktop.storage
+package com.xetondownloadmanager.desktop.storage
 
-import com.abdownloadmanager.desktop.pages.home.HomePageStateToPersist
+import com.xetondownloadmanager.desktop.pages.home.HomePageStateToPersist
 import androidx.datastore.core.DataStore
 import arrow.optics.Lens
 import arrow.optics.optics
-import com.abdownloadmanager.desktop.pages.settings.SettingPageStateToPersist
-import com.abdownloadmanager.desktop.pages.singleDownloadPage.SingleDownloadPageStateStorage
-import com.abdownloadmanager.desktop.pages.singleDownloadPage.SingleDownloadPageStateToPersist
-import com.abdownloadmanager.shared.storage.ILastSavedLocationsStorage
-import com.abdownloadmanager.shared.util.ConfigBaseSettingsByMapConfig
+import com.xetondownloadmanager.desktop.pages.settings.SettingPageStateToPersist
+import com.xetondownloadmanager.desktop.pages.singleDownloadPage.SingleDownloadPageStateStorage
+import com.xetondownloadmanager.desktop.pages.singleDownloadPage.SingleDownloadPageStateToPersist
+import com.xetondownloadmanager.shared.storage.ILastSavedLocationsStorage
+import com.xetondownloadmanager.shared.util.ConfigBaseSettingsByMapConfig
 import com.xeton.util.config.getDecoded
 import com.xeton.util.config.keyOfEncoded
 import com.xeton.util.config.putEncoded

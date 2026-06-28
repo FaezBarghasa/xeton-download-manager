@@ -1,6 +1,6 @@
-package com.abdownloadmanager.android.storage
+package com.xetondownloadmanager.android.storage
 
-import com.abdownloadmanager.shared.storage.IExtraQueueSettings
+import com.xetondownloadmanager.shared.storage.IExtraQueueSettings
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 

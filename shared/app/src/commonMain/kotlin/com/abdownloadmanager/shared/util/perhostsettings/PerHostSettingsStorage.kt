@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.util.perhostsettings
+package com.xetondownloadmanager.shared.util.perhostsettings
 
 import kotlinx.coroutines.flow.MutableStateFlow
 

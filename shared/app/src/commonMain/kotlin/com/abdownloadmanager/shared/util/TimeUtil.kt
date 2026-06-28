@@ -1,7 +1,7 @@
-package com.abdownloadmanager.shared.util
+package com.xetondownloadmanager.shared.util
 
 import androidx.compose.runtime.*
-import com.abdownloadmanager.resources.Res
+import com.xetondownloadmanager.resources.Res
 import com.xeton.util.compose.StringSource
 import com.xeton.util.compose.asStringSourceWithARgs
 import kotlinx.coroutines.delay

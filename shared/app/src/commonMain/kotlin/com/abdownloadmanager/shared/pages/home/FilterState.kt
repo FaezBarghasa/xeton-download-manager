@@ -1,12 +1,12 @@
-package com.abdownloadmanager.shared.pages.home
+package com.xetondownloadmanager.shared.pages.home
 
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.abdownloadmanager.shared.pages.home.category.DefinedStatusCategories
-import com.abdownloadmanager.shared.pages.home.category.DownloadStatusCategoryFilter
-import com.abdownloadmanager.shared.util.category.Category
+import com.xetondownloadmanager.shared.pages.home.category.DefinedStatusCategories
+import com.xetondownloadmanager.shared.pages.home.category.DownloadStatusCategoryFilter
+import com.xetondownloadmanager.shared.util.category.Category
 import com.xeton.downloader.db.QueueModel
 
 @Stable

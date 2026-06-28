@@ -1,9 +1,9 @@
-package com.abdownloadmanager.android.ui.configurable.android
+package com.xetondownloadmanager.android.ui.configurable.android
 
-import com.abdownloadmanager.android.ui.configurable.android.item.PermissionConfigurable
-import com.abdownloadmanager.shared.ui.configurable.Configurable
-import com.abdownloadmanager.shared.ui.configurable.ConfigurableRenderer
-import com.abdownloadmanager.shared.ui.configurable.ContainsConfigurableRenderers
+import com.xetondownloadmanager.android.ui.configurable.android.item.PermissionConfigurable
+import com.xetondownloadmanager.shared.ui.configurable.Configurable
+import com.xetondownloadmanager.shared.ui.configurable.ConfigurableRenderer
+import com.xetondownloadmanager.shared.ui.configurable.ContainsConfigurableRenderers
 
 data class AndroidConfigurableRenderers(
     val permissionConfigurableRenderers: ConfigurableRenderer<PermissionConfigurable>,

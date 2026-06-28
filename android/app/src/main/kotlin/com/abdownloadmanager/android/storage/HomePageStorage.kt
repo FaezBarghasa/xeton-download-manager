@@ -1,9 +1,9 @@
-package com.abdownloadmanager.android.storage
+package com.xetondownloadmanager.android.storage
 
 import androidx.datastore.core.DataStore
-import com.abdownloadmanager.android.pages.home.HomePageStateToPersist
-import com.abdownloadmanager.android.pages.home.sortBy
-import com.abdownloadmanager.shared.util.ConfigBaseSettingsByJson
+import com.xetondownloadmanager.android.pages.home.HomePageStateToPersist
+import com.xetondownloadmanager.android.pages.home.sortBy
+import com.xetondownloadmanager.shared.util.ConfigBaseSettingsByJson
 
 class HomePageStorage(
     dataStore: DataStore<HomePageStateToPersist>,

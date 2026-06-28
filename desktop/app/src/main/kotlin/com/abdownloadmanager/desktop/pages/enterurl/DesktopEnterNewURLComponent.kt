@@ -1,7 +1,7 @@
-package com.abdownloadmanager.desktop.pages.enterurl
+package com.xetondownloadmanager.desktop.pages.enterurl
 
-import com.abdownloadmanager.shared.downloaderinui.DownloaderInUiRegistry
-import com.abdownloadmanager.shared.pages.enterurl.BaseEnterNewURLComponent
+import com.xetondownloadmanager.shared.downloaderinui.DownloaderInUiRegistry
+import com.xetondownloadmanager.shared.pages.enterurl.BaseEnterNewURLComponent
 import com.arkivanov.decompose.ComponentContext
 import com.xeton.downloader.downloaditem.IDownloadCredentials
 

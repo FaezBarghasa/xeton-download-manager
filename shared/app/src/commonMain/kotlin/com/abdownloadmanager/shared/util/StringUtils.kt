@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.util
+package com.xetondownloadmanager.shared.util
 
 fun String.takeOrAppendDots(takeCount: Int): String {
     val take = take(takeCount)

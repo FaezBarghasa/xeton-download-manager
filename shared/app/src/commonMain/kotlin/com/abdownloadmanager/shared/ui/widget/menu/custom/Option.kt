@@ -1,13 +1,13 @@
-package com.abdownloadmanager.shared.ui.widget.menu.custom
+package com.xetondownloadmanager.shared.ui.widget.menu.custom
 
-import com.abdownloadmanager.shared.util.ui.myColors
-import com.abdownloadmanager.shared.util.ui.theme.myTextSizes
+import com.xetondownloadmanager.shared.util.ui.myColors
+import com.xetondownloadmanager.shared.util.ui.theme.myTextSizes
 import com.xeton.util.compose.action.MenuItem
-import com.abdownloadmanager.shared.util.div
+import com.xetondownloadmanager.shared.util.div
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.*
-import com.abdownloadmanager.shared.ui.widget.Text
+import com.xetondownloadmanager.shared.ui.widget.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue

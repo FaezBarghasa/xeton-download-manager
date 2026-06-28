@@ -1,6 +1,6 @@
-package com.abdownloadmanager.shared.util.keepawake
+package com.xetondownloadmanager.shared.util.keepawake
 
-import com.abdownloadmanager.shared.util.DownloadSystem
+import com.xetondownloadmanager.shared.util.DownloadSystem
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.distinctUntilChanged

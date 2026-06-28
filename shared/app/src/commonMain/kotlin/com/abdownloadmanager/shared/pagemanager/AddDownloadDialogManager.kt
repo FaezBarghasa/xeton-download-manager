@@ -1,7 +1,7 @@
-package com.abdownloadmanager.shared.pagemanager
+package com.xetondownloadmanager.shared.pagemanager
 
-import com.abdownloadmanager.shared.pages.adddownload.AddDownloadCredentialsInUiProps
-import com.abdownloadmanager.shared.pages.adddownload.ImportOptions
+import com.xetondownloadmanager.shared.pages.adddownload.AddDownloadCredentialsInUiProps
+import com.xetondownloadmanager.shared.pages.adddownload.ImportOptions
 
 interface AddDownloadDialogManager {
     fun closeAddDownloadDialog()

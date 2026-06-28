@@ -1,12 +1,12 @@
-package com.abdownloadmanager.desktop.pages.addDownload.shared
+package com.xetondownloadmanager.desktop.pages.addDownload.shared
 
-import com.abdownloadmanager.shared.ui.widget.MyTextFieldWithIcons
-import com.abdownloadmanager.shared.ui.widget.MyTextFieldIcon
-import com.abdownloadmanager.shared.util.ui.icon.MyIcons
-import com.abdownloadmanager.shared.util.ui.myColors
-import com.abdownloadmanager.shared.util.ui.theme.myTextSizes
-import com.abdownloadmanager.shared.ui.widget.Text
-import com.abdownloadmanager.shared.ui.widget.menu.custom.MyDropDown
+import com.xetondownloadmanager.shared.ui.widget.MyTextFieldWithIcons
+import com.xetondownloadmanager.shared.ui.widget.MyTextFieldIcon
+import com.xetondownloadmanager.shared.util.ui.icon.MyIcons
+import com.xetondownloadmanager.shared.util.ui.myColors
+import com.xetondownloadmanager.shared.util.ui.theme.myTextSizes
+import com.xetondownloadmanager.shared.ui.widget.Text
+import com.xetondownloadmanager.shared.ui.widget.menu.custom.MyDropDown
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -20,11 +20,11 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.util.ui.theme.myShapes
-import com.abdownloadmanager.shared.util.ui.widget.MyIcon
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.util.ui.theme.myShapes
+import com.xetondownloadmanager.shared.util.ui.widget.MyIcon
 import com.xeton.util.compose.resources.myStringResource
-import com.abdownloadmanager.desktop.ui.util.rememberMyDirectoryPickerLauncher
+import com.xetondownloadmanager.desktop.ui.util.rememberMyDirectoryPickerLauncher
 import java.io.File
 
 @Composable

@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.downloaderinui
+package com.xetondownloadmanager.shared.downloaderinui
 
 data class BasicDownloadItem(
     var folder: String,

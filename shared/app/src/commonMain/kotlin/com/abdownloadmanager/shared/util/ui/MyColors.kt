@@ -1,8 +1,8 @@
-package com.abdownloadmanager.shared.util.ui
+package com.xetondownloadmanager.shared.util.ui
 
 import androidx.compose.animation.animateColor
-import com.abdownloadmanager.shared.util.darker
-import com.abdownloadmanager.shared.util.div
+import com.xetondownloadmanager.shared.util.darker
+import com.xetondownloadmanager.shared.util.div
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.FiniteAnimationSpec

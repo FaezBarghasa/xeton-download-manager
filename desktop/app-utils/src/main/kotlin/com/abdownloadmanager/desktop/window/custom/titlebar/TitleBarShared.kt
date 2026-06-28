@@ -1,4 +1,4 @@
-package com.abdownloadmanager.desktop.window.custom.titlebar
+package com.xetondownloadmanager.desktop.window.custom.titlebar
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
@@ -17,13 +17,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.abdownloadmanager.desktop.window.custom.TitlePosition
-import com.abdownloadmanager.desktop.window.custom.isWindowFocused
-import com.abdownloadmanager.shared.ui.widget.Text
-import com.abdownloadmanager.shared.util.ui.WithContentAlpha
-import com.abdownloadmanager.shared.util.ui.WithContentColor
-import com.abdownloadmanager.shared.util.ui.myColors
-import com.abdownloadmanager.shared.util.ui.theme.myTextSizes
+import com.xetondownloadmanager.desktop.window.custom.TitlePosition
+import com.xetondownloadmanager.desktop.window.custom.isWindowFocused
+import com.xetondownloadmanager.shared.ui.widget.Text
+import com.xetondownloadmanager.shared.util.ui.WithContentAlpha
+import com.xetondownloadmanager.shared.util.ui.WithContentColor
+import com.xetondownloadmanager.shared.util.ui.myColors
+import com.xetondownloadmanager.shared.util.ui.theme.myTextSizes
 import com.xeton.util.ifThen
 
 @Composable

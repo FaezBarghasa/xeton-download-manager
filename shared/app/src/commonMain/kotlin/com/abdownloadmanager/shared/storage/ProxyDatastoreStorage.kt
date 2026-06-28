@@ -1,9 +1,9 @@
-package com.abdownloadmanager.shared.storage
+package com.xetondownloadmanager.shared.storage
 
 import androidx.datastore.core.DataStore
-import com.abdownloadmanager.shared.util.ConfigBaseSettingsByJson
-import com.abdownloadmanager.shared.util.proxy.IProxyStorage
-import com.abdownloadmanager.shared.util.proxy.ProxyData
+import com.xetondownloadmanager.shared.util.ConfigBaseSettingsByJson
+import com.xetondownloadmanager.shared.util.proxy.IProxyStorage
+import com.xetondownloadmanager.shared.util.proxy.ProxyData
 
 class ProxyDatastoreStorage(
     dataStore: DataStore<ProxyData>,

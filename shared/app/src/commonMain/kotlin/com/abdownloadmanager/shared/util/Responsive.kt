@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.util
+package com.xetondownloadmanager.shared.util
 
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.BoxWithConstraintsScope

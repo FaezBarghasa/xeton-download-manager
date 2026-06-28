@@ -1,11 +1,11 @@
-package com.abdownloadmanager.desktop.pages.singleDownloadPage
+package com.xetondownloadmanager.desktop.pages.singleDownloadPage
 
-import com.abdownloadmanager.desktop.DesktopDownloadDialogManager
-import com.abdownloadmanager.desktop.window.custom.CustomWindow
-import com.abdownloadmanager.desktop.window.custom.WindowIcon
-import com.abdownloadmanager.desktop.window.custom.WindowTitle
-import com.abdownloadmanager.shared.util.ui.icon.MyIcons
-import com.abdownloadmanager.shared.util.mvi.HandleEffects
+import com.xetondownloadmanager.desktop.DesktopDownloadDialogManager
+import com.xetondownloadmanager.desktop.window.custom.CustomWindow
+import com.xetondownloadmanager.desktop.window.custom.WindowIcon
+import com.xetondownloadmanager.desktop.window.custom.WindowTitle
+import com.xetondownloadmanager.shared.util.ui.icon.MyIcons
+import com.xetondownloadmanager.shared.util.mvi.HandleEffects
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.DpSize
@@ -14,8 +14,8 @@ import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.rememberWindowState
-import com.abdownloadmanager.shared.singledownloadpage.BaseSingleDownloadComponent
-import com.abdownloadmanager.shared.util.ui.theme.LocalUiScale
+import com.xetondownloadmanager.shared.singledownloadpage.BaseSingleDownloadComponent
+import com.xetondownloadmanager.shared.util.ui.theme.LocalUiScale
 import com.xeton.downloader.downloaditem.DownloadJobStatus
 import com.xeton.downloader.monitor.CompletedDownloadItemState
 import com.xeton.downloader.monitor.IDownloadItemState

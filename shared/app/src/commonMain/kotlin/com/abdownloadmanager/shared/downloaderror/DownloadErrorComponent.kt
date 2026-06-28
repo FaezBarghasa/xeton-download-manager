@@ -1,8 +1,8 @@
-package com.abdownloadmanager.shared.downloaderror
+package com.xetondownloadmanager.shared.downloaderror
 
-import com.abdownloadmanager.shared.util.BaseComponent
-import com.abdownloadmanager.shared.util.ClipboardUtil
-import com.abdownloadmanager.shared.util.downloaderror.DownloadErrorReason
+import com.xetondownloadmanager.shared.util.BaseComponent
+import com.xetondownloadmanager.shared.util.ClipboardUtil
+import com.xetondownloadmanager.shared.util.downloaderror.DownloadErrorReason
 import com.arkivanov.decompose.ComponentContext
 import com.xeton.downloader.downloaditem.IDownloadItem
 import kotlinx.serialization.Serializable

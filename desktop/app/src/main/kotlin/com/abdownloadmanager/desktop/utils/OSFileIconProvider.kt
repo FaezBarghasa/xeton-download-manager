@@ -1,11 +1,11 @@
-package com.abdownloadmanager.desktop.utils
+package com.xetondownloadmanager.desktop.utils
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.toComposeImageBitmap
-import com.abdownloadmanager.shared.util.FileIconProvider
-import com.abdownloadmanager.shared.util.ui.IMyIcons
+import com.xetondownloadmanager.shared.util.FileIconProvider
+import com.xetondownloadmanager.shared.util.ui.IMyIcons
 import com.xeton.util.compose.IconSource
 import java.awt.image.BufferedImage
 import java.io.File

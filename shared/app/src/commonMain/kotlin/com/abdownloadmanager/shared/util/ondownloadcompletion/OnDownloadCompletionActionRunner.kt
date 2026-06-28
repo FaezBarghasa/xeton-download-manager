@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.util.ondownloadcompletion
+package com.xetondownloadmanager.shared.util.ondownloadcompletion
 
 import com.xeton.downloader.DownloadManagerEvents
 import com.xeton.downloader.DownloadManagerMinimalControl

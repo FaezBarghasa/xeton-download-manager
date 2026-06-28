@@ -1,6 +1,6 @@
-package com.abdownloadmanager.desktop.storage
+package com.xetondownloadmanager.desktop.storage
 
-import com.abdownloadmanager.shared.storage.IExtraDownloadItemSettings
+import com.xetondownloadmanager.shared.storage.IExtraDownloadItemSettings
 import com.xeton.util.desktop.poweraction.ContainsPowerActionConfigOnFinish
 import com.xeton.util.desktop.poweraction.PowerActionConfig
 import kotlinx.serialization.KSerializer

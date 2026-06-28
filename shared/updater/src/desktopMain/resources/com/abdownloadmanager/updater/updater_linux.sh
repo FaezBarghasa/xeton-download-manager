@@ -1,4 +1,4 @@
-APP_NAME="ABDownloadManager"
+APP_NAME="XetonDownloadManager"
 awaitTermination(){
   local processName="${1:?}"
   local count=0

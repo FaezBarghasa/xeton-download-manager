@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.util.extractors
+package com.xetondownloadmanager.shared.util.extractors
 
 interface Extractor<in Input,out Output>{
     fun extract(input:Input):Output

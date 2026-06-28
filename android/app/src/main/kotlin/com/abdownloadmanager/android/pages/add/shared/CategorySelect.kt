@@ -1,4 +1,4 @@
-package com.abdownloadmanager.android.pages.add.shared
+package com.xetondownloadmanager.android.pages.add.shared
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -10,19 +10,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.*
-import com.abdownloadmanager.android.ui.configurable.RenderSpinnerInSheet
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.ui.widget.IconActionButton
-import com.abdownloadmanager.shared.util.ui.icon.MyIcons
-import com.abdownloadmanager.shared.util.ui.myColors
+import com.xetondownloadmanager.android.ui.configurable.RenderSpinnerInSheet
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.ui.widget.IconActionButton
+import com.xetondownloadmanager.shared.util.ui.icon.MyIcons
+import com.xetondownloadmanager.shared.util.ui.myColors
 import com.xeton.util.ifThen
-import com.abdownloadmanager.shared.ui.widget.Text
-import com.abdownloadmanager.shared.util.div
-import com.abdownloadmanager.shared.util.category.Category
-import com.abdownloadmanager.shared.util.category.rememberIconPainter
-import com.abdownloadmanager.shared.util.ui.theme.myShapes
-import com.abdownloadmanager.shared.util.ui.theme.mySpacings
-import com.abdownloadmanager.shared.util.ui.widget.MyIcon
+import com.xetondownloadmanager.shared.ui.widget.Text
+import com.xetondownloadmanager.shared.util.div
+import com.xetondownloadmanager.shared.util.category.Category
+import com.xetondownloadmanager.shared.util.category.rememberIconPainter
+import com.xetondownloadmanager.shared.util.ui.theme.myShapes
+import com.xetondownloadmanager.shared.util.ui.theme.mySpacings
+import com.xetondownloadmanager.shared.util.ui.widget.MyIcon
 import com.xeton.util.compose.asStringSource
 import com.xeton.util.compose.resources.myStringResource
 

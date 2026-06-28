@@ -1,4 +1,4 @@
-package com.abdownloadmanager.android.pages.directorypicker
+package com.xetondownloadmanager.android.pages.directorypicker
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.runtime.Composable

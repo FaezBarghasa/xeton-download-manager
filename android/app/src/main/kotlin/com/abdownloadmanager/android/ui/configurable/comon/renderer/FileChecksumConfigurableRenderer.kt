@@ -1,4 +1,4 @@
-package com.abdownloadmanager.android.ui.configurable.comon.renderer
+package com.xetondownloadmanager.android.ui.configurable.comon.renderer
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
@@ -12,19 +12,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
-import com.abdownloadmanager.android.ui.configurable.ConfigTemplate
-import com.abdownloadmanager.android.ui.configurable.TitleAndDescription
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.ui.configurable.ConfigurableRenderer
-import com.abdownloadmanager.shared.ui.configurable.ConfigurableUiProps
-import com.abdownloadmanager.shared.ui.configurable.RenderSpinner
-import com.abdownloadmanager.shared.ui.configurable.isConfigEnabled
-import com.abdownloadmanager.shared.ui.configurable.item.FileChecksumConfigurable
-import com.abdownloadmanager.shared.ui.widget.CheckBox
-import com.abdownloadmanager.shared.ui.widget.MyTextField
-import com.abdownloadmanager.shared.ui.widget.Text
-import com.abdownloadmanager.shared.util.FileChecksum
-import com.abdownloadmanager.shared.util.FileChecksumAlgorithm
+import com.xetondownloadmanager.android.ui.configurable.ConfigTemplate
+import com.xetondownloadmanager.android.ui.configurable.TitleAndDescription
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.ui.configurable.ConfigurableRenderer
+import com.xetondownloadmanager.shared.ui.configurable.ConfigurableUiProps
+import com.xetondownloadmanager.shared.ui.configurable.RenderSpinner
+import com.xetondownloadmanager.shared.ui.configurable.isConfigEnabled
+import com.xetondownloadmanager.shared.ui.configurable.item.FileChecksumConfigurable
+import com.xetondownloadmanager.shared.ui.widget.CheckBox
+import com.xetondownloadmanager.shared.ui.widget.MyTextField
+import com.xetondownloadmanager.shared.ui.widget.Text
+import com.xetondownloadmanager.shared.util.FileChecksum
+import com.xetondownloadmanager.shared.util.FileChecksumAlgorithm
 import com.xeton.util.compose.resources.myStringResource
 
 object FileChecksumConfigurableRenderer : ConfigurableRenderer<FileChecksumConfigurable> {

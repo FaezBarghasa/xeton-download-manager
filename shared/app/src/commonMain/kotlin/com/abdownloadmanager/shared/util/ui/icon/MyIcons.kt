@@ -1,8 +1,8 @@
-package com.abdownloadmanager.shared.util.ui.icon
+package com.xetondownloadmanager.shared.util.ui.icon
 
-import com.abdownloadmanager.resources.icons.ABDMIcons
-import com.abdownloadmanager.resources.icons.*
-import com.abdownloadmanager.shared.util.ui.BaseMyColors
+import com.xetondownloadmanager.resources.icons.ABDMIcons
+import com.xetondownloadmanager.resources.icons.*
+import com.xetondownloadmanager.shared.util.ui.BaseMyColors
 import com.xeton.util.compose.IconSource
 
 object MyIcons : BaseMyColors() {

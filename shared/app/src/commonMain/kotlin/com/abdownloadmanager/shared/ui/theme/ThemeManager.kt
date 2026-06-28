@@ -1,10 +1,10 @@
-package com.abdownloadmanager.shared.ui.theme
+package com.xetondownloadmanager.shared.ui.theme
 
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.graphics.Color
-import com.abdownloadmanager.shared.util.ui.theme.ISystemThemeDetector
-import com.abdownloadmanager.shared.util.ui.MyColors
-import com.abdownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.util.ui.theme.ISystemThemeDetector
+import com.xetondownloadmanager.shared.util.ui.MyColors
+import com.xetondownloadmanager.resources.Res
 import com.xeton.util.compose.StringSource
 import com.xeton.util.compose.asStringSource
 import com.xeton.util.flow.combineStateFlows

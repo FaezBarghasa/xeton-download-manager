@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.ui.widget
+package com.xetondownloadmanager.shared.ui.widget
 
 @Suppress("unused")
 sealed class MessageDialogType {

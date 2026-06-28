@@ -1,3 +1,3 @@
-package com.abdownloadmanager.shared.ui.widget.table.customtable
+package com.xetondownloadmanager.shared.ui.widget.table.customtable
 
 

@@ -1,7 +1,7 @@
-package com.abdownloadmanager.shared.storage
+package com.xetondownloadmanager.shared.storage
 
-import com.abdownloadmanager.shared.ui.theme.ThemeSettingsStorage
-import com.abdownloadmanager.shared.util.notification.INotificationSettingsStorage
+import com.xetondownloadmanager.shared.ui.theme.ThemeSettingsStorage
+import com.xetondownloadmanager.shared.util.notification.INotificationSettingsStorage
 import com.xeton.util.compose.localizationmanager.LanguageStorage
 import kotlinx.coroutines.flow.MutableStateFlow
 

@@ -6,13 +6,13 @@ plugins {
     id(MyPlugins.composeBase)
     id(Plugins.Android.kotlinMultiplatformLibrary)
 }
-val ourPackageName = "com.abdownloadmanager.resources"
+val ourPackageName = "com.xetondownloadmanager.resources"
 val propertiesToKotlinTask = tasks.register<PropertiesToKotlinTask>("propertiesToKotlinTask") {
     outputDir.set(file("build/tasks/propertiesToKotlinTask"))
     generatedFileName.set("String.kt")
     packageName.set(ourPackageName)
     myStringResourceClass.set("com.xeton.resources.contracts.MyStringResource")
-    propertyFiles.from("src/commonMain/resources/com/abdownloadmanager/resources/locales/en_US.properties")
+    propertyFiles.from("src/commonMain/resources/com/xetondownloadmanager/resources/locales/en_US.properties")
 }
 val generateResourceMap = tasks.register<GenerateResourceMap>("generateResourceMap") {
     outputDir.set(file("build/tasks/generateResourceMapTask"))
@@ -32,7 +32,7 @@ kotlin {
     jvm("desktop")
     android {
         compileSdk = 37
-        namespace = "com.abdownloadmanager.resources"
+        namespace = "com.xetondownloadmanager.resources"
         minSdk = 26
     }
     sourceSets {

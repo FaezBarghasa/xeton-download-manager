@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.util.keepawake
+package com.xetondownloadmanager.shared.util.keepawake
 
 import com.sun.jna.platform.win32.Kernel32
 import kotlin.concurrent.thread

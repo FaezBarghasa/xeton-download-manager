@@ -1,4 +1,4 @@
-package com.abdownloadmanager.updatechecker
+package com.xetondownloadmanager.updatechecker
 
 import io.github.z4kn4fein.semver.Version
 

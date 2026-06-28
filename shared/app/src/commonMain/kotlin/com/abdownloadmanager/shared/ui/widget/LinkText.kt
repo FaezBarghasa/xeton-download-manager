@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.ui.widget
+package com.xetondownloadmanager.shared.ui.widget
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.hoverable
@@ -18,10 +18,10 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.abdownloadmanager.shared.util.ui.LocalTextStyle
-import com.abdownloadmanager.shared.util.ui.icon.MyIcons
-import com.abdownloadmanager.shared.util.ui.myColors
-import com.abdownloadmanager.shared.util.ui.widget.MyIcon
+import com.xetondownloadmanager.shared.util.ui.LocalTextStyle
+import com.xetondownloadmanager.shared.util.ui.icon.MyIcons
+import com.xetondownloadmanager.shared.util.ui.myColors
+import com.xetondownloadmanager.shared.util.ui.widget.MyIcon
 import com.xeton.util.HttpUrlUtils
 import com.xeton.util.ifThen
 

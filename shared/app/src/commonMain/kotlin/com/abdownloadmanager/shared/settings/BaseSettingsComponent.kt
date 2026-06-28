@@ -1,9 +1,9 @@
-package com.abdownloadmanager.shared.settings
+package com.xetondownloadmanager.shared.settings
 
-import com.abdownloadmanager.shared.ui.configurable.ConfigurableGroup
-import com.abdownloadmanager.shared.util.BaseComponent
-import com.abdownloadmanager.shared.util.mvi.ContainsEffects
-import com.abdownloadmanager.shared.util.mvi.supportEffects
+import com.xetondownloadmanager.shared.ui.configurable.ConfigurableGroup
+import com.xetondownloadmanager.shared.util.BaseComponent
+import com.xetondownloadmanager.shared.util.mvi.ContainsEffects
+import com.xetondownloadmanager.shared.util.mvi.supportEffects
 import com.arkivanov.decompose.ComponentContext
 import kotlinx.coroutines.flow.StateFlow
 

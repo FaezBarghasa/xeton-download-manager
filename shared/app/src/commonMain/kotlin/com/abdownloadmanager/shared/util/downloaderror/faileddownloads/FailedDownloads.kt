@@ -1,6 +1,6 @@
-package com.abdownloadmanager.shared.util.downloaderror.faileddownloads
+package com.xetondownloadmanager.shared.util.downloaderror.faileddownloads
 
-import com.abdownloadmanager.shared.util.downloaderror.IDownloadErrorMapperRegistry
+import com.xetondownloadmanager.shared.util.downloaderror.IDownloadErrorMapperRegistry
 import com.xeton.downloader.DownloadManagerEvents
 import com.xeton.downloader.DownloadManagerMinimalControl
 import com.xeton.util.guardedEntry

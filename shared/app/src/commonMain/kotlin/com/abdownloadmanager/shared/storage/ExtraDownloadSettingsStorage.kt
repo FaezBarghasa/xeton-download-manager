@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.storage
+package com.xetondownloadmanager.shared.storage
 
 import com.xeton.downloader.db.TransactionalFileSaver
 import com.xeton.downloader.utils.SuspendLockList

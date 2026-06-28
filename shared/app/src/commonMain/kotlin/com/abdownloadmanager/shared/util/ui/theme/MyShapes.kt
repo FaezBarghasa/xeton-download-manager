@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.util.ui.theme
+package com.xetondownloadmanager.shared.util.ui.theme
 
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape

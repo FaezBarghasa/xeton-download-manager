@@ -1,9 +1,9 @@
 <resources>
-    <style name="Theme.ABDownloadManager" parent="android:Theme.Material.NoActionBar">
+    <style name="Theme.XetonDownloadManager" parent="android:Theme.Material.NoActionBar">
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
     </style>
-    <style name="Theme.ABDownloadManager.Transparent" parent="Theme.ABDownloadManager">
+    <style name="Theme.XetonDownloadManager.Transparent" parent="Theme.XetonDownloadManager">
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowContentOverlay">@null</item>

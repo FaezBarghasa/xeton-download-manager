@@ -1,4 +1,4 @@
-package com.abdownloadmanager.android.ui.menu
+package com.xetondownloadmanager.android.ui.menu
 
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.animation.core.Animatable
@@ -24,14 +24,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
-import com.abdownloadmanager.shared.ui.widget.Text
-import com.abdownloadmanager.shared.ui.widget.menu.custom.LocalMenuBoxClip
-import com.abdownloadmanager.shared.util.div
-import com.abdownloadmanager.shared.util.ui.LocalContentColor
-import com.abdownloadmanager.shared.util.ui.icon.MyIcons
-import com.abdownloadmanager.shared.util.ui.myColors
-import com.abdownloadmanager.shared.util.ui.theme.mySpacings
-import com.abdownloadmanager.shared.util.ui.widget.MyIcon
+import com.xetondownloadmanager.shared.ui.widget.Text
+import com.xetondownloadmanager.shared.ui.widget.menu.custom.LocalMenuBoxClip
+import com.xetondownloadmanager.shared.util.div
+import com.xetondownloadmanager.shared.util.ui.LocalContentColor
+import com.xetondownloadmanager.shared.util.ui.icon.MyIcons
+import com.xetondownloadmanager.shared.util.ui.myColors
+import com.xetondownloadmanager.shared.util.ui.theme.mySpacings
+import com.xetondownloadmanager.shared.util.ui.widget.MyIcon
 import com.xeton.util.compose.action.MenuItem
 import com.xeton.util.compose.asStringSource
 import com.xeton.util.compose.localizationmanager.WithLanguageDirection

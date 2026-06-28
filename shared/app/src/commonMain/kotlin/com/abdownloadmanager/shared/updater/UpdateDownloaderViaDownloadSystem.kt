@@ -1,9 +1,9 @@
-package com.abdownloadmanager.shared.updater
+package com.xetondownloadmanager.shared.updater
 
-import com.abdownloadmanager.UpdateDownloadLocationProvider
-import com.abdownloadmanager.shared.util.DownloadSystem
-import com.abdownloadmanager.updateapplier.UpdateDownloader
-import com.abdownloadmanager.updatechecker.UpdateSource
+import com.xetondownloadmanager.UpdateDownloadLocationProvider
+import com.xetondownloadmanager.shared.util.DownloadSystem
+import com.xetondownloadmanager.updateapplier.UpdateDownloader
+import com.xetondownloadmanager.updatechecker.UpdateSource
 import com.xeton.downloader.NewDownloadItemProps
 import com.xeton.downloader.downloaditem.EmptyContext
 import com.xeton.downloader.downloaditem.http.HttpDownloadItem

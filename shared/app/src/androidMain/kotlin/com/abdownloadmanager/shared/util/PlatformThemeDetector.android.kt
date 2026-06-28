@@ -1,11 +1,11 @@
-package com.abdownloadmanager.shared.util
+package com.xetondownloadmanager.shared.util
 
 import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
-import com.abdownloadmanager.shared.util.ui.theme.ISystemThemeDetector
+import com.xetondownloadmanager.shared.util.ui.theme.ISystemThemeDetector
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow

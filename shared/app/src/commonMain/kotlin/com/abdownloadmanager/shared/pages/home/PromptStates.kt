@@ -1,11 +1,11 @@
-package com.abdownloadmanager.shared.pages.home
+package com.xetondownloadmanager.shared.pages.home
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.abdownloadmanager.shared.util.category.Category
+import com.xetondownloadmanager.shared.util.category.Category
 import com.xeton.util.compose.StringSource
 
 @Stable

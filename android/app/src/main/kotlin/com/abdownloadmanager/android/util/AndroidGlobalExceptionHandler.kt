@@ -1,4 +1,4 @@
-package com.abdownloadmanager.android.util
+package com.xetondownloadmanager.android.util
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -8,8 +8,8 @@ import android.content.Intent
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import com.abdownloadmanager.android.R
-import com.abdownloadmanager.android.pages.crashreport.CrashReportActivity
+import com.xetondownloadmanager.android.R
+import com.xetondownloadmanager.android.pages.crashreport.CrashReportActivity
 import kotlin.system.exitProcess
 
 class AndroidGlobalExceptionHandler(

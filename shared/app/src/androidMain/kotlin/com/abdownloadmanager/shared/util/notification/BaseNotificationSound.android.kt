@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.util.notification
+package com.xetondownloadmanager.shared.util.notification
 
 
 import android.app.NotificationManager
@@ -9,7 +9,7 @@ import android.media.RingtoneManager
 import android.net.Uri
 import androidx.core.content.getSystemService
 import androidx.core.net.toUri
-import com.abdownloadmanager.shared.ui.widget.NotificationType
+import com.xetondownloadmanager.shared.ui.widget.NotificationType
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 

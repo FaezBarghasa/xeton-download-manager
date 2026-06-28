@@ -1,12 +1,12 @@
-package com.abdownloadmanager.shared.ui.configurable
+package com.xetondownloadmanager.shared.ui.configurable
 
-import com.abdownloadmanager.shared.util.ui.myColors
-import com.abdownloadmanager.shared.util.ui.theme.myTextSizes
-import com.abdownloadmanager.shared.util.div
+import com.xetondownloadmanager.shared.util.ui.myColors
+import com.xetondownloadmanager.shared.util.ui.theme.myTextSizes
+import com.xetondownloadmanager.shared.util.div
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import com.abdownloadmanager.shared.ui.widget.Text
+import com.xetondownloadmanager.shared.ui.widget.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -15,7 +15,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.abdownloadmanager.shared.util.ui.theme.myShapes
+import com.xetondownloadmanager.shared.util.ui.theme.myShapes
 import com.xeton.util.ifThen
 
 @Composable

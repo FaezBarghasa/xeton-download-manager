@@ -1,4 +1,4 @@
-package com.abdownloadmanager.desktop
+package com.xetondownloadmanager.desktop
 
 data class AppArguments(
     val getIntegrationPort: Boolean,

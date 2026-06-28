@@ -1,6 +1,6 @@
-package com.abdownloadmanager.desktop.storage
+package com.xetondownloadmanager.desktop.storage
 
-import com.abdownloadmanager.shared.util.DefinedPaths
+import com.xetondownloadmanager.shared.util.DefinedPaths
 import okio.Path
 import java.io.File
 

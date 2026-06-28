@@ -1,13 +1,13 @@
-package com.abdownloadmanager.desktop.pages.home
+package com.xetondownloadmanager.desktop.pages.home
 
-import com.abdownloadmanager.shared.pagemanager.EditDownloadDialogManager
-import com.abdownloadmanager.shared.pagemanager.FileChecksumDialogManager
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.pagemanager.DownloadDialogManager
-import com.abdownloadmanager.shared.pages.home.AbstractDownloadActions
-import com.abdownloadmanager.shared.util.DownloadSystem
-import com.abdownloadmanager.shared.util.category.CategoryManager
-import com.abdownloadmanager.shared.util.ui.icon.MyIcons
+import com.xetondownloadmanager.shared.pagemanager.EditDownloadDialogManager
+import com.xetondownloadmanager.shared.pagemanager.FileChecksumDialogManager
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.pagemanager.DownloadDialogManager
+import com.xetondownloadmanager.shared.pages.home.AbstractDownloadActions
+import com.xetondownloadmanager.shared.util.DownloadSystem
+import com.xetondownloadmanager.shared.util.category.CategoryManager
+import com.xetondownloadmanager.shared.util.ui.icon.MyIcons
 import com.xeton.downloader.monitor.IDownloadItemState
 import com.xeton.downloader.queue.QueueManager
 import com.xeton.util.compose.action.MenuItem

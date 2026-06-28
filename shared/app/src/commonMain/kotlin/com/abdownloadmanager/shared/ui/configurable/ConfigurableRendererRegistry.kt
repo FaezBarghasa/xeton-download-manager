@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.ui.configurable
+package com.xetondownloadmanager.shared.ui.configurable
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.staticCompositionLocalOf

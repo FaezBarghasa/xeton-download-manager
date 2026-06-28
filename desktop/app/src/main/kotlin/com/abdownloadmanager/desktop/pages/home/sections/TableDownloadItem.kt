@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalTime::class)
 
-package com.abdownloadmanager.desktop.pages.home.sections
+package com.xetondownloadmanager.desktop.pages.home.sections
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -18,16 +18,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.ui.widget.CheckBox
-import com.abdownloadmanager.shared.ui.widget.Text
-import com.abdownloadmanager.shared.util.*
-import com.abdownloadmanager.shared.util.category.Category
-import com.abdownloadmanager.shared.util.downloaderror.DownloadErrorReason
-import com.abdownloadmanager.shared.util.ui.LocalContentColor
-import com.abdownloadmanager.shared.util.ui.myColors
-import com.abdownloadmanager.shared.util.ui.theme.myTextSizes
-import com.abdownloadmanager.shared.util.ui.widget.MyIcon
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.ui.widget.CheckBox
+import com.xetondownloadmanager.shared.ui.widget.Text
+import com.xetondownloadmanager.shared.util.*
+import com.xetondownloadmanager.shared.util.category.Category
+import com.xetondownloadmanager.shared.util.downloaderror.DownloadErrorReason
+import com.xetondownloadmanager.shared.util.ui.LocalContentColor
+import com.xetondownloadmanager.shared.util.ui.myColors
+import com.xetondownloadmanager.shared.util.ui.theme.myTextSizes
+import com.xetondownloadmanager.shared.util.ui.widget.MyIcon
 import com.xeton.downloader.downloaditem.DownloadJobStatus
 import com.xeton.downloader.monitor.CompletedDownloadItemState
 import com.xeton.downloader.monitor.IDownloadItemState

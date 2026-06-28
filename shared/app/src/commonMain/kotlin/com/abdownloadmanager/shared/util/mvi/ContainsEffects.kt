@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.util.mvi
+package com.xetondownloadmanager.shared.util.mvi
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect

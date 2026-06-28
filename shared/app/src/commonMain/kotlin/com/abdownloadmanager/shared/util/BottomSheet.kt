@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.util
+package com.xetondownloadmanager.shared.util
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.updateTransition
@@ -9,7 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
-import com.abdownloadmanager.shared.util.ui.widget.MPBackHandler
+import com.xetondownloadmanager.shared.util.ui.widget.MPBackHandler
 import com.xeton.util.compose.modifiers.hijackClick
 import com.xeton.util.compose.modifiers.silentClickable
 import kotlinx.coroutines.flow.drop

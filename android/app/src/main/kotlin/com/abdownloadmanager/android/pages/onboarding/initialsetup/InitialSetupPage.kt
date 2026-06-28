@@ -1,4 +1,4 @@
-package com.abdownloadmanager.android.pages.onboarding.initialsetup
+package com.xetondownloadmanager.android.pages.onboarding.initialsetup
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -19,21 +19,21 @@ import androidx.compose.ui.layout.AlignmentLine
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.abdownloadmanager.android.pages.onboarding.AppIcon
-import com.abdownloadmanager.android.pages.onboarding.StartUpPageActions
-import com.abdownloadmanager.android.pages.onboarding.StartUpPageHeader
-import com.abdownloadmanager.android.pages.onboarding.StartUpPageTemplate
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.ui.configurable.ConfigurableUiProps
-import com.abdownloadmanager.shared.ui.configurable.RenderConfigurable
-import com.abdownloadmanager.shared.ui.widget.PrimaryMainActionButton
-import com.abdownloadmanager.shared.ui.widget.Text
-import com.abdownloadmanager.shared.util.ui.LocalContentAlpha
-import com.abdownloadmanager.shared.util.ui.LocalContentColor
-import com.abdownloadmanager.shared.util.ui.myColors
-import com.abdownloadmanager.shared.util.ui.theme.myShapes
-import com.abdownloadmanager.shared.util.ui.theme.mySpacings
-import com.abdownloadmanager.shared.util.ui.theme.myTextSizes
+import com.xetondownloadmanager.android.pages.onboarding.AppIcon
+import com.xetondownloadmanager.android.pages.onboarding.StartUpPageActions
+import com.xetondownloadmanager.android.pages.onboarding.StartUpPageHeader
+import com.xetondownloadmanager.android.pages.onboarding.StartUpPageTemplate
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.ui.configurable.ConfigurableUiProps
+import com.xetondownloadmanager.shared.ui.configurable.RenderConfigurable
+import com.xetondownloadmanager.shared.ui.widget.PrimaryMainActionButton
+import com.xetondownloadmanager.shared.ui.widget.Text
+import com.xetondownloadmanager.shared.util.ui.LocalContentAlpha
+import com.xetondownloadmanager.shared.util.ui.LocalContentColor
+import com.xetondownloadmanager.shared.util.ui.myColors
+import com.xetondownloadmanager.shared.util.ui.theme.myShapes
+import com.xetondownloadmanager.shared.util.ui.theme.mySpacings
+import com.xetondownloadmanager.shared.util.ui.theme.myTextSizes
 import com.xeton.util.compose.asStringSource
 import com.xeton.util.compose.resources.myStringResource
 

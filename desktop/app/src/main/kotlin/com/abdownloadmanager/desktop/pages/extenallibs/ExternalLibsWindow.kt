@@ -1,14 +1,14 @@
-package com.abdownloadmanager.desktop.pages.extenallibs
+package com.xetondownloadmanager.desktop.pages.extenallibs
 
-import com.abdownloadmanager.desktop.AppComponent
-import com.abdownloadmanager.desktop.window.custom.CustomWindow
-import com.abdownloadmanager.desktop.window.custom.WindowTitle
+import com.xetondownloadmanager.desktop.AppComponent
+import com.xetondownloadmanager.desktop.window.custom.CustomWindow
+import com.xetondownloadmanager.desktop.window.custom.WindowTitle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.rememberWindowState
-import com.abdownloadmanager.resources.Res
+import com.xetondownloadmanager.resources.Res
 import com.xeton.util.compose.resources.myStringResource
 
 @Composable

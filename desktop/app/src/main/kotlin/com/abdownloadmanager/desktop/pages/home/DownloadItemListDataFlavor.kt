@@ -1,4 +1,4 @@
-package com.abdownloadmanager.desktop.pages.home
+package com.xetondownloadmanager.desktop.pages.home
 
 import com.xeton.downloader.monitor.IDownloadItemState
 import java.awt.datatransfer.DataFlavor

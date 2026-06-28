@@ -1,11 +1,11 @@
-package com.abdownloadmanager.android.receiver
+package com.xetondownloadmanager.android.receiver
 
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import com.abdownloadmanager.android.pages.onboarding.permissions.PermissionManager
-import com.abdownloadmanager.android.util.ABDMAppManager
-import com.abdownloadmanager.shared.storage.BaseAppSettingsStorage
+import com.xetondownloadmanager.android.pages.onboarding.permissions.PermissionManager
+import com.xetondownloadmanager.android.util.ABDMAppManager
+import com.xetondownloadmanager.shared.storage.BaseAppSettingsStorage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent

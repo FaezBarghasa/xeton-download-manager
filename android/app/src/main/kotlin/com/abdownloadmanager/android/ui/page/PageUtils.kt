@@ -1,4 +1,4 @@
-package com.abdownloadmanager.android.ui.page
+package com.xetondownloadmanager.android.ui.page
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -17,7 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
-import com.abdownloadmanager.shared.util.ui.myColors
+import com.xetondownloadmanager.shared.util.ui.myColors
 
 @Composable
 fun BoxScope.HeaderFade(

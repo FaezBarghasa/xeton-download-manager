@@ -1,6 +1,6 @@
-package com.abdownloadmanager.integration
+package com.xetondownloadmanager.integration
 
-import com.abdownloadmanager.integration.http4k.MyHttp4KServer
+import com.xetondownloadmanager.integration.http4k.MyHttp4KServer
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlinx.serialization.json.Json

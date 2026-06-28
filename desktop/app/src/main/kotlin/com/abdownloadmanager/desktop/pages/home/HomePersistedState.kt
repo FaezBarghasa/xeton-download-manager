@@ -1,6 +1,6 @@
-package com.abdownloadmanager.desktop.pages.home
+package com.xetondownloadmanager.desktop.pages.home
 
-import com.abdownloadmanager.shared.ui.widget.table.customtable.TableState
+import com.xetondownloadmanager.shared.ui.widget.table.customtable.TableState
 import arrow.optics.Lens
 import com.xeton.util.config.floatKeyOf
 import com.xeton.util.config.getDecoded

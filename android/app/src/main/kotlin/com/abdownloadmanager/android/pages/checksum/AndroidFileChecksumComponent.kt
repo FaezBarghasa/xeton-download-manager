@@ -1,8 +1,8 @@
-package com.abdownloadmanager.android.pages.checksum
+package com.xetondownloadmanager.android.pages.checksum
 
-import com.abdownloadmanager.shared.pages.checksum.BaseFileChecksumComponent
-import com.abdownloadmanager.shared.util.DownloadSystem
-import com.abdownloadmanager.shared.util.FileIconProvider
+import com.xetondownloadmanager.shared.pages.checksum.BaseFileChecksumComponent
+import com.xetondownloadmanager.shared.util.DownloadSystem
+import com.xetondownloadmanager.shared.util.FileIconProvider
 import com.arkivanov.decompose.ComponentContext
 import kotlinx.serialization.Serializable
 import java.util.UUID

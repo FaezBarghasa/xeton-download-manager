@@ -1,4 +1,4 @@
-package com.abdownloadmanager.android.pages.home
+package com.xetondownloadmanager.android.pages.home
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
@@ -16,13 +16,13 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.ui.widget.Text
-import com.abdownloadmanager.shared.util.FileIconProvider
-import com.abdownloadmanager.shared.util.div
-import com.abdownloadmanager.shared.util.downloaderror.DownloadErrorReason
-import com.abdownloadmanager.shared.util.ui.WithContentAlpha
-import com.abdownloadmanager.shared.util.ui.myColors
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.ui.widget.Text
+import com.xetondownloadmanager.shared.util.FileIconProvider
+import com.xetondownloadmanager.shared.util.div
+import com.xetondownloadmanager.shared.util.downloaderror.DownloadErrorReason
+import com.xetondownloadmanager.shared.util.ui.WithContentAlpha
+import com.xetondownloadmanager.shared.util.ui.myColors
 import com.xeton.downloader.monitor.IDownloadItemState
 import com.xeton.util.compose.resources.myStringResource
 import com.xeton.util.ifThen

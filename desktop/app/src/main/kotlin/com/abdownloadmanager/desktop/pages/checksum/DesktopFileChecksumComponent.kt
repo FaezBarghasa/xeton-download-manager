@@ -1,7 +1,7 @@
-package com.abdownloadmanager.desktop.pages.checksum
+package com.xetondownloadmanager.desktop.pages.checksum
 
-import com.abdownloadmanager.shared.pages.checksum.BaseFileChecksumComponent
-import com.abdownloadmanager.shared.util.DownloadSystem
+import com.xetondownloadmanager.shared.pages.checksum.BaseFileChecksumComponent
+import com.xetondownloadmanager.shared.util.DownloadSystem
 import com.arkivanov.decompose.ComponentContext
 import java.util.UUID
 

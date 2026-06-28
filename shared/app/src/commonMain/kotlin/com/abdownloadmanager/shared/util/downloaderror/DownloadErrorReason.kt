@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.util.downloaderror
+package com.xetondownloadmanager.shared.util.downloaderror
 
 import androidx.compose.runtime.Immutable
 import kotlinx.serialization.Serializable

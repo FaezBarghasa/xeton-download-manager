@@ -1,6 +1,6 @@
-package com.abdownloadmanager.updatechecker
+package com.xetondownloadmanager.updatechecker
 
-import com.abdownloadmanager.InstallableArch
+import com.xetondownloadmanager.InstallableArch
 import io.github.z4kn4fein.semver.Version
 import com.xeton.util.platform.Arch
 import com.xeton.util.platform.Platform
@@ -21,8 +21,8 @@ class DummyUpdateChecker(currentVersion: Version) : UpdateChecker(currentVersion
             arch = Arch.getCurrentArch(),
             updateSource = listOf(
                 UpdateSource.DirectDownloadLink(
-                    link = "http://127.0.0.1:8080/ABDownloadManager_1.4.4_windows_x64.zip",
-                    name = "ABDownloadManager_1.4.4_windows_x64.zip",
+                    link = "http://127.0.0.1:8080/XetonDownloadManager_1.4.4_windows_x64.zip",
+                    name = "XetonDownloadManager_1.4.4_windows_x64.zip",
                     hash = "md5:0123456789abcdef",
                     installableArch = InstallableArch.fromString("x64")
                 )

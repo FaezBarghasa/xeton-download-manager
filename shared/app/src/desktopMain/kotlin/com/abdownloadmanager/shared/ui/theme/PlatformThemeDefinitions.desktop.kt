@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.ui.theme
+package com.xetondownloadmanager.shared.ui.theme
 
 import androidx.compose.foundation.LocalContextMenuRepresentation
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -8,11 +8,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.abdownloadmanager.shared.util.div
-import com.abdownloadmanager.shared.util.ui.myColors
-import com.abdownloadmanager.shared.util.ui.theme.MyShapes
-import com.abdownloadmanager.shared.util.ui.theme.MySpacings
-import com.abdownloadmanager.shared.util.ui.theme.TextSizes
+import com.xetondownloadmanager.shared.util.div
+import com.xetondownloadmanager.shared.util.ui.myColors
+import com.xetondownloadmanager.shared.util.ui.theme.MyShapes
+import com.xetondownloadmanager.shared.util.ui.theme.MySpacings
+import com.xetondownloadmanager.shared.util.ui.theme.TextSizes
 import io.github.oikvpqya.compose.fastscroller.ScrollbarStyle
 import io.github.oikvpqya.compose.fastscroller.ThumbStyle
 import io.github.oikvpqya.compose.fastscroller.TrackStyle

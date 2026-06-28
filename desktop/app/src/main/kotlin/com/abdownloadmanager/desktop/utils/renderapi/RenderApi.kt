@@ -1,6 +1,6 @@
-package com.abdownloadmanager.desktop.utils.renderapi
+package com.xetondownloadmanager.desktop.utils.renderapi
 
-import com.abdownloadmanager.shared.util.BaseStorage
+import com.xetondownloadmanager.shared.util.BaseStorage
 import com.xeton.util.createParentDirectories
 import com.xeton.util.deleteIfExists
 import com.xeton.util.platform.Arch

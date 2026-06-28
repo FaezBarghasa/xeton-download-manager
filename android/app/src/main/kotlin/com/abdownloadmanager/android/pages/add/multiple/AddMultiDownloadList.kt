@@ -1,4 +1,4 @@
-package com.abdownloadmanager.android.pages.add.multiple
+package com.xetondownloadmanager.android.pages.add.multiple
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
@@ -19,16 +19,16 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.pages.adddownload.multiple.NewMultiDownloadState
-import com.abdownloadmanager.shared.ui.widget.CheckBox
-import com.abdownloadmanager.shared.ui.widget.Text
-import com.abdownloadmanager.shared.util.FileIconProvider
-import com.abdownloadmanager.shared.util.div
-import com.abdownloadmanager.shared.util.ui.LocalContentColor
-import com.abdownloadmanager.shared.util.ui.myColors
-import com.abdownloadmanager.shared.util.ui.theme.mySpacings
-import com.abdownloadmanager.shared.util.ui.widget.MyIcon
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.pages.adddownload.multiple.NewMultiDownloadState
+import com.xetondownloadmanager.shared.ui.widget.CheckBox
+import com.xetondownloadmanager.shared.ui.widget.Text
+import com.xetondownloadmanager.shared.util.FileIconProvider
+import com.xetondownloadmanager.shared.util.div
+import com.xetondownloadmanager.shared.util.ui.LocalContentColor
+import com.xetondownloadmanager.shared.util.ui.myColors
+import com.xetondownloadmanager.shared.util.ui.theme.mySpacings
+import com.xetondownloadmanager.shared.util.ui.widget.MyIcon
 import com.xeton.util.compose.resources.myStringResource
 import com.xeton.util.ifThen
 

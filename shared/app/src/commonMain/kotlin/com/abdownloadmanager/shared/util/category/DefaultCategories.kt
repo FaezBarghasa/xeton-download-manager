@@ -1,6 +1,6 @@
-package com.abdownloadmanager.shared.util.category
+package com.xetondownloadmanager.shared.util.category
 
-import com.abdownloadmanager.shared.util.ui.IMyIcons
+import com.xetondownloadmanager.shared.util.ui.IMyIcons
 import com.xeton.util.compose.IconSource
 import java.io.File
 

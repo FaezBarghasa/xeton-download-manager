@@ -1,6 +1,6 @@
-package com.abdownloadmanager.desktop.window
+package com.xetondownloadmanager.desktop.window
 
-import com.abdownloadmanager.shared.util.BrowserType
+import com.xetondownloadmanager.shared.util.BrowserType
 import com.xeton.util.platform.Platform
 import com.xeton.util.platform.asDesktop
 import com.xeton.util.toUpUntil

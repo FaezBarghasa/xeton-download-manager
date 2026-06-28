@@ -1,4 +1,4 @@
-package com.abdownloadmanager.desktop.utils.singleInstance
+package com.xetondownloadmanager.desktop.utils.singleInstance
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json

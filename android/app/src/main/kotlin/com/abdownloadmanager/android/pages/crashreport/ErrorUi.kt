@@ -1,31 +1,31 @@
-package com.abdownloadmanager.android.pages.crashreport
+package com.xetondownloadmanager.android.pages.crashreport
 
 import android.os.Build
-import com.abdownloadmanager.shared.util.ui.myColors
-import com.abdownloadmanager.shared.util.ui.theme.myTextSizes
-import com.abdownloadmanager.shared.ui.widget.ActionButton
-import com.abdownloadmanager.shared.util.ClipboardUtil
+import com.xetondownloadmanager.shared.util.ui.myColors
+import com.xetondownloadmanager.shared.util.ui.theme.myTextSizes
+import com.xetondownloadmanager.shared.ui.widget.ActionButton
+import com.xetondownloadmanager.shared.util.ClipboardUtil
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
-import com.abdownloadmanager.shared.ui.widget.Text
+import com.xetondownloadmanager.shared.ui.widget.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.abdownloadmanager.android.ui.SheetHeader
-import com.abdownloadmanager.android.ui.SheetTitle
-import com.abdownloadmanager.android.ui.SheetUI
-import com.abdownloadmanager.android.util.AppInfo
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.util.OnFullyDismissed
-import com.abdownloadmanager.shared.util.ResponsiveDialog
-import com.abdownloadmanager.shared.util.rememberResponsiveDialogState
-import com.abdownloadmanager.shared.util.ui.theme.myShapes
-import com.abdownloadmanager.shared.util.ui.theme.mySpacings
+import com.xetondownloadmanager.android.ui.SheetHeader
+import com.xetondownloadmanager.android.ui.SheetTitle
+import com.xetondownloadmanager.android.ui.SheetUI
+import com.xetondownloadmanager.android.util.AppInfo
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.util.OnFullyDismissed
+import com.xetondownloadmanager.shared.util.ResponsiveDialog
+import com.xetondownloadmanager.shared.util.rememberResponsiveDialogState
+import com.xetondownloadmanager.shared.util.ui.theme.myShapes
+import com.xetondownloadmanager.shared.util.ui.theme.mySpacings
 import com.xeton.util.compose.resources.myStringResource
 
 @Composable

@@ -1,8 +1,8 @@
-package com.abdownloadmanager.shared.downloaderinui.hls
+package com.xetondownloadmanager.shared.downloaderinui.hls
 
-import com.abdownloadmanager.shared.downloaderinui.DownloadSize
-import com.abdownloadmanager.shared.downloaderinui.LinkChecker
-import com.abdownloadmanager.shared.util.FilenameFixer
+import com.xetondownloadmanager.shared.downloaderinui.DownloadSize
+import com.xetondownloadmanager.shared.downloaderinui.LinkChecker
+import com.xetondownloadmanager.shared.util.FilenameFixer
 import com.xeton.downloader.connection.HttpDownloaderClient
 import com.xeton.downloader.downloaditem.hls.HLSDownloadCredentials
 import com.xeton.downloader.downloaditem.hls.HLSResponseInfo

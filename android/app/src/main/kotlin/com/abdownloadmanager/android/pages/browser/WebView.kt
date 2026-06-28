@@ -1,9 +1,9 @@
-package com.abdownloadmanager.android.pages.browser
+package com.xetondownloadmanager.android.pages.browser
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
-import com.abdownloadmanager.android.ui.widget.WebView
+import com.xetondownloadmanager.android.ui.widget.WebView
 
 /**
  * Renders the active tab's content using either GeckoView (Mozilla Firefox engine) or the

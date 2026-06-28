@@ -1,4 +1,4 @@
-package com.abdownloadmanager.desktop.pages.home.sections.category
+package com.xetondownloadmanager.desktop.pages.home.sections.category
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.LinearEasing
@@ -9,11 +9,11 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.PointerMatcher
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import com.abdownloadmanager.shared.util.ui.widget.MyIcon
-import com.abdownloadmanager.shared.util.ui.icon.MyIcons
-import com.abdownloadmanager.shared.util.ui.theme.myTextSizes
-import com.abdownloadmanager.shared.ui.widget.ExpandableItem
-import com.abdownloadmanager.shared.util.ui.WithContentAlpha
+import com.xetondownloadmanager.shared.util.ui.widget.MyIcon
+import com.xetondownloadmanager.shared.util.ui.icon.MyIcons
+import com.xetondownloadmanager.shared.util.ui.theme.myTextSizes
+import com.xetondownloadmanager.shared.ui.widget.ExpandableItem
+import com.xetondownloadmanager.shared.util.ui.WithContentAlpha
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -23,7 +23,7 @@ import androidx.compose.foundation.onClick
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import com.abdownloadmanager.shared.ui.widget.Text
+import com.xetondownloadmanager.shared.ui.widget.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -40,15 +40,15 @@ import androidx.compose.ui.input.pointer.PointerButton
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.abdownloadmanager.desktop.pages.home.dropDownloadItemsHere
-import com.abdownloadmanager.shared.util.ui.myColors
-import com.abdownloadmanager.shared.util.div
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.pages.home.category.DownloadStatusCategoryFilter
-import com.abdownloadmanager.shared.ui.widget.DelayedTooltipPopup
-import com.abdownloadmanager.shared.util.category.Category
-import com.abdownloadmanager.shared.util.category.rememberIconPainter
-import com.abdownloadmanager.shared.util.ui.theme.mySpacings
+import com.xetondownloadmanager.desktop.pages.home.dropDownloadItemsHere
+import com.xetondownloadmanager.shared.util.ui.myColors
+import com.xetondownloadmanager.shared.util.div
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.pages.home.category.DownloadStatusCategoryFilter
+import com.xetondownloadmanager.shared.ui.widget.DelayedTooltipPopup
+import com.xetondownloadmanager.shared.util.category.Category
+import com.xetondownloadmanager.shared.util.category.rememberIconPainter
+import com.xetondownloadmanager.shared.util.ui.theme.mySpacings
 import com.xeton.util.compose.resources.myStringResource
 import com.xeton.util.ifThen
 import sh.calvin.reorderable.ReorderableColumn

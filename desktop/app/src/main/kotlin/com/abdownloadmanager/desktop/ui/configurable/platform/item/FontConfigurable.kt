@@ -1,8 +1,8 @@
-package com.abdownloadmanager.desktop.ui.configurable.platform.item
+package com.xetondownloadmanager.desktop.ui.configurable.platform.item
 
-import com.abdownloadmanager.desktop.pages.settings.FontInfo
-import com.abdownloadmanager.shared.ui.configurable.BaseEnumConfigurable
-import com.abdownloadmanager.shared.ui.configurable.Configurable
+import com.xetondownloadmanager.desktop.pages.settings.FontInfo
+import com.xetondownloadmanager.shared.ui.configurable.BaseEnumConfigurable
+import com.xetondownloadmanager.shared.ui.configurable.Configurable
 import com.xeton.util.compose.StringSource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

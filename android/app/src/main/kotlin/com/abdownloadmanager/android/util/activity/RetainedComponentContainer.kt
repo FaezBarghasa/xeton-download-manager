@@ -1,13 +1,13 @@
-package com.abdownloadmanager.android.util.activity
+package com.xetondownloadmanager.android.util.activity
 
 import android.content.Intent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.LocalActivity
 import androidx.compose.runtime.Composable
-import com.abdownloadmanager.shared.util.BaseComponent
-import com.abdownloadmanager.shared.util.mvi.ContainsEffects
-import com.abdownloadmanager.shared.util.mvi.HandleEffects
-import com.abdownloadmanager.shared.util.mvi.supportEffects
+import com.xetondownloadmanager.shared.util.BaseComponent
+import com.xetondownloadmanager.shared.util.mvi.ContainsEffects
+import com.xetondownloadmanager.shared.util.mvi.HandleEffects
+import com.xetondownloadmanager.shared.util.mvi.supportEffects
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.childContext
 import java.lang.ref.WeakReference

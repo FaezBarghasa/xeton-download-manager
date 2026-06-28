@@ -1,4 +1,4 @@
-package com.abdownloadmanager.desktop.pages.perhostsettings
+package com.xetondownloadmanager.desktop.pages.perhostsettings
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -6,11 +6,11 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
-import com.abdownloadmanager.desktop.AppComponent
-import com.abdownloadmanager.desktop.window.custom.CustomWindow
-import com.abdownloadmanager.shared.pages.perhostsettings.BasePerHostSettingsComponent
-import com.abdownloadmanager.shared.util.mvi.HandleEffects
-import com.abdownloadmanager.shared.util.rememberChild
+import com.xetondownloadmanager.desktop.AppComponent
+import com.xetondownloadmanager.desktop.window.custom.CustomWindow
+import com.xetondownloadmanager.shared.pages.perhostsettings.BasePerHostSettingsComponent
+import com.xetondownloadmanager.shared.util.mvi.HandleEffects
+import com.xetondownloadmanager.shared.util.rememberChild
 
 @Composable
 fun PerHostSettingsWindow(

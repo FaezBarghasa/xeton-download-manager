@@ -1,6 +1,6 @@
-package com.abdownloadmanager.shared.downloaderinui.edit
+package com.xetondownloadmanager.shared.downloaderinui.edit
 
-import com.abdownloadmanager.shared.util.DownloadSystem
+import com.xetondownloadmanager.shared.util.DownloadSystem
 import com.xeton.downloader.downloaditem.IDownloadItem
 
 interface IDownloadConflictDetector<in TDownloadItem : IDownloadItem> {

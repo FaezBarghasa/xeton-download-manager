@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.ui.theme
+package com.xetondownloadmanager.shared.ui.theme
 
 import kotlinx.coroutines.flow.MutableStateFlow
 

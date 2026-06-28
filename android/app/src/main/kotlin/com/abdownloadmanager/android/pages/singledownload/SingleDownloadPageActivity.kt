@@ -1,18 +1,18 @@
-package com.abdownloadmanager.android.pages.singledownload
+package com.xetondownloadmanager.android.pages.singledownload
 
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import com.abdownloadmanager.android.storage.AndroidExtraDownloadItemSettings
-import com.abdownloadmanager.android.ui.MainActivity
-import com.abdownloadmanager.android.util.AndroidDownloadItemOpener
-import com.abdownloadmanager.android.util.activity.ABDMActivity
-import com.abdownloadmanager.android.util.activity.HandleActivityEffects
-import com.abdownloadmanager.android.util.activity.RetainedComponentContainer
-import com.abdownloadmanager.android.util.pagemanager.AndroidDownloadErrorPageManager
-import com.abdownloadmanager.shared.storage.ExtraDownloadSettingsStorage
-import com.abdownloadmanager.shared.util.DownloadSystem
-import com.abdownloadmanager.shared.util.FileIconProvider
+import com.xetondownloadmanager.android.storage.AndroidExtraDownloadItemSettings
+import com.xetondownloadmanager.android.ui.MainActivity
+import com.xetondownloadmanager.android.util.AndroidDownloadItemOpener
+import com.xetondownloadmanager.android.util.activity.ABDMActivity
+import com.xetondownloadmanager.android.util.activity.HandleActivityEffects
+import com.xetondownloadmanager.android.util.activity.RetainedComponentContainer
+import com.xetondownloadmanager.android.util.pagemanager.AndroidDownloadErrorPageManager
+import com.xetondownloadmanager.shared.storage.ExtraDownloadSettingsStorage
+import com.xetondownloadmanager.shared.util.DownloadSystem
+import com.xetondownloadmanager.shared.util.FileIconProvider
 import kotlinx.serialization.json.Json
 import org.koin.core.component.inject
 

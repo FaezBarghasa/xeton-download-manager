@@ -1,4 +1,4 @@
-package com.abdownloadmanager.desktop.ui.widget
+package com.xetondownloadmanager.desktop.ui.widget
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable

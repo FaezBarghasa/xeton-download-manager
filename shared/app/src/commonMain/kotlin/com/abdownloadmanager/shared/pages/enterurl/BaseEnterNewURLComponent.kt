@@ -1,13 +1,13 @@
-package com.abdownloadmanager.shared.pages.enterurl
+package com.xetondownloadmanager.shared.pages.enterurl
 
-import com.abdownloadmanager.shared.downloaderinui.DownloaderInUiRegistry
-import com.abdownloadmanager.shared.downloaderinui.TADownloaderInUI
-import com.abdownloadmanager.shared.util.ClipboardUtil
-import com.abdownloadmanager.shared.util.extractors.linkextractor.DownloadCredentialsFromSimpleLink
-import com.abdownloadmanager.shared.util.BaseComponent
-import com.abdownloadmanager.shared.util.extractors.linkextractor.StringUrlExtractor
-import com.abdownloadmanager.shared.util.mvi.ContainsEffects
-import com.abdownloadmanager.shared.util.mvi.supportEffects
+import com.xetondownloadmanager.shared.downloaderinui.DownloaderInUiRegistry
+import com.xetondownloadmanager.shared.downloaderinui.TADownloaderInUI
+import com.xetondownloadmanager.shared.util.ClipboardUtil
+import com.xetondownloadmanager.shared.util.extractors.linkextractor.DownloadCredentialsFromSimpleLink
+import com.xetondownloadmanager.shared.util.BaseComponent
+import com.xetondownloadmanager.shared.util.extractors.linkextractor.StringUrlExtractor
+import com.xetondownloadmanager.shared.util.mvi.ContainsEffects
+import com.xetondownloadmanager.shared.util.mvi.supportEffects
 import com.arkivanov.decompose.ComponentContext
 import com.xeton.downloader.downloaditem.IDownloadCredentials
 import com.xeton.util.flow.combineStateFlows

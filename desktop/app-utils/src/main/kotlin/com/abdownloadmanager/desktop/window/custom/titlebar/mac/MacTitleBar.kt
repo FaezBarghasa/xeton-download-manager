@@ -1,4 +1,4 @@
-package com.abdownloadmanager.desktop.window.custom.titlebar.mac
+package com.xetondownloadmanager.desktop.window.custom.titlebar.mac
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Row
@@ -14,13 +14,13 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.abdownloadmanager.desktop.window.custom.TitlePosition
-import com.abdownloadmanager.desktop.window.custom.titlebar.CommonRenderTitleBar
-import com.abdownloadmanager.desktop.window.custom.titlebar.SystemButtonType
-import com.abdownloadmanager.desktop.window.custom.titlebar.SystemButtonsPosition
-import com.abdownloadmanager.desktop.window.custom.titlebar.Title
-import com.abdownloadmanager.desktop.window.custom.titlebar.TitleBar
-import com.abdownloadmanager.shared.util.ui.WithContentAlpha
+import com.xetondownloadmanager.desktop.window.custom.TitlePosition
+import com.xetondownloadmanager.desktop.window.custom.titlebar.CommonRenderTitleBar
+import com.xetondownloadmanager.desktop.window.custom.titlebar.SystemButtonType
+import com.xetondownloadmanager.desktop.window.custom.titlebar.SystemButtonsPosition
+import com.xetondownloadmanager.desktop.window.custom.titlebar.Title
+import com.xetondownloadmanager.desktop.window.custom.titlebar.TitleBar
+import com.xetondownloadmanager.shared.util.ui.WithContentAlpha
 import com.xeton.util.compose.layout.RelativeAlignment
 import com.xeton.util.ifThen
 import kotlin.math.roundToInt

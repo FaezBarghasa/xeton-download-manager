@@ -1,4 +1,4 @@
-package com.abdownloadmanager.desktop.utils.singleInstance
+package com.xetondownloadmanager.desktop.utils.singleInstance
 
 import okio.Path
 import java.io.RandomAccessFile

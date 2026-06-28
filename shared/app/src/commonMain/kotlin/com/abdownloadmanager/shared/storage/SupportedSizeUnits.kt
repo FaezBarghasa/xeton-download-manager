@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.storage
+package com.xetondownloadmanager.shared.storage
 
 import com.xeton.util.datasize.CommonSizeConvertConfigs
 import com.xeton.util.datasize.ConvertSizeConfig

@@ -1,4 +1,4 @@
-package com.abdownloadmanager.android.pages.singledownload
+package com.xetondownloadmanager.android.pages.singledownload
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
@@ -10,17 +10,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.abdownloadmanager.shared.util.ui.icon.MyIcons
-import com.abdownloadmanager.shared.util.ui.myColors
-import com.abdownloadmanager.shared.util.ui.theme.myTextSizes
-import com.abdownloadmanager.shared.ui.widget.ActionButton
-import com.abdownloadmanager.shared.ui.widget.Text
-import com.abdownloadmanager.shared.util.LocalSizeUnit
-import com.abdownloadmanager.shared.util.convertPositiveSizeToHumanReadable
-import com.abdownloadmanager.shared.util.div
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.util.ui.WithContentColor
-import com.abdownloadmanager.shared.util.ui.widget.MyIcon
+import com.xetondownloadmanager.shared.util.ui.icon.MyIcons
+import com.xetondownloadmanager.shared.util.ui.myColors
+import com.xetondownloadmanager.shared.util.ui.theme.myTextSizes
+import com.xetondownloadmanager.shared.ui.widget.ActionButton
+import com.xetondownloadmanager.shared.ui.widget.Text
+import com.xetondownloadmanager.shared.util.LocalSizeUnit
+import com.xetondownloadmanager.shared.util.convertPositiveSizeToHumanReadable
+import com.xetondownloadmanager.shared.util.div
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.util.ui.WithContentColor
+import com.xetondownloadmanager.shared.util.ui.widget.MyIcon
 import com.xeton.downloader.monitor.CompletedDownloadItemState
 import com.xeton.util.compose.resources.myStringResource
 

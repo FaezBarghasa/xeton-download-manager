@@ -1,3 +1,3 @@
-package com.abdownloadmanager.resources.icons
+package com.xetondownloadmanager.resources.icons
 
 object ABDMIcons

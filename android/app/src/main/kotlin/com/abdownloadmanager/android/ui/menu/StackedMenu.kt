@@ -1,4 +1,4 @@
-package com.abdownloadmanager.android.ui.menu
+package com.xetondownloadmanager.android.ui.menu
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent

@@ -1,9 +1,9 @@
-package com.abdownloadmanager.shared.pages.batchdownload
+package com.xetondownloadmanager.shared.pages.batchdownload
 
-import com.abdownloadmanager.shared.util.ClipboardUtil
-import com.abdownloadmanager.shared.util.BaseComponent
-import com.abdownloadmanager.shared.util.mvi.ContainsEffects
-import com.abdownloadmanager.shared.util.mvi.supportEffects
+import com.xetondownloadmanager.shared.util.ClipboardUtil
+import com.xetondownloadmanager.shared.util.BaseComponent
+import com.xetondownloadmanager.shared.util.mvi.ContainsEffects
+import com.xetondownloadmanager.shared.util.mvi.supportEffects
 import com.arkivanov.decompose.ComponentContext
 import com.xeton.util.HttpUrlUtils
 import com.xeton.util.flow.combineStateFlows

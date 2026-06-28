@@ -8,7 +8,7 @@ plugins {
 kotlin {
     jvm("desktop")
     android {
-        namespace = "com.abdownloadmanager.updater"
+        namespace = "com.xetondownloadmanager.updater"
         compileSdk = 37
         minSdk = 26
     }

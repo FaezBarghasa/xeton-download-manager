@@ -1,11 +1,11 @@
-package com.abdownloadmanager.desktop.pages.home.sections
+package com.xetondownloadmanager.desktop.pages.home.sections
 
-import com.abdownloadmanager.shared.util.ui.widget.MyIcon
-import com.abdownloadmanager.shared.util.ui.icon.MyIcons
-import com.abdownloadmanager.shared.util.ui.myColors
-import com.abdownloadmanager.shared.util.ui.theme.myTextSizes
-import com.abdownloadmanager.shared.ui.widget.MyTextField
-import com.abdownloadmanager.shared.util.ui.WithContentAlpha
+import com.xetondownloadmanager.shared.util.ui.widget.MyIcon
+import com.xetondownloadmanager.shared.util.ui.icon.MyIcons
+import com.xetondownloadmanager.shared.util.ui.myColors
+import com.xetondownloadmanager.shared.util.ui.theme.myTextSizes
+import com.xetondownloadmanager.shared.ui.widget.MyTextField
+import com.xetondownloadmanager.shared.util.ui.WithContentAlpha
 import androidx.compose.animation.*
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.clickable
@@ -19,11 +19,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.unit.dp
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.ui.widget.MyTextFieldIcon
-import com.abdownloadmanager.shared.ui.widget.MyTextFieldWithIcons
-import com.abdownloadmanager.shared.util.ui.theme.myShapes
-import com.abdownloadmanager.shared.util.ui.theme.mySpacings
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.ui.widget.MyTextFieldIcon
+import com.xetondownloadmanager.shared.ui.widget.MyTextFieldWithIcons
+import com.xetondownloadmanager.shared.util.ui.theme.myShapes
+import com.xetondownloadmanager.shared.util.ui.theme.mySpacings
 import com.xeton.util.compose.resources.myStringResource
 
 @Composable

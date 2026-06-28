@@ -1,20 +1,20 @@
-package com.abdownloadmanager.android.pages.browser
+package com.xetondownloadmanager.android.pages.browser
 
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import com.abdownloadmanager.android.util.AndroidIntentUtils
-import com.abdownloadmanager.android.util.activity.ABDMActivity
-import com.abdownloadmanager.shared.util.mvi.HandleEffects
+import com.xetondownloadmanager.android.util.AndroidIntentUtils
+import com.xetondownloadmanager.android.util.activity.ABDMActivity
+import com.xetondownloadmanager.shared.util.mvi.HandleEffects
 import com.arkivanov.decompose.defaultComponentContext
 import com.xeton.util.HttpUrlUtils
 import kotlinx.serialization.json.Json
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import androidx.core.net.toUri
-import com.abdownloadmanager.android.storage.BrowserBookmarksStorage
+import com.xetondownloadmanager.android.storage.BrowserBookmarksStorage
 
 class BrowserActivity : ABDMActivity() {
     private val browserBookmarksStorage: BrowserBookmarksStorage by inject()
@@ -69,7 +69,7 @@ class BrowserActivity : ABDMActivity() {
         object Launcher : KoinComponent {
             private val context: Context by inject()
             private val browserLauncherActivityAliasName by lazy {
-                "com.abdownloadmanager.browser.BrowserIconInLauncher"
+                "com.xetondownloadmanager.browser.BrowserIconInLauncher"
             }
 
             fun setEnabled(

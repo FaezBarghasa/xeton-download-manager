@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.ui.widget.menu.custom
+package com.xetondownloadmanager.shared.ui.widget.menu.custom
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment

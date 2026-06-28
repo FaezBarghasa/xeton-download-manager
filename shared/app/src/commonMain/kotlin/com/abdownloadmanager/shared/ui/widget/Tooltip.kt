@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.ui.widget
+package com.xetondownloadmanager.shared.ui.widget
 
 import androidx.compose.foundation.BasicTooltipState
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -18,11 +18,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
-import com.abdownloadmanager.shared.util.div
-import com.abdownloadmanager.shared.util.ui.myColors
-import com.abdownloadmanager.shared.util.ui.theme.myTextSizes
-import com.abdownloadmanager.shared.util.ui.WithContentColor
-import com.abdownloadmanager.shared.util.ui.theme.myShapes
+import com.xetondownloadmanager.shared.util.div
+import com.xetondownloadmanager.shared.util.ui.myColors
+import com.xetondownloadmanager.shared.util.ui.theme.myTextSizes
+import com.xetondownloadmanager.shared.util.ui.WithContentColor
+import com.xetondownloadmanager.shared.util.ui.theme.myShapes
 import com.xeton.util.compose.StringSource
 import kotlinx.coroutines.delay
 

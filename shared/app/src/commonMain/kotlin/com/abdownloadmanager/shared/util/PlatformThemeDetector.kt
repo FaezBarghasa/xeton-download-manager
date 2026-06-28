@@ -1,5 +1,5 @@
-package com.abdownloadmanager.shared.util
+package com.xetondownloadmanager.shared.util
 
-import com.abdownloadmanager.shared.util.ui.theme.ISystemThemeDetector
+import com.xetondownloadmanager.shared.util.ui.theme.ISystemThemeDetector
 
 expect class PlatformThemeDetector : ISystemThemeDetector

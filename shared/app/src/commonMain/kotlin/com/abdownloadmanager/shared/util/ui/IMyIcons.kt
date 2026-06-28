@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.util.ui
+package com.xetondownloadmanager.shared.util.ui
 
 import com.xeton.util.compose.IconSource
 

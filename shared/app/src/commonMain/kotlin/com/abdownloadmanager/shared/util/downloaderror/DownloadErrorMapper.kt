@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.util.downloaderror
+package com.xetondownloadmanager.shared.util.downloaderror
 
 interface DownloadErrorMapper {
     fun accept(throwable: Throwable): Boolean

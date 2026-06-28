@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.util
+package com.xetondownloadmanager.shared.util
 
 import com.xeton.util.datasize.ConvertSizeConfig
 import kotlinx.coroutines.flow.StateFlow

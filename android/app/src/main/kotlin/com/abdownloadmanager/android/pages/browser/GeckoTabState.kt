@@ -1,4 +1,4 @@
-package com.abdownloadmanager.android.pages.browser
+package com.xetondownloadmanager.android.pages.browser
 
 import com.xeton.util.HttpUrlUtils
 import kotlinx.coroutines.flow.MutableStateFlow

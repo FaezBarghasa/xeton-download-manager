@@ -1,4 +1,4 @@
-package com.abdownloadmanager.desktop.utils
+package com.xetondownloadmanager.desktop.utils
 
 import okio.FileSystem
 import okio.Path.Companion.toOkioPath

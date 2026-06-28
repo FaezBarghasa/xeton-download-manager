@@ -1,8 +1,8 @@
-package com.abdownloadmanager.android.pages.perhostsettings
+package com.xetondownloadmanager.android.pages.perhostsettings
 
-import com.abdownloadmanager.shared.pages.perhostsettings.BasePerHostSettingsComponent
-import com.abdownloadmanager.shared.repository.BaseAppRepository
-import com.abdownloadmanager.shared.util.perhostsettings.PerHostSettingsManager
+import com.xetondownloadmanager.shared.pages.perhostsettings.BasePerHostSettingsComponent
+import com.xetondownloadmanager.shared.repository.BaseAppRepository
+import com.xetondownloadmanager.shared.util.perhostsettings.PerHostSettingsManager
 import com.arkivanov.decompose.ComponentContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.serialization.Serializable

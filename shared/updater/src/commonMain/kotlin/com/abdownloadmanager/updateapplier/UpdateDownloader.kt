@@ -1,6 +1,6 @@
-package com.abdownloadmanager.updateapplier
+package com.xetondownloadmanager.updateapplier
 
-import com.abdownloadmanager.updatechecker.UpdateSource
+import com.xetondownloadmanager.updatechecker.UpdateSource
 import java.io.File
 
 interface UpdatePreparer {

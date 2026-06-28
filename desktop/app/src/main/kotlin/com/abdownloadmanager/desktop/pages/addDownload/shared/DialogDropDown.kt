@@ -1,4 +1,4 @@
-package com.abdownloadmanager.desktop.pages.addDownload.shared
+package com.xetondownloadmanager.desktop.pages.addDownload.shared
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -22,18 +22,18 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.rememberDialogState
-import com.abdownloadmanager.desktop.window.custom.BaseOptionDialog
-import com.abdownloadmanager.shared.util.ui.icon.MyIcons
-import com.abdownloadmanager.shared.util.ui.theme.LocalUiScale
-import com.abdownloadmanager.shared.util.ui.myColors
+import com.xetondownloadmanager.desktop.window.custom.BaseOptionDialog
+import com.xetondownloadmanager.shared.util.ui.icon.MyIcons
+import com.xetondownloadmanager.shared.util.ui.theme.LocalUiScale
+import com.xetondownloadmanager.shared.util.ui.myColors
 import com.xeton.util.ifThen
-import com.abdownloadmanager.shared.ui.widget.Text
-import com.abdownloadmanager.shared.util.div
-import com.abdownloadmanager.desktop.window.moveSafe
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.util.ui.WithContentAlpha
-import com.abdownloadmanager.shared.util.ui.theme.myShapes
-import com.abdownloadmanager.shared.util.ui.widget.MyIcon
+import com.xetondownloadmanager.shared.ui.widget.Text
+import com.xetondownloadmanager.shared.util.div
+import com.xetondownloadmanager.desktop.window.moveSafe
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.util.ui.WithContentAlpha
+import com.xetondownloadmanager.shared.util.ui.theme.myShapes
+import com.xetondownloadmanager.shared.util.ui.widget.MyIcon
 import com.xeton.util.compose.resources.myStringResource
 import com.xeton.util.desktop.screen.applyUiScale
 import java.awt.MouseInfo

@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.ui.theme
+package com.xetondownloadmanager.shared.ui.theme
 
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.LocalIndication
@@ -6,9 +6,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.TextUnit
-import com.abdownloadmanager.shared.util.ui.*
-import com.abdownloadmanager.shared.util.ui.theme.*
-import com.abdownloadmanager.shared.util.ui.theme.UiScaledContent
+import com.xetondownloadmanager.shared.util.ui.*
+import com.xetondownloadmanager.shared.util.ui.theme.*
+import com.xetondownloadmanager.shared.util.ui.theme.UiScaledContent
 
 
 @Composable

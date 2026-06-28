@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.util
+package com.xetondownloadmanager.shared.util
 
 import androidx.datastore.core.DataStore
 import arrow.optics.Lens

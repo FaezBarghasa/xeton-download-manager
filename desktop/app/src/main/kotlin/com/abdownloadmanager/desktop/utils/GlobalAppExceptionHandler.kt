@@ -1,4 +1,4 @@
-package com.abdownloadmanager.desktop.utils
+package com.xetondownloadmanager.desktop.utils
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -8,9 +8,9 @@ import androidx.compose.ui.window.LocalWindowExceptionHandlerFactory
 import androidx.compose.ui.window.WindowExceptionHandler
 import androidx.compose.ui.window.WindowExceptionHandlerFactory
 import androidx.compose.ui.window.application
-import com.abdownloadmanager.desktop.ui.error.ErrorWindow
-import com.abdownloadmanager.shared.ui.theme.ABDownloaderTheme
-import com.abdownloadmanager.shared.ui.theme.ThemeManager
+import com.xetondownloadmanager.desktop.ui.error.ErrorWindow
+import com.xetondownloadmanager.shared.ui.theme.ABDownloaderTheme
+import com.xetondownloadmanager.shared.ui.theme.ThemeManager
 import com.xeton.util.logger.appLogger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update

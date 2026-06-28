@@ -1,20 +1,20 @@
-package com.abdownloadmanager.android.ui.menu
+package com.xetondownloadmanager.android.ui.menu
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import com.abdownloadmanager.android.ui.SheetHeader
-import com.abdownloadmanager.android.ui.SheetTitle
-import com.abdownloadmanager.android.ui.SheetUI
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.ui.widget.TransparentIconActionButton
-import com.abdownloadmanager.shared.util.OnFullyDismissed
-import com.abdownloadmanager.shared.util.ResponsiveDialog
-import com.abdownloadmanager.shared.util.ResponsiveDialogScope
-import com.abdownloadmanager.shared.util.rememberResponsiveDialogState
-import com.abdownloadmanager.shared.util.ui.icon.MyIcons
+import com.xetondownloadmanager.android.ui.SheetHeader
+import com.xetondownloadmanager.android.ui.SheetTitle
+import com.xetondownloadmanager.android.ui.SheetUI
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.ui.widget.TransparentIconActionButton
+import com.xetondownloadmanager.shared.util.OnFullyDismissed
+import com.xetondownloadmanager.shared.util.ResponsiveDialog
+import com.xetondownloadmanager.shared.util.ResponsiveDialogScope
+import com.xetondownloadmanager.shared.util.rememberResponsiveDialogState
+import com.xetondownloadmanager.shared.util.ui.icon.MyIcons
 import com.xeton.util.compose.action.MenuItem
 import com.xeton.util.compose.asStringSource
 

@@ -1,4 +1,4 @@
-package com.abdownloadmanager.android.ui.configurable.android.renderer
+package com.xetondownloadmanager.android.ui.configurable.android.renderer
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
@@ -6,17 +6,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import com.abdownloadmanager.android.pages.onboarding.permissions.AppPermissionState
-import com.abdownloadmanager.android.pages.onboarding.permissions.rememberAppPermissionState
-import com.abdownloadmanager.android.ui.configurable.ConfigTemplate
-import com.abdownloadmanager.android.ui.configurable.NextIcon
-import com.abdownloadmanager.android.ui.configurable.TitleAndDescription
-import com.abdownloadmanager.android.ui.configurable.android.item.PermissionConfigurable
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.ui.configurable.ConfigurableRenderer
-import com.abdownloadmanager.shared.ui.configurable.ConfigurableUiProps
-import com.abdownloadmanager.shared.util.ui.LocalContentColor
-import com.abdownloadmanager.shared.util.ui.myColors
+import com.xetondownloadmanager.android.pages.onboarding.permissions.AppPermissionState
+import com.xetondownloadmanager.android.pages.onboarding.permissions.rememberAppPermissionState
+import com.xetondownloadmanager.android.ui.configurable.ConfigTemplate
+import com.xetondownloadmanager.android.ui.configurable.NextIcon
+import com.xetondownloadmanager.android.ui.configurable.TitleAndDescription
+import com.xetondownloadmanager.android.ui.configurable.android.item.PermissionConfigurable
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.ui.configurable.ConfigurableRenderer
+import com.xetondownloadmanager.shared.ui.configurable.ConfigurableUiProps
+import com.xetondownloadmanager.shared.util.ui.LocalContentColor
+import com.xetondownloadmanager.shared.util.ui.myColors
 import com.xeton.util.compose.asStringSource
 
 object PermissionConfigurableRenderer : ConfigurableRenderer<PermissionConfigurable> {

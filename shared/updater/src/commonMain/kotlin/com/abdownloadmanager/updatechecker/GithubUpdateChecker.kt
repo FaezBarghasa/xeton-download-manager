@@ -1,7 +1,7 @@
-package com.abdownloadmanager.updatechecker
+package com.xetondownloadmanager.updatechecker
 
-import com.abdownloadmanager.github.GithubApi
-import com.abdownloadmanager.ArtifactUtil
+import com.xetondownloadmanager.github.GithubApi
+import com.xetondownloadmanager.ArtifactUtil
 import io.github.z4kn4fein.semver.Version
 import com.xeton.util.platform.Arch
 import com.xeton.util.platform.Platform

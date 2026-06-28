@@ -1,6 +1,6 @@
-package com.abdownloadmanager.shared.util.autoremove
+package com.xetondownloadmanager.shared.util.autoremove
 
-import com.abdownloadmanager.shared.util.DownloadSystem
+import com.xetondownloadmanager.shared.util.DownloadSystem
 import io.github.irgaly.kfswatch.KfsDirectoryWatcher
 import io.github.irgaly.kfswatch.KfsEvent
 import com.xeton.downloader.downloaditem.contexts.CanPerformRemove

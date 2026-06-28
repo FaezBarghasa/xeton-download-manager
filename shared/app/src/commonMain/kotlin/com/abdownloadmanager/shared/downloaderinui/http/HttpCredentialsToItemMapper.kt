@@ -1,6 +1,6 @@
-package com.abdownloadmanager.shared.downloaderinui.http
+package com.xetondownloadmanager.shared.downloaderinui.http
 
-import com.abdownloadmanager.shared.downloaderinui.CredentialAndItemMapper
+import com.xetondownloadmanager.shared.downloaderinui.CredentialAndItemMapper
 import com.xeton.downloader.downloaditem.http.HttpDownloadCredentials
 import com.xeton.downloader.downloaditem.http.HttpDownloadItem
 import com.xeton.downloader.downloaditem.http.withHttpCredentials

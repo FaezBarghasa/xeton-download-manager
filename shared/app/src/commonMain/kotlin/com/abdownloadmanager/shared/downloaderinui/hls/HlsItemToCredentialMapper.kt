@@ -1,6 +1,6 @@
-package com.abdownloadmanager.shared.downloaderinui.hls
+package com.xetondownloadmanager.shared.downloaderinui.hls
 
-import com.abdownloadmanager.shared.downloaderinui.CredentialAndItemMapper
+import com.xetondownloadmanager.shared.downloaderinui.CredentialAndItemMapper
 import com.xeton.downloader.downloaditem.hls.HLSDownloadCredentials
 import com.xeton.downloader.downloaditem.hls.HLSDownloadItem
 

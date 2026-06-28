@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.pages.adddownload
+package com.xetondownloadmanager.shared.pages.adddownload
 
 import kotlinx.serialization.Serializable
 

@@ -1,11 +1,11 @@
-package com.abdownloadmanager.android.util.pagemanager
+package com.xetondownloadmanager.android.util.pagemanager
 
 import android.content.Context
 import android.content.Intent
-import com.abdownloadmanager.android.pages.downloaderror.DownloadErrorActivity
-import com.abdownloadmanager.shared.downloaderror.DownloadErrorComponent
-import com.abdownloadmanager.shared.pagemanager.DownloadErrorDialogManager
-import com.abdownloadmanager.shared.util.downloaderror.DownloadErrorReason
+import com.xetondownloadmanager.android.pages.downloaderror.DownloadErrorActivity
+import com.xetondownloadmanager.shared.downloaderror.DownloadErrorComponent
+import com.xetondownloadmanager.shared.pagemanager.DownloadErrorDialogManager
+import com.xetondownloadmanager.shared.util.downloaderror.DownloadErrorReason
 import com.xeton.downloader.downloaditem.IDownloadItem
 import kotlinx.serialization.json.Json
 

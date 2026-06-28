@@ -1,6 +1,6 @@
-package com.abdownloadmanager.shared.pages.adddownload
+package com.xetondownloadmanager.shared.pages.adddownload
 
-import com.abdownloadmanager.shared.util.FilenameFixer
+import com.xetondownloadmanager.shared.util.FilenameFixer
 import com.xeton.downloader.downloaditem.IDownloadCredentials
 import kotlinx.serialization.Serializable
 

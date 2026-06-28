@@ -1,11 +1,11 @@
-package com.abdownloadmanager.desktop.ui.widget
+package com.xetondownloadmanager.desktop.ui.widget
 
-import com.abdownloadmanager.desktop.window.custom.CustomWindow
-import com.abdownloadmanager.desktop.window.custom.WindowTitle
-import com.abdownloadmanager.shared.util.ui.widget.MyIcon
-import com.abdownloadmanager.shared.util.ui.icon.MyIcons
-import com.abdownloadmanager.shared.util.ui.myColors
-import com.abdownloadmanager.shared.util.ui.theme.myTextSizes
+import com.xetondownloadmanager.desktop.window.custom.CustomWindow
+import com.xetondownloadmanager.desktop.window.custom.WindowTitle
+import com.xetondownloadmanager.shared.util.ui.widget.MyIcon
+import com.xetondownloadmanager.shared.util.ui.icon.MyIcons
+import com.xetondownloadmanager.shared.util.ui.myColors
+import com.xetondownloadmanager.shared.util.ui.theme.myTextSizes
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -21,11 +21,11 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
-import com.abdownloadmanager.shared.ui.widget.ActionButton
-import com.abdownloadmanager.shared.ui.widget.ActionContainer
-import com.abdownloadmanager.shared.ui.widget.Text
-import com.abdownloadmanager.shared.util.ui.theme.LocalUiScale
-import com.abdownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.ui.widget.ActionButton
+import com.xetondownloadmanager.shared.ui.widget.ActionContainer
+import com.xetondownloadmanager.shared.ui.widget.Text
+import com.xetondownloadmanager.shared.util.ui.theme.LocalUiScale
+import com.xetondownloadmanager.resources.Res
 import com.xeton.util.compose.StringSource
 import com.xeton.util.compose.resources.myStringResource
 import com.xeton.util.desktop.screen.applyUiScale

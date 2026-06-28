@@ -1,12 +1,12 @@
-package com.abdownloadmanager.desktop.pages.settings
+package com.xetondownloadmanager.desktop.pages.settings
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.platform.FileFont
 import androidx.compose.ui.text.platform.ResourceFont
-import com.abdownloadmanager.desktop.storage.AppSettingsStorage
-import com.abdownloadmanager.resources.Res
+import com.xetondownloadmanager.desktop.storage.AppSettingsStorage
+import com.xetondownloadmanager.resources.Res
 import com.xeton.util.compose.StringSource
 import com.xeton.util.compose.asStringSource
 import com.xeton.util.compose.contants.FILE_PROTOCOL

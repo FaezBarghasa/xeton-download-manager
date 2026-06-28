@@ -1,6 +1,6 @@
-package com.abdownloadmanager.updateapplier
+package com.xetondownloadmanager.updateapplier
 
-import com.abdownloadmanager.updatechecker.UpdateInfo
+import com.xetondownloadmanager.updatechecker.UpdateInfo
 
 interface UpdateApplier {
     fun updateSupported(): Boolean

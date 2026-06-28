@@ -1,9 +1,9 @@
-package com.abdownloadmanager.shared.ui.theme
+package com.xetondownloadmanager.shared.ui.theme
 
 import androidx.compose.runtime.Composable
-import com.abdownloadmanager.shared.util.ui.theme.MyShapes
-import com.abdownloadmanager.shared.util.ui.theme.MySpacings
-import com.abdownloadmanager.shared.util.ui.theme.TextSizes
+import com.xetondownloadmanager.shared.util.ui.theme.MyShapes
+import com.xetondownloadmanager.shared.util.ui.theme.MySpacings
+import com.xetondownloadmanager.shared.util.ui.theme.TextSizes
 import io.github.oikvpqya.compose.fastscroller.ScrollbarStyle
 
 @Composable

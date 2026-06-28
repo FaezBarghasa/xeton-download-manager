@@ -1,8 +1,8 @@
-package com.abdownloadmanager.shared.util
+package com.xetondownloadmanager.shared.util
 
 import androidx.compose.runtime.Immutable
 import com.xeton.util.compose.IconSource
-import com.abdownloadmanager.shared.util.ui.icon.MyIcons
+import com.xetondownloadmanager.shared.util.ui.icon.MyIcons
 
 sealed class BrowserType(
     val code:String

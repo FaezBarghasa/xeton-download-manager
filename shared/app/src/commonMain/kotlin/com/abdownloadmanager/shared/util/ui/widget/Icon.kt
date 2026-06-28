@@ -1,8 +1,8 @@
-package com.abdownloadmanager.shared.util.ui.widget
+package com.xetondownloadmanager.shared.util.ui.widget
 
 import androidx.compose.foundation.Image
-import com.abdownloadmanager.shared.util.ui.LocalContentAlpha
-import com.abdownloadmanager.shared.util.ui.LocalContentColor
+import com.xetondownloadmanager.shared.util.ui.LocalContentAlpha
+import com.xetondownloadmanager.shared.util.ui.LocalContentColor
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable

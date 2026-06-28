@@ -1,4 +1,4 @@
-package com.abdownloadmanager.android.ui
+package com.xetondownloadmanager.android.ui
 
 import androidx.compose.foundation.Indication
 import androidx.compose.foundation.LocalIndication

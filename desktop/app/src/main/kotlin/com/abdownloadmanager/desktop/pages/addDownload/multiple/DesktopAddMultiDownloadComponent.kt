@@ -1,18 +1,18 @@
-package com.abdownloadmanager.desktop.pages.addDownload.multiple
+package com.xetondownloadmanager.desktop.pages.addDownload.multiple
 
-import com.abdownloadmanager.shared.ui.widget.table.customtable.TableState
-import com.abdownloadmanager.shared.util.DownloadSystem
-import com.abdownloadmanager.desktop.repository.AppRepository
-import com.abdownloadmanager.shared.downloaderinui.DownloaderInUiRegistry
-import com.abdownloadmanager.shared.pagemanager.CategoryDialogManager
-import com.abdownloadmanager.shared.pages.adddownload.multiple.BaseAddMultiDownloadComponent
-import com.abdownloadmanager.shared.pages.adddownload.multiple.OnRequestAddMultipleItem
-import com.abdownloadmanager.shared.pages.adddownload.multiple.OnRequestDownloadMultipleItem
-import com.abdownloadmanager.shared.storage.ILastSavedLocationsStorage
-import com.abdownloadmanager.shared.storage.ISelectQueueStorage
-import com.abdownloadmanager.shared.util.FileIconProvider
-import com.abdownloadmanager.shared.util.category.CategoryManager
-import com.abdownloadmanager.shared.util.perhostsettings.PerHostSettingsManager
+import com.xetondownloadmanager.shared.ui.widget.table.customtable.TableState
+import com.xetondownloadmanager.shared.util.DownloadSystem
+import com.xetondownloadmanager.desktop.repository.AppRepository
+import com.xetondownloadmanager.shared.downloaderinui.DownloaderInUiRegistry
+import com.xetondownloadmanager.shared.pagemanager.CategoryDialogManager
+import com.xetondownloadmanager.shared.pages.adddownload.multiple.BaseAddMultiDownloadComponent
+import com.xetondownloadmanager.shared.pages.adddownload.multiple.OnRequestAddMultipleItem
+import com.xetondownloadmanager.shared.pages.adddownload.multiple.OnRequestDownloadMultipleItem
+import com.xetondownloadmanager.shared.storage.ILastSavedLocationsStorage
+import com.xetondownloadmanager.shared.storage.ISelectQueueStorage
+import com.xetondownloadmanager.shared.util.FileIconProvider
+import com.xetondownloadmanager.shared.util.category.CategoryManager
+import com.xetondownloadmanager.shared.util.perhostsettings.PerHostSettingsManager
 import com.arkivanov.decompose.ComponentContext
 import com.xeton.downloader.queue.QueueManager
 

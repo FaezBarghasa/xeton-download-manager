@@ -1,4 +1,4 @@
-package com.abdownloadmanager.desktop.utils
+package com.xetondownloadmanager.desktop.utils
 
 import com.xeton.util.platform.Platform
 import com.xeton.util.platform.isLinux
@@ -17,7 +17,7 @@ object DesktopEntryCreator {
                 execFile = requireNotNull(AppInfo.exeFile) {
                     "Exe file not known"
                 },
-                startupWMClass = "com-abdownloadmanager-desktop-AppKt"
+                startupWMClass = "com-xetondownloadmanager-desktop-AppKt"
             )
         }.onFailure {
             it.printStackTrace()

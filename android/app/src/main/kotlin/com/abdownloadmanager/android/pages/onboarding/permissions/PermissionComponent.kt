@@ -1,6 +1,6 @@
-package com.abdownloadmanager.android.pages.onboarding.permissions
+package com.xetondownloadmanager.android.pages.onboarding.permissions
 
-import com.abdownloadmanager.shared.util.BaseComponent
+import com.xetondownloadmanager.shared.util.BaseComponent
 import com.arkivanov.decompose.ComponentContext
 import kotlinx.coroutines.flow.MutableStateFlow
 

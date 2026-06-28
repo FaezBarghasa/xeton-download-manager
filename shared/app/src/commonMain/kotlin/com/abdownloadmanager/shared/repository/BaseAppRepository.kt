@@ -1,13 +1,13 @@
-package com.abdownloadmanager.shared.repository
+package com.xetondownloadmanager.shared.repository
 
-import com.abdownloadmanager.shared.storage.BaseAppSettingsStorage
-import com.abdownloadmanager.shared.storage.SupportedSizeUnits
-import com.abdownloadmanager.shared.util.AutoStartManager
-import com.abdownloadmanager.shared.util.SizeAndSpeedUnitProvider
-import com.abdownloadmanager.shared.util.DownloadSystem
-import com.abdownloadmanager.shared.util.autoremove.RemovedDownloadsFromDiskTracker
-import com.abdownloadmanager.shared.util.category.CategoryManager
-import com.abdownloadmanager.shared.util.proxy.ProxyManager
+import com.xetondownloadmanager.shared.storage.BaseAppSettingsStorage
+import com.xetondownloadmanager.shared.storage.SupportedSizeUnits
+import com.xetondownloadmanager.shared.util.AutoStartManager
+import com.xetondownloadmanager.shared.util.SizeAndSpeedUnitProvider
+import com.xetondownloadmanager.shared.util.DownloadSystem
+import com.xetondownloadmanager.shared.util.autoremove.RemovedDownloadsFromDiskTracker
+import com.xetondownloadmanager.shared.util.category.CategoryManager
+import com.xetondownloadmanager.shared.util.proxy.ProxyManager
 import com.xeton.downloader.DownloadManager
 import com.xeton.downloader.DownloadSettings
 import com.xeton.downloader.monitor.IDownloadMonitor

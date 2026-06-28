@@ -1,4 +1,4 @@
-package com.abdownloadmanager.android.pages.home
+package com.xetondownloadmanager.android.pages.home
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
@@ -7,11 +7,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.style.TextAlign
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.ui.widget.IconActionButton
-import com.abdownloadmanager.shared.ui.widget.Text
-import com.abdownloadmanager.shared.ui.widget.TransparentIconActionButton
-import com.abdownloadmanager.shared.util.ui.icon.MyIcons
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.ui.widget.IconActionButton
+import com.xetondownloadmanager.shared.ui.widget.Text
+import com.xetondownloadmanager.shared.ui.widget.TransparentIconActionButton
+import com.xetondownloadmanager.shared.util.ui.icon.MyIcons
 import com.xeton.util.compose.asStringSource
 
 @Immutable

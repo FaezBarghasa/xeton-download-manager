@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.util.ui.widget
+package com.xetondownloadmanager.shared.util.ui.widget
 
 import androidx.compose.runtime.Composable
 

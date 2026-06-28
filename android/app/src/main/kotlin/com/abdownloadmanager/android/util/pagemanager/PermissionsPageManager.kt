@@ -1,4 +1,4 @@
-package com.abdownloadmanager.android.util.pagemanager
+package com.xetondownloadmanager.android.util.pagemanager
 
 interface PermissionsPageManager {
     fun openPermissionsPage(openHomeAfterFinish: Boolean)

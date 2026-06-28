@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.util.perhostsettings
+package com.xetondownloadmanager.shared.util.perhostsettings
 
 import com.xeton.util.wildcardMatch
 import kotlinx.coroutines.flow.update

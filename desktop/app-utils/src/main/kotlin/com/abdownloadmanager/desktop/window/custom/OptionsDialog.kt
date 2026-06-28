@@ -1,8 +1,8 @@
-package com.abdownloadmanager.desktop.window.custom
+package com.xetondownloadmanager.desktop.window.custom
 
 import androidx.compose.runtime.*
 import androidx.compose.ui.window.*
-import com.abdownloadmanager.shared.util.ui.theme.UiScaledContent
+import com.xetondownloadmanager.shared.util.ui.theme.UiScaledContent
 import java.awt.event.WindowEvent
 import java.awt.event.WindowFocusListener
 

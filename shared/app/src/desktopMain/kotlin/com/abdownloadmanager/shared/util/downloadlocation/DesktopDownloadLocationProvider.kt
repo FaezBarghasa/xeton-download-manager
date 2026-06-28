@@ -1,6 +1,6 @@
-package com.abdownloadmanager.shared.util.downloadlocation
+package com.xetondownloadmanager.shared.util.downloadlocation
 
-import com.abdownloadmanager.shared.util.SystemDownloadLocationProvider
+import com.xetondownloadmanager.shared.util.SystemDownloadLocationProvider
 import java.io.File
 
 abstract class DesktopDownloadLocationProvider() : SystemDownloadLocationProvider() {

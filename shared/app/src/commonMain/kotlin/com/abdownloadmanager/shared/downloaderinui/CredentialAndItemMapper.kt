@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.downloaderinui
+package com.xetondownloadmanager.shared.downloaderinui
 
 import com.xeton.downloader.downloaditem.IDownloadCredentials
 import com.xeton.downloader.downloaditem.IDownloadItem

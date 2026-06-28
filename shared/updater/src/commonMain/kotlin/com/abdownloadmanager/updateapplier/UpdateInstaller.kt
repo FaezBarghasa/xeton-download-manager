@@ -1,4 +1,4 @@
-package com.abdownloadmanager.updateapplier
+package com.xetondownloadmanager.updateapplier
 
 interface UpdateInstaller {
     fun installUpdate()

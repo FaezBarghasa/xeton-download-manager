@@ -1,6 +1,6 @@
-package com.abdownloadmanager.updatechecker
+package com.xetondownloadmanager.updatechecker
 
-import com.abdownloadmanager.InstallableArch
+import com.xetondownloadmanager.InstallableArch
 import io.github.z4kn4fein.semver.Version
 import com.xeton.util.platform.Arch
 import com.xeton.util.platform.Platform

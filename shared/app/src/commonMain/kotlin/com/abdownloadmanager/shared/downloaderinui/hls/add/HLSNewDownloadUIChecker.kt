@@ -1,12 +1,12 @@
-package com.abdownloadmanager.shared.downloaderinui.hls.add
+package com.xetondownloadmanager.shared.downloaderinui.hls.add
 
-import com.abdownloadmanager.shared.downloaderinui.DownloadSize
-import com.abdownloadmanager.shared.downloaderinui.add.NewDownloadUiChecker
-import com.abdownloadmanager.shared.downloaderinui.LinkCheckerFactory
+import com.xetondownloadmanager.shared.downloaderinui.DownloadSize
+import com.xetondownloadmanager.shared.downloaderinui.add.NewDownloadUiChecker
+import com.xetondownloadmanager.shared.downloaderinui.LinkCheckerFactory
 import com.xeton.downloader.downloaditem.hls.HLSDownloadCredentials
-import com.abdownloadmanager.shared.downloaderinui.hls.HLSLinkChecker
+import com.xetondownloadmanager.shared.downloaderinui.hls.HLSLinkChecker
 import com.xeton.downloader.downloaditem.hls.HLSResponseInfo
-import com.abdownloadmanager.shared.util.DownloadSystem
+import com.xetondownloadmanager.shared.util.DownloadSystem
 import kotlinx.coroutines.CoroutineScope
 
 class HLSNewDownloadUIChecker(

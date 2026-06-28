@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.util
+package com.xetondownloadmanager.shared.util
 
 import com.xeton.util.ifThen
 import com.xeton.util.platform.Platform

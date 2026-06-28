@@ -1,15 +1,15 @@
-package com.abdownloadmanager.desktop.window.custom.titlebar.windows
+package com.xetondownloadmanager.desktop.window.custom.titlebar.windows
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.Dp
-import com.abdownloadmanager.desktop.window.custom.TitlePosition
-import com.abdownloadmanager.desktop.window.custom.titlebar.CommonRenderTitleBar
-import com.abdownloadmanager.desktop.window.custom.titlebar.CommonTitleBarContent
-import com.abdownloadmanager.desktop.window.custom.titlebar.SystemButtonType
-import com.abdownloadmanager.desktop.window.custom.titlebar.SystemButtonsPosition
-import com.abdownloadmanager.desktop.window.custom.titlebar.TitleBar
+import com.xetondownloadmanager.desktop.window.custom.TitlePosition
+import com.xetondownloadmanager.desktop.window.custom.titlebar.CommonRenderTitleBar
+import com.xetondownloadmanager.desktop.window.custom.titlebar.CommonTitleBarContent
+import com.xetondownloadmanager.desktop.window.custom.titlebar.SystemButtonType
+import com.xetondownloadmanager.desktop.window.custom.titlebar.SystemButtonsPosition
+import com.xetondownloadmanager.desktop.window.custom.titlebar.TitleBar
 
 object WindowsTitleBar : TitleBar {
     override val titleBarHeight: Dp = TitleBar.Companion.DefaultTitleBarHeigh

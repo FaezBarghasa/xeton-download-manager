@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.ui.configurable
+package com.xetondownloadmanager.shared.ui.configurable
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable

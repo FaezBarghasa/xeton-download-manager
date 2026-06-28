@@ -1,4 +1,4 @@
-package com.abdownloadmanager.android.ui.configurable.comon.renderer
+package com.xetondownloadmanager.android.ui.configurable.comon.renderer
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
@@ -19,17 +19,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.abdownloadmanager.android.ui.configurable.ConfigTemplate
-import com.abdownloadmanager.android.ui.configurable.SheetInput
-import com.abdownloadmanager.android.ui.configurable.TitleAndDescription
-import com.abdownloadmanager.shared.ui.configurable.ConfigurableRenderer
-import com.abdownloadmanager.shared.ui.configurable.ConfigurableUiProps
-import com.abdownloadmanager.shared.ui.configurable.isConfigEnabled
-import com.abdownloadmanager.shared.ui.configurable.item.TimeConfigurable
-import com.abdownloadmanager.shared.ui.widget.IntTextField
-import com.abdownloadmanager.shared.ui.widget.Text
-import com.abdownloadmanager.shared.util.ui.icon.MyIcons
-import com.abdownloadmanager.shared.util.ui.widget.MyIcon
+import com.xetondownloadmanager.android.ui.configurable.ConfigTemplate
+import com.xetondownloadmanager.android.ui.configurable.SheetInput
+import com.xetondownloadmanager.android.ui.configurable.TitleAndDescription
+import com.xetondownloadmanager.shared.ui.configurable.ConfigurableRenderer
+import com.xetondownloadmanager.shared.ui.configurable.ConfigurableUiProps
+import com.xetondownloadmanager.shared.ui.configurable.isConfigEnabled
+import com.xetondownloadmanager.shared.ui.configurable.item.TimeConfigurable
+import com.xetondownloadmanager.shared.ui.widget.IntTextField
+import com.xetondownloadmanager.shared.ui.widget.Text
+import com.xetondownloadmanager.shared.util.ui.icon.MyIcons
+import com.xetondownloadmanager.shared.util.ui.widget.MyIcon
 import kotlinx.datetime.LocalTime
 
 object TimeConfigurableRenderer : ConfigurableRenderer<TimeConfigurable> {

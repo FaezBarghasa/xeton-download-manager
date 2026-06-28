@@ -1,4 +1,4 @@
-package com.abdownloadmanager.desktop.window
+package com.xetondownloadmanager.desktop.window
 
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Offset

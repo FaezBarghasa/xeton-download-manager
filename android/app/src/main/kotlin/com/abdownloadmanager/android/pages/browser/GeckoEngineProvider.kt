@@ -1,4 +1,4 @@
-package com.abdownloadmanager.android.pages.browser
+package com.xetondownloadmanager.android.pages.browser
 
 import android.content.Context
 import org.mozilla.geckoview.GeckoRuntime

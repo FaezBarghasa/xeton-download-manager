@@ -1,4 +1,4 @@
-package com.abdownloadmanager.desktop.pages.category
+package com.xetondownloadmanager.desktop.pages.category
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -8,19 +8,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.abdownloadmanager.shared.ui.widget.MyTextFieldIcon
-import com.abdownloadmanager.desktop.window.custom.WindowTitle
-import com.abdownloadmanager.shared.util.ui.icon.MyIcons
-import com.abdownloadmanager.shared.ui.widget.*
-import com.abdownloadmanager.shared.util.ui.myColors
+import com.xetondownloadmanager.shared.ui.widget.MyTextFieldIcon
+import com.xetondownloadmanager.desktop.window.custom.WindowTitle
+import com.xetondownloadmanager.shared.util.ui.icon.MyIcons
+import com.xetondownloadmanager.shared.ui.widget.*
+import com.xetondownloadmanager.shared.util.ui.myColors
 import com.xeton.util.ifThen
-import com.abdownloadmanager.shared.util.div
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.pages.category.CategoryComponent
-import com.abdownloadmanager.shared.util.ui.widget.MyIcon
+import com.xetondownloadmanager.shared.util.div
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.pages.category.CategoryComponent
+import com.xetondownloadmanager.shared.util.ui.widget.MyIcon
 import com.xeton.util.compose.IconSource
 import com.xeton.util.compose.resources.myStringResource
-import com.abdownloadmanager.desktop.ui.util.rememberMyDirectoryPickerLauncher
+import com.xetondownloadmanager.desktop.ui.util.rememberMyDirectoryPickerLauncher
 import java.io.File
 
 @Composable

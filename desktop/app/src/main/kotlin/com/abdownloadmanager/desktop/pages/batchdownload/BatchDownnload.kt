@@ -1,4 +1,4 @@
-package com.abdownloadmanager.desktop.pages.batchdownload
+package com.xetondownloadmanager.desktop.pages.batchdownload
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.*
@@ -11,18 +11,18 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.unit.dp
-import com.abdownloadmanager.desktop.pages.batchdownload.WildcardSelect.*
-import com.abdownloadmanager.desktop.window.custom.WindowTitle
-import com.abdownloadmanager.shared.util.ui.icon.MyIcons
-import com.abdownloadmanager.shared.ui.widget.*
-import com.abdownloadmanager.shared.util.ui.myColors
-import com.abdownloadmanager.shared.util.ClipboardUtil
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.pages.batchdownload.BatchDownloadValidationResult
-import com.abdownloadmanager.shared.pages.batchdownload.WildcardLength
-import com.abdownloadmanager.shared.util.ui.LocalContentColor
-import com.abdownloadmanager.shared.util.ui.MultiplatformVerticalScrollbar
-import com.abdownloadmanager.shared.util.ui.theme.myShapes
+import com.xetondownloadmanager.desktop.pages.batchdownload.WildcardSelect.*
+import com.xetondownloadmanager.desktop.window.custom.WindowTitle
+import com.xetondownloadmanager.shared.util.ui.icon.MyIcons
+import com.xetondownloadmanager.shared.ui.widget.*
+import com.xetondownloadmanager.shared.util.ui.myColors
+import com.xetondownloadmanager.shared.util.ClipboardUtil
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.pages.batchdownload.BatchDownloadValidationResult
+import com.xetondownloadmanager.shared.pages.batchdownload.WildcardLength
+import com.xetondownloadmanager.shared.util.ui.LocalContentColor
+import com.xetondownloadmanager.shared.util.ui.MultiplatformVerticalScrollbar
+import com.xetondownloadmanager.shared.util.ui.theme.myShapes
 import com.xeton.util.compose.resources.myStringResource
 import com.xeton.util.compose.StringSource
 import com.xeton.util.compose.asStringSource

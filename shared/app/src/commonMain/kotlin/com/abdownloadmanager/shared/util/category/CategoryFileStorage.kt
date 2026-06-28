@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.util.category
+package com.xetondownloadmanager.shared.util.category
 
 import com.xeton.downloader.db.TransactionalFileSaver
 import kotlinx.coroutines.sync.Mutex

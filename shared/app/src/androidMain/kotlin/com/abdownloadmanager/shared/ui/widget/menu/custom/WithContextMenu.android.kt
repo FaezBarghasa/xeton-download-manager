@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.ui.widget.menu.custom
+package com.xetondownloadmanager.shared.ui.widget.menu.custom
 
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.window.Popup
-import com.abdownloadmanager.shared.ui.widget.rememberMyPopupPositionProviderAtPosition
+import com.xetondownloadmanager.shared.ui.widget.rememberMyPopupPositionProviderAtPosition
 import com.xeton.util.compose.action.MenuItem
 
 @Composable

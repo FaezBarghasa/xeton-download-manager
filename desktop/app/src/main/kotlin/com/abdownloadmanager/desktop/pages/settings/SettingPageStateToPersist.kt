@@ -1,7 +1,7 @@
-package com.abdownloadmanager.desktop.pages.settings
+package com.xetondownloadmanager.desktop.pages.settings
 
 import arrow.optics.Lens
-import com.abdownloadmanager.desktop.pages.home.HomePageStateToPersist
+import com.xetondownloadmanager.desktop.pages.home.HomePageStateToPersist
 import com.xeton.util.config.*
 import kotlinx.serialization.Serializable
 import org.koin.core.component.KoinComponent

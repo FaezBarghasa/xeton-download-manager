@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.ui.util
+package com.xetondownloadmanager.shared.ui.util
 
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.compositionLocalOf

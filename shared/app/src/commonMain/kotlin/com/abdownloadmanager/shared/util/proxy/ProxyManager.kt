@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.util.proxy
+package com.xetondownloadmanager.shared.util.proxy
 
 import com.xeton.downloader.connection.proxy.Proxy
 import com.xeton.downloader.connection.proxy.ProxyStrategy

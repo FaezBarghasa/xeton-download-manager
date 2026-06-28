@@ -1,7 +1,7 @@
-package com.abdownloadmanager.shared.util.ui.widget
+package com.xetondownloadmanager.shared.util.ui.widget
 
-import com.abdownloadmanager.shared.util.ui.myColors
-import com.abdownloadmanager.shared.util.ui.WithContentColor
+import com.xetondownloadmanager.shared.util.ui.myColors
+import com.xetondownloadmanager.shared.util.ui.WithContentColor
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope

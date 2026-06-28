@@ -1,15 +1,15 @@
-package com.abdownloadmanager.android.ui.configurable
+package com.xetondownloadmanager.android.ui.configurable
 
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import com.abdownloadmanager.android.ui.SheetHeader
-import com.abdownloadmanager.android.ui.SheetTitle
-import com.abdownloadmanager.android.ui.SheetUI
-import com.abdownloadmanager.shared.ui.widget.Text
-import com.abdownloadmanager.shared.util.OnFullyDismissed
-import com.abdownloadmanager.shared.util.ResponsiveDialog
-import com.abdownloadmanager.shared.util.rememberResponsiveDialogState
+import com.xetondownloadmanager.android.ui.SheetHeader
+import com.xetondownloadmanager.android.ui.SheetTitle
+import com.xetondownloadmanager.android.ui.SheetUI
+import com.xetondownloadmanager.shared.ui.widget.Text
+import com.xetondownloadmanager.shared.util.OnFullyDismissed
+import com.xetondownloadmanager.shared.util.ResponsiveDialog
+import com.xetondownloadmanager.shared.util.rememberResponsiveDialogState
 import com.xeton.util.compose.StringSource
 
 @Composable

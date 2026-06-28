@@ -1,4 +1,4 @@
-package com.abdownloadmanager.android.pages.home
+package com.xetondownloadmanager.android.pages.home
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.*
@@ -16,16 +16,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.abdownloadmanager.shared.singledownloadpage.createStatusStringWithReason
-import com.abdownloadmanager.shared.ui.widget.CheckBox
-import com.abdownloadmanager.shared.ui.widget.Text
-import com.abdownloadmanager.shared.util.*
-import com.abdownloadmanager.shared.util.downloaderror.DownloadErrorReason
-import com.abdownloadmanager.shared.util.ui.*
-import com.abdownloadmanager.shared.util.ui.icon.MyIcons
-import com.abdownloadmanager.shared.util.ui.theme.myShapes
-import com.abdownloadmanager.shared.util.ui.theme.myTextSizes
-import com.abdownloadmanager.shared.util.ui.widget.MyIcon
+import com.xetondownloadmanager.shared.singledownloadpage.createStatusStringWithReason
+import com.xetondownloadmanager.shared.ui.widget.CheckBox
+import com.xetondownloadmanager.shared.ui.widget.Text
+import com.xetondownloadmanager.shared.util.*
+import com.xetondownloadmanager.shared.util.downloaderror.DownloadErrorReason
+import com.xetondownloadmanager.shared.util.ui.*
+import com.xetondownloadmanager.shared.util.ui.icon.MyIcons
+import com.xetondownloadmanager.shared.util.ui.theme.myShapes
+import com.xetondownloadmanager.shared.util.ui.theme.myTextSizes
+import com.xetondownloadmanager.shared.util.ui.widget.MyIcon
 import com.xeton.downloader.downloaditem.DownloadJobStatus
 import com.xeton.downloader.monitor.CompletedDownloadItemState
 import com.xeton.downloader.monitor.IDownloadItemState

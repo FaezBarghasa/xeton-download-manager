@@ -1,7 +1,7 @@
-package com.abdownloadmanager.desktop.actions.onevennts
+package com.xetondownloadmanager.desktop.actions.onevennts
 
-import com.abdownloadmanager.shared.storage.IExtraDownloadSettingsStorage
-import com.abdownloadmanager.shared.util.ondownloadcompletion.OnDownloadCompletionAction
+import com.xetondownloadmanager.shared.storage.IExtraDownloadSettingsStorage
+import com.xetondownloadmanager.shared.util.ondownloadcompletion.OnDownloadCompletionAction
 import com.xeton.downloader.downloaditem.IDownloadItem
 
 class CleanExtraSettingsOnDownloadFinish(

@@ -1,11 +1,11 @@
-package com.abdownloadmanager.shared.pages.home
+package com.xetondownloadmanager.shared.pages.home
 
 import androidx.compose.runtime.Stable
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.util.category.Category
-import com.abdownloadmanager.shared.util.category.CategoryManager
-import com.abdownloadmanager.shared.util.category.DefaultCategories
-import com.abdownloadmanager.shared.util.ui.icon.MyIcons
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.util.category.Category
+import com.xetondownloadmanager.shared.util.category.CategoryManager
+import com.xetondownloadmanager.shared.util.category.DefaultCategories
+import com.xetondownloadmanager.shared.util.ui.icon.MyIcons
 import com.xeton.util.compose.action.MenuItem
 import com.xeton.util.compose.action.buildMenu
 import com.xeton.util.compose.action.simpleAction

@@ -1,7 +1,7 @@
-package com.abdownloadmanager.shared.downloaderinui
+package com.xetondownloadmanager.shared.downloaderinui
 
-import com.abdownloadmanager.shared.downloaderinui.add.NewDownloadInputs
-import com.abdownloadmanager.shared.downloaderinui.edit.EditDownloadInputs
+import com.xetondownloadmanager.shared.downloaderinui.add.NewDownloadInputs
+import com.xetondownloadmanager.shared.downloaderinui.edit.EditDownloadInputs
 import com.xeton.downloader.Downloader
 import com.xeton.downloader.connection.IResponseInfo
 import com.xeton.downloader.downloaditem.DownloadJob

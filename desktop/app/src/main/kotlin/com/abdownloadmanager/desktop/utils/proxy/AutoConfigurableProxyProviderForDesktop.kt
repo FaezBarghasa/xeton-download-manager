@@ -1,4 +1,4 @@
-package com.abdownloadmanager.desktop.utils.proxy
+package com.xetondownloadmanager.desktop.utils.proxy
 
 import com.github.markusbernhardt.proxy.selector.misc.BufferedProxySelector
 import com.github.markusbernhardt.proxy.selector.misc.ProxyListFallbackSelector

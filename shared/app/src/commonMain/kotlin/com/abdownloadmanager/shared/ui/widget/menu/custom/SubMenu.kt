@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.ui.widget.menu.custom
+package com.xetondownloadmanager.shared.ui.widget.menu.custom
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -35,16 +35,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import com.abdownloadmanager.shared.ui.widget.Text
-import com.abdownloadmanager.shared.util.LocalShortCutManager
-import com.abdownloadmanager.shared.util.PlatformKeyStroke
-import com.abdownloadmanager.shared.util.div
-import com.abdownloadmanager.shared.util.ui.ProvideTextStyle
-import com.abdownloadmanager.shared.util.ui.WithContentColor
-import com.abdownloadmanager.shared.util.ui.icon.MyIcons
-import com.abdownloadmanager.shared.util.ui.myColors
-import com.abdownloadmanager.shared.util.ui.theme.myTextSizes
-import com.abdownloadmanager.shared.util.ui.widget.MyIcon
+import com.xetondownloadmanager.shared.ui.widget.Text
+import com.xetondownloadmanager.shared.util.LocalShortCutManager
+import com.xetondownloadmanager.shared.util.PlatformKeyStroke
+import com.xetondownloadmanager.shared.util.div
+import com.xetondownloadmanager.shared.util.ui.ProvideTextStyle
+import com.xetondownloadmanager.shared.util.ui.WithContentColor
+import com.xetondownloadmanager.shared.util.ui.icon.MyIcons
+import com.xetondownloadmanager.shared.util.ui.myColors
+import com.xetondownloadmanager.shared.util.ui.theme.myTextSizes
+import com.xetondownloadmanager.shared.util.ui.widget.MyIcon
 import com.xeton.util.compose.action.MenuItem
 import com.xeton.util.compose.modifiers.autoMirror
 import com.xeton.util.ifThen

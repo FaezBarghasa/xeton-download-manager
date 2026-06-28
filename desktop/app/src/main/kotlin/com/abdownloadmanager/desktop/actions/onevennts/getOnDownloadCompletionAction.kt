@@ -1,12 +1,12 @@
-package com.abdownloadmanager.desktop.actions.onevennts
+package com.xetondownloadmanager.desktop.actions.onevennts
 
-import com.abdownloadmanager.desktop.PowerActionManager
+import com.xetondownloadmanager.desktop.PowerActionManager
 import com.xeton.util.desktop.poweraction.PowerActionConfig
-import com.abdownloadmanager.desktop.pages.poweractionalert.PowerActionComponent
-import com.abdownloadmanager.desktop.storage.DesktopExtraDownloadItemSettings
-import com.abdownloadmanager.shared.storage.ExtraDownloadSettingsStorage
-import com.abdownloadmanager.shared.util.ondownloadcompletion.OnDownloadCompletionAction
-import com.abdownloadmanager.shared.util.ondownloadcompletion.OnDownloadCompletionActionProvider
+import com.xetondownloadmanager.desktop.pages.poweractionalert.PowerActionComponent
+import com.xetondownloadmanager.desktop.storage.DesktopExtraDownloadItemSettings
+import com.xetondownloadmanager.shared.storage.ExtraDownloadSettingsStorage
+import com.xetondownloadmanager.shared.util.ondownloadcompletion.OnDownloadCompletionAction
+import com.xetondownloadmanager.shared.util.ondownloadcompletion.OnDownloadCompletionActionProvider
 import com.xeton.downloader.downloaditem.IDownloadItem
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject

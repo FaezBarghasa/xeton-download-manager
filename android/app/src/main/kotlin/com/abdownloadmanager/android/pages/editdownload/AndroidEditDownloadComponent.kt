@@ -1,12 +1,12 @@
-package com.abdownloadmanager.android.pages.editdownload
+package com.xetondownloadmanager.android.pages.editdownload
 
-import com.abdownloadmanager.shared.downloaderinui.DownloaderInUiRegistry
-import com.abdownloadmanager.shared.pagemanager.DownloadErrorDialogManager
-import com.abdownloadmanager.shared.pages.editdownload.BaseEditDownloadComponent
-import com.abdownloadmanager.shared.util.mvi.ContainsEffects
-import com.abdownloadmanager.shared.util.mvi.supportEffects
-import com.abdownloadmanager.shared.util.DownloadSystem
-import com.abdownloadmanager.shared.util.FileIconProvider
+import com.xetondownloadmanager.shared.downloaderinui.DownloaderInUiRegistry
+import com.xetondownloadmanager.shared.pagemanager.DownloadErrorDialogManager
+import com.xetondownloadmanager.shared.pages.editdownload.BaseEditDownloadComponent
+import com.xetondownloadmanager.shared.util.mvi.ContainsEffects
+import com.xetondownloadmanager.shared.util.mvi.supportEffects
+import com.xetondownloadmanager.shared.util.DownloadSystem
+import com.xetondownloadmanager.shared.util.FileIconProvider
 import com.arkivanov.decompose.ComponentContext
 import com.xeton.downloader.downloaditem.DownloadJobExtraConfig
 import com.xeton.downloader.downloaditem.IDownloadItem

@@ -8,7 +8,7 @@ kotlin {
     jvm("desktop")
     android {
         compileSdk = 37
-        namespace = "com.abdownloadmanager.resources.contracts"
+        namespace = "com.xetondownloadmanager.resources.contracts"
         minSdk = 26
     }
     sourceSets.commonMain.dependencies {

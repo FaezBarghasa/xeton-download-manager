@@ -1,6 +1,6 @@
-package com.abdownloadmanager.shared.util
+package com.xetondownloadmanager.shared.util
 
-import com.abdownloadmanager.shared.storage.BaseAppSettingsStorage
+import com.xetondownloadmanager.shared.storage.BaseAppSettingsStorage
 import com.xeton.downloader.connection.UserAgentProvider
 
 class UserAgentProviderFromSettings(

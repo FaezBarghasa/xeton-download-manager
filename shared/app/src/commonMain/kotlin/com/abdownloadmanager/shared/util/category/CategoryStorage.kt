@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.util.category
+package com.xetondownloadmanager.shared.util.category
 
 interface CategoryStorage {
     suspend fun setCategories(categories: List<Category>)

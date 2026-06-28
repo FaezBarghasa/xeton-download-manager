@@ -1,11 +1,11 @@
-package com.abdownloadmanager.shared.ui.widget
+package com.xetondownloadmanager.shared.ui.widget
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
-import com.abdownloadmanager.shared.util.ui.LocalTitleBarDirection
+import com.xetondownloadmanager.shared.util.ui.LocalTitleBarDirection
 import com.xeton.util.compose.localizationmanager.LanguageManager
 import com.xeton.util.compose.localizationmanager.LocalLanguageManager
 import com.xeton.util.compose.localizationmanager.LocaleLanguageDirection

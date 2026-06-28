@@ -16,7 +16,7 @@ kotlin {
     jvm("desktop")
     android {
         compileSdk = 37
-        namespace = "com.abdownloadmanager.shared"
+        namespace = "com.xetondownloadmanager.shared"
         minSdk = 26
     }
     sourceSets {
@@ -68,7 +68,7 @@ kotlin {
 }
 // generate a file with these constants
 buildConfig {
-    packageName = "com.abdownloadmanager.shared"
+    packageName = "com.xetondownloadmanager.shared"
     buildConfigField(
         "PACKAGE_NAME",
         provider {
@@ -94,19 +94,19 @@ buildConfig {
     buildConfigField(
         "PROJECT_WEBSITE",
         provider {
-            "https://abdownloadmanager.com"
+            "https://xetondownloadmanager.com"
         }
     )
     buildConfigField(
         "PROJECT_SOURCE_CODE",
         provider {
-            "https://github.com/amir1376/ab-download-manager"
+            "https://github.com/amir1376/xeton-download-manager"
         }
     )
     buildConfigField(
         "DONATE_LINK",
         provider {
-            "https://github.com/amir1376/ab-download-manager/blob/master/DONATE.md"
+            "https://github.com/amir1376/xeton-download-manager/blob/master/DONATE.md"
         }
     )
     buildConfigField(
@@ -118,37 +118,37 @@ buildConfig {
     buildConfigField(
         "PROJECT_GITHUB_REPO",
         provider {
-            "ab-download-manager"
+            "xeton-download-manager"
         }
     )
     buildConfigField(
         "PROJECT_TRANSLATIONS",
         provider {
-            "https://crowdin.com/project/ab-download-manager"
+            "https://crowdin.com/project/xeton-download-manager"
         }
     )
     buildConfigField(
         "INTEGRATION_CHROME_LINK",
         provider {
-            "https://chromewebstore.google.com/detail/ab-download-manager-brows/bbobopahenonfdgjgaleledndnnfhooj"
+            "https://chromewebstore.google.com/detail/xeton-download-manager-brows/bbobopahenonfdgjgaleledndnnfhooj"
         }
     )
     buildConfigField(
         "INTEGRATION_FIREFOX_LINK",
         provider {
-            "https://addons.mozilla.org/en-US/firefox/addon/ab-download-manager/"
+            "https://addons.mozilla.org/en-US/firefox/addon/xeton-download-manager/"
         }
     )
     buildConfigField(
         "TELEGRAM_GROUP",
         provider {
-            "https://t.me/abdownloadmanager_discussion"
+            "https://t.me/xetondownloadmanager_discussion"
         }
     )
     buildConfigField(
         "TELEGRAM_CHANNEL",
         provider {
-            "https://t.me/abdownloadmanager"
+            "https://t.me/xetondownloadmanager"
         }
     )
 }

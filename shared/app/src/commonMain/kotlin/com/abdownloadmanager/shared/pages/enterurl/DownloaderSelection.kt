@@ -1,6 +1,6 @@
-package com.abdownloadmanager.shared.pages.enterurl
+package com.xetondownloadmanager.shared.pages.enterurl
 
-import com.abdownloadmanager.shared.downloaderinui.TADownloaderInUI
+import com.xetondownloadmanager.shared.downloaderinui.TADownloaderInUI
 
 sealed interface DownloaderSelection {
     data object Auto : DownloaderSelection

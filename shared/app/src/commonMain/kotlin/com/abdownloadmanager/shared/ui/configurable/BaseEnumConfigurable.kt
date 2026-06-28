@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.ui.configurable
+package com.xetondownloadmanager.shared.ui.configurable
 
 import com.xeton.util.compose.StringSource
 import kotlinx.coroutines.flow.MutableStateFlow

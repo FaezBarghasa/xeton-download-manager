@@ -1,10 +1,10 @@
-package com.abdownloadmanager.integration.http4k
+package com.xetondownloadmanager.integration.http4k
 
 import com.xeton.util.http4k.NanoHttp
-import com.abdownloadmanager.integration.HandlerMap
-import com.abdownloadmanager.integration.MyRequest
-import com.abdownloadmanager.integration.MyResponse
-import com.abdownloadmanager.integration.MyServer
+import com.xetondownloadmanager.integration.HandlerMap
+import com.xetondownloadmanager.integration.MyRequest
+import com.xetondownloadmanager.integration.MyResponse
+import com.xetondownloadmanager.integration.MyServer
 import org.http4k.core.*
 import org.http4k.server.Http4kServer
 import org.http4k.server.asServer

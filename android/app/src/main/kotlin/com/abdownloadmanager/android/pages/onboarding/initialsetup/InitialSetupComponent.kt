@@ -1,9 +1,9 @@
-package com.abdownloadmanager.android.pages.onboarding.initialsetup
+package com.xetondownloadmanager.android.pages.onboarding.initialsetup
 
-import com.abdownloadmanager.shared.settings.CommonSettings
-import com.abdownloadmanager.shared.ui.configurable.ConfigurableGroup
-import com.abdownloadmanager.shared.ui.theme.ThemeManager
-import com.abdownloadmanager.shared.util.BaseComponent
+import com.xetondownloadmanager.shared.settings.CommonSettings
+import com.xetondownloadmanager.shared.ui.configurable.ConfigurableGroup
+import com.xetondownloadmanager.shared.ui.theme.ThemeManager
+import com.xetondownloadmanager.shared.util.BaseComponent
 import com.arkivanov.decompose.ComponentContext
 import com.xeton.util.compose.localizationmanager.LanguageManager
 

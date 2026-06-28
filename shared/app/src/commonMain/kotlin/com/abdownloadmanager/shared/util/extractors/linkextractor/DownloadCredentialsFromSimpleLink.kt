@@ -1,6 +1,6 @@
-package com.abdownloadmanager.shared.util.extractors.linkextractor
+package com.xetondownloadmanager.shared.util.extractors.linkextractor
 
-import com.abdownloadmanager.shared.downloaderinui.DownloaderInUiRegistry
+import com.xetondownloadmanager.shared.downloaderinui.DownloaderInUiRegistry
 import com.xeton.downloader.downloaditem.IDownloadCredentials
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject

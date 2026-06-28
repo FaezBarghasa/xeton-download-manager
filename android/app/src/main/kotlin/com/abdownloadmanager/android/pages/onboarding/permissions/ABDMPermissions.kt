@@ -1,4 +1,4 @@
-package com.abdownloadmanager.android.pages.onboarding.permissions
+package com.xetondownloadmanager.android.pages.onboarding.permissions
 
 import android.Manifest
 import android.content.Context
@@ -6,8 +6,8 @@ import android.os.Build
 import android.os.Environment
 import android.os.PowerManager
 import androidx.annotation.RequiresApi
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.util.ui.icon.MyIcons
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.util.ui.icon.MyIcons
 import com.xeton.util.compose.asStringSource
 
 object ABDMPermissions {

@@ -1,9 +1,9 @@
-package com.abdownloadmanager.shared.util.downloaderror.definederrors
+package com.xetondownloadmanager.shared.util.downloaderror.definederrors
 
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.util.downloaderror.DownloadErrorMapper
-import com.abdownloadmanager.shared.util.downloaderror.DownloadErrorMapper.Companion.createErrorReason
-import com.abdownloadmanager.shared.util.downloaderror.DownloadErrorReason
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.util.downloaderror.DownloadErrorMapper
+import com.xetondownloadmanager.shared.util.downloaderror.DownloadErrorMapper.Companion.createErrorReason
+import com.xetondownloadmanager.shared.util.downloaderror.DownloadErrorReason
 import com.xeton.downloader.exception.ServerPartIsNotTheSameAsWeExpectException
 import com.xeton.downloader.exception.ServerResumeSupportChangeException
 import com.xeton.util.compose.asStringSource

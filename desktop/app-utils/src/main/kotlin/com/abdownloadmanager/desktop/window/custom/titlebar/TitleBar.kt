@@ -1,14 +1,14 @@
-package com.abdownloadmanager.desktop.window.custom.titlebar
+package com.xetondownloadmanager.desktop.window.custom.titlebar
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.abdownloadmanager.desktop.window.custom.TitlePosition
-import com.abdownloadmanager.desktop.window.custom.titlebar.linux.LinuxTitleBar
-import com.abdownloadmanager.desktop.window.custom.titlebar.mac.MacTitleBar
-import com.abdownloadmanager.desktop.window.custom.titlebar.windows.WindowsTitleBar
+import com.xetondownloadmanager.desktop.window.custom.TitlePosition
+import com.xetondownloadmanager.desktop.window.custom.titlebar.linux.LinuxTitleBar
+import com.xetondownloadmanager.desktop.window.custom.titlebar.mac.MacTitleBar
+import com.xetondownloadmanager.desktop.window.custom.titlebar.windows.WindowsTitleBar
 import com.xeton.util.platform.Platform
 import com.xeton.util.platform.asDesktop
 

@@ -1,8 +1,8 @@
-package com.abdownloadmanager.desktop.actions
+package com.xetondownloadmanager.desktop.actions
 
-import com.abdownloadmanager.desktop.DesktopDownloadDialogManager
-import com.abdownloadmanager.shared.action.createStopAllAction
-import com.abdownloadmanager.shared.util.DownloadSystem
+import com.xetondownloadmanager.desktop.DesktopDownloadDialogManager
+import com.xetondownloadmanager.shared.action.createStopAllAction
+import com.xetondownloadmanager.shared.util.DownloadSystem
 import com.xeton.downloader.queue.DownloadQueue
 import com.xeton.util.compose.action.AnAction
 import kotlinx.coroutines.CoroutineScope

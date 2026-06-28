@@ -1,13 +1,13 @@
-package com.abdownloadmanager.shared.util
+package com.xetondownloadmanager.shared.util
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import com.abdownloadmanager.shared.util.category.CategoryManager
-import com.abdownloadmanager.shared.util.category.DefaultCategories
-import com.abdownloadmanager.shared.util.category.iconSource
-import com.abdownloadmanager.shared.util.ui.IMyIcons
+import com.xetondownloadmanager.shared.util.category.CategoryManager
+import com.xetondownloadmanager.shared.util.category.DefaultCategories
+import com.xetondownloadmanager.shared.util.category.iconSource
+import com.xetondownloadmanager.shared.util.ui.IMyIcons
 import com.xeton.util.compose.IIconResolver
 import com.xeton.util.compose.IconSource
 

@@ -1,7 +1,7 @@
-package com.abdownloadmanager.desktop.pages.category
+package com.xetondownloadmanager.desktop.pages.category
 
-import com.abdownloadmanager.shared.pagemanager.CategoryDialogManager
-import com.abdownloadmanager.shared.pages.category.CategoryComponent
+import com.xetondownloadmanager.shared.pagemanager.CategoryDialogManager
+import com.xetondownloadmanager.shared.pages.category.CategoryComponent
 import kotlinx.coroutines.flow.StateFlow
 
 interface DesktopCategoryDialogManager : CategoryDialogManager {

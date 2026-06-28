@@ -1,8 +1,8 @@
-package com.abdownloadmanager.desktop.window.custom.titlebar.windows
+package com.xetondownloadmanager.desktop.window.custom.titlebar.windows
 
-import com.abdownloadmanager.shared.util.ui.LocalContentColor
+import com.xetondownloadmanager.shared.util.ui.LocalContentColor
 import com.xeton.util.compose.IconSource
-import com.abdownloadmanager.shared.util.ui.widget.MyIcon
+import com.xetondownloadmanager.shared.util.ui.widget.MyIcon
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -17,14 +17,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.abdownloadmanager.desktop.window.custom.WindowCloseButtonTooltip
-import com.abdownloadmanager.desktop.window.custom.WindowMinimizeTooltip
-import com.abdownloadmanager.desktop.window.custom.WindowToggleMaximizeTooltip
-import com.abdownloadmanager.desktop.window.custom.isWindowFocused
-import com.abdownloadmanager.desktop.window.custom.isWindowMaximized
-import com.abdownloadmanager.desktop.window.custom.titlebar.SystemButtonType
-import com.abdownloadmanager.shared.util.ui.icon.MyIcons
-import com.abdownloadmanager.shared.util.ui.myColors
+import com.xetondownloadmanager.desktop.window.custom.WindowCloseButtonTooltip
+import com.xetondownloadmanager.desktop.window.custom.WindowMinimizeTooltip
+import com.xetondownloadmanager.desktop.window.custom.WindowToggleMaximizeTooltip
+import com.xetondownloadmanager.desktop.window.custom.isWindowFocused
+import com.xetondownloadmanager.desktop.window.custom.isWindowMaximized
+import com.xetondownloadmanager.desktop.window.custom.titlebar.SystemButtonType
+import com.xetondownloadmanager.shared.util.ui.icon.MyIcons
+import com.xetondownloadmanager.shared.util.ui.myColors
 
 @Composable
 private fun SystemButton(

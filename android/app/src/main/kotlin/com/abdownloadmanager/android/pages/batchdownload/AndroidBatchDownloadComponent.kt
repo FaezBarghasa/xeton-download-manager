@@ -1,6 +1,6 @@
-package com.abdownloadmanager.android.pages.batchdownload
+package com.xetondownloadmanager.android.pages.batchdownload
 
-import com.abdownloadmanager.shared.pages.batchdownload.BaseBatchDownloadComponent
+import com.xetondownloadmanager.shared.pages.batchdownload.BaseBatchDownloadComponent
 import com.arkivanov.decompose.ComponentContext
 
 class AndroidBatchDownloadComponent(

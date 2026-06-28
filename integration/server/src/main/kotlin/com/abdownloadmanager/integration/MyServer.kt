@@ -1,4 +1,4 @@
-package com.abdownloadmanager.integration
+package com.xetondownloadmanager.integration
 
 interface MyServer{
     fun stopMyServer()

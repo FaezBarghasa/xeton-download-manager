@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.util
+package com.xetondownloadmanager.shared.util
 
 import com.xeton.util.datasize.CommonSizeConvertConfigs
 import com.xeton.util.datasize.ConvertSizeConfig
@@ -6,7 +6,7 @@ import com.xeton.util.datasize.SizeWithUnit
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
-import com.abdownloadmanager.resources.Res
+import com.xetondownloadmanager.resources.Res
 import com.xeton.util.compose.StringSource
 import com.xeton.util.compose.asStringSource
 import com.xeton.util.datasize.*

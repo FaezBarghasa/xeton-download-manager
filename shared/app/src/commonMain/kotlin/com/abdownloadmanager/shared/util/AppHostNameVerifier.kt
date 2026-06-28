@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.util
+package com.xetondownloadmanager.shared.util
 
 import kotlinx.coroutines.flow.StateFlow
 import javax.net.ssl.HostnameVerifier

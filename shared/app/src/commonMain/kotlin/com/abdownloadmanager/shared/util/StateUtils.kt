@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.util
+package com.xetondownloadmanager.shared.util
 
 import androidx.compose.runtime.*
 import com.xeton.util.flow.DerivedStateFlow

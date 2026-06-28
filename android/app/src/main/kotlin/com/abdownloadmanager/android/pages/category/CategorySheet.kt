@@ -1,14 +1,14 @@
-package com.abdownloadmanager.android.pages.category
+package com.xetondownloadmanager.android.pages.category
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import com.abdownloadmanager.android.ui.SheetHeader
-import com.abdownloadmanager.android.ui.SheetTitle
-import com.abdownloadmanager.android.ui.SheetUI
-import com.abdownloadmanager.shared.pages.category.CategoryComponent
-import com.abdownloadmanager.shared.util.OnFullyDismissed
-import com.abdownloadmanager.shared.util.ResponsiveDialog
-import com.abdownloadmanager.shared.util.rememberResponsiveDialogState
+import com.xetondownloadmanager.android.ui.SheetHeader
+import com.xetondownloadmanager.android.ui.SheetTitle
+import com.xetondownloadmanager.android.ui.SheetUI
+import com.xetondownloadmanager.shared.pages.category.CategoryComponent
+import com.xetondownloadmanager.shared.util.OnFullyDismissed
+import com.xetondownloadmanager.shared.util.ResponsiveDialog
+import com.xetondownloadmanager.shared.util.rememberResponsiveDialogState
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -18,19 +18,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.abdownloadmanager.android.pages.directorypicker.rememberAndroidDirectoryPickerLauncher
-import com.abdownloadmanager.shared.ui.widget.MyTextFieldIcon
-import com.abdownloadmanager.shared.util.ui.icon.MyIcons
-import com.abdownloadmanager.shared.ui.widget.*
-import com.abdownloadmanager.shared.util.ui.myColors
+import com.xetondownloadmanager.android.pages.directorypicker.rememberAndroidDirectoryPickerLauncher
+import com.xetondownloadmanager.shared.ui.widget.MyTextFieldIcon
+import com.xetondownloadmanager.shared.util.ui.icon.MyIcons
+import com.xetondownloadmanager.shared.ui.widget.*
+import com.xetondownloadmanager.shared.util.ui.myColors
 import com.xeton.util.ifThen
-import com.abdownloadmanager.shared.util.div
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.util.ui.widget.MyIcon
+import com.xetondownloadmanager.shared.util.div
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.util.ui.widget.MyIcon
 import com.xeton.util.compose.IconSource
 import com.xeton.util.compose.resources.myStringResource
-import com.abdownloadmanager.shared.util.ResponsiveDialogScope
-import com.abdownloadmanager.shared.util.ui.theme.mySpacings
+import com.xetondownloadmanager.shared.util.ResponsiveDialogScope
+import com.xetondownloadmanager.shared.util.ui.theme.mySpacings
 import com.xeton.util.compose.asStringSource
 import java.io.File
 @Composable

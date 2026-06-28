@@ -1,10 +1,10 @@
-package com.abdownloadmanager.desktop.pages.extenallibs
+package com.xetondownloadmanager.desktop.pages.extenallibs
 
-import com.abdownloadmanager.shared.ui.widget.table.customtable.CellSize
-import com.abdownloadmanager.shared.ui.widget.table.customtable.SortableCell
-import com.abdownloadmanager.shared.ui.widget.table.customtable.TableCell
+import com.xetondownloadmanager.shared.ui.widget.table.customtable.CellSize
+import com.xetondownloadmanager.shared.ui.widget.table.customtable.SortableCell
+import com.xetondownloadmanager.shared.ui.widget.table.customtable.TableCell
 import androidx.compose.ui.unit.dp
-import com.abdownloadmanager.resources.Res
+import com.xetondownloadmanager.resources.Res
 import com.mikepenz.aboutlibraries.entity.Library
 import com.xeton.util.compose.StringSource
 import com.xeton.util.compose.asStringSource

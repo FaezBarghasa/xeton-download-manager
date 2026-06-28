@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.ui.modifier
+package com.xetondownloadmanager.shared.ui.modifier
 
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerIcon

@@ -1,9 +1,9 @@
-package com.abdownloadmanager.android.service
+package com.xetondownloadmanager.android.service
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.util.MyDateAndTimeFormats
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.util.MyDateAndTimeFormats
 import com.xeton.downloader.db.QueueModel
 import com.xeton.util.compose.asStringSource
 import kotlinx.datetime.TimeZone

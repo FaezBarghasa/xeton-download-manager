@@ -1,13 +1,13 @@
-package com.abdownloadmanager.desktop.actions
+package com.xetondownloadmanager.desktop.actions
 
-import com.abdownloadmanager.desktop.AppComponent
-import com.abdownloadmanager.desktop.di.Di
-import com.abdownloadmanager.desktop.pages.poweractionalert.PowerActionComponent
-import com.abdownloadmanager.shared.util.ui.icon.MyIcons
-import com.abdownloadmanager.shared.ui.widget.MessageDialogType
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.action.createDummyExceptionAction
-import com.abdownloadmanager.shared.action.createDummyMessageAction
+import com.xetondownloadmanager.desktop.AppComponent
+import com.xetondownloadmanager.desktop.di.Di
+import com.xetondownloadmanager.desktop.pages.poweractionalert.PowerActionComponent
+import com.xetondownloadmanager.shared.util.ui.icon.MyIcons
+import com.xetondownloadmanager.shared.ui.widget.MessageDialogType
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.action.createDummyExceptionAction
+import com.xetondownloadmanager.shared.action.createDummyMessageAction
 import com.xeton.util.compose.action.AnAction
 import com.xeton.util.compose.action.MenuItem
 import com.xeton.util.compose.action.simpleAction

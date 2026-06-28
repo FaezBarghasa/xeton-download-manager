@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.util
+package com.xetondownloadmanager.shared.util
 
 interface ContainsShortcuts {
     val shortcutManager: ShortcutManager

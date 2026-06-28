@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.pages.credits.translators
+package com.xetondownloadmanager.shared.pages.credits.translators
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.downloaderinui.add
+package com.xetondownloadmanager.shared.downloaderinui.add
 
 sealed interface CanAddResult {
     data class DownloadAlreadyExists(val itemId: Long) : CanAddResult

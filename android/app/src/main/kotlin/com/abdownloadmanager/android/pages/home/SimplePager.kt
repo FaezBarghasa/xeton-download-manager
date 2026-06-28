@@ -1,4 +1,4 @@
-package com.abdownloadmanager.android.pages.home
+package com.xetondownloadmanager.android.pages.home
 
 import android.util.Log
 import androidx.compose.foundation.horizontalScroll

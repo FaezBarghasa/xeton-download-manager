@@ -1,4 +1,4 @@
-package com.abdownloadmanager.desktop.pages.home
+package com.xetondownloadmanager.desktop.pages.home
 
 import androidx.compose.foundation.draganddrop.dragAndDropTarget
 import androidx.compose.runtime.getValue

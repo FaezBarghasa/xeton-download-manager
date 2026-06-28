@@ -1,14 +1,14 @@
-package com.abdownloadmanager.android.storage
+package com.xetondownloadmanager.android.storage
 
 import androidx.datastore.core.DataStore
 import arrow.optics.Lens
 import arrow.optics.optics
-import com.abdownloadmanager.shared.storage.BaseAppSettingsStorage
-import com.abdownloadmanager.shared.storage.IAppSettingsModel
-import com.abdownloadmanager.shared.storage.SupportedSizeUnits
-import com.abdownloadmanager.shared.util.downloadlocation.PlatformDownloadLocationProvider
-import com.abdownloadmanager.shared.util.ConfigBaseSettingsByMapConfig
-import com.abdownloadmanager.shared.util.ui.theme.DEFAULT_UI_SCALE
+import com.xetondownloadmanager.shared.storage.BaseAppSettingsStorage
+import com.xetondownloadmanager.shared.storage.IAppSettingsModel
+import com.xetondownloadmanager.shared.storage.SupportedSizeUnits
+import com.xetondownloadmanager.shared.util.downloadlocation.PlatformDownloadLocationProvider
+import com.xetondownloadmanager.shared.util.ConfigBaseSettingsByMapConfig
+import com.xetondownloadmanager.shared.util.ui.theme.DEFAULT_UI_SCALE
 import com.xeton.util.config.*
 import com.xeton.util.enumValueOrNull
 import kotlinx.serialization.Serializable

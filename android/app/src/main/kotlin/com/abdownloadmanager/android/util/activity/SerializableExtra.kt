@@ -1,4 +1,4 @@
-package com.abdownloadmanager.android.util.activity
+package com.xetondownloadmanager.android.util.activity
 
 import android.content.Intent
 import kotlinx.serialization.KSerializer

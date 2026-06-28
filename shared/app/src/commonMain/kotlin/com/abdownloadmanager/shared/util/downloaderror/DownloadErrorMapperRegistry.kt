@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.util.downloaderror
+package com.xetondownloadmanager.shared.util.downloaderror
 
 import com.xeton.downloader.exception.TooManyErrorException
 import com.xeton.downloader.utils.ExceptionUtils

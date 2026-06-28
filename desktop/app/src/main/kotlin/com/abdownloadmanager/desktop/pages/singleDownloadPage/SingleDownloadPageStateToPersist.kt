@@ -1,4 +1,4 @@
-package com.abdownloadmanager.desktop.pages.singleDownloadPage
+package com.xetondownloadmanager.desktop.pages.singleDownloadPage
 
 import arrow.optics.Lens
 import arrow.optics.optics

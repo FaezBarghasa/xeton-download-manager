@@ -1,14 +1,14 @@
-package com.abdownloadmanager.desktop.repository
+package com.xetondownloadmanager.desktop.repository
 
-import com.abdownloadmanager.shared.util.DownloadSystem
+import com.xetondownloadmanager.shared.util.DownloadSystem
 import com.xeton.downloader.DownloadSettings
-import com.abdownloadmanager.integration.Integration
-import com.abdownloadmanager.integration.IntegrationResult
-import com.abdownloadmanager.shared.repository.BaseAppRepository
-import com.abdownloadmanager.shared.storage.BaseAppSettingsStorage
-import com.abdownloadmanager.shared.util.autoremove.RemovedDownloadsFromDiskTracker
-import com.abdownloadmanager.shared.util.category.CategoryManager
-import com.abdownloadmanager.shared.util.proxy.ProxyManager
+import com.xetondownloadmanager.integration.Integration
+import com.xetondownloadmanager.integration.IntegrationResult
+import com.xetondownloadmanager.shared.repository.BaseAppRepository
+import com.xetondownloadmanager.shared.storage.BaseAppSettingsStorage
+import com.xetondownloadmanager.shared.util.autoremove.RemovedDownloadsFromDiskTracker
+import com.xetondownloadmanager.shared.util.category.CategoryManager
+import com.xetondownloadmanager.shared.util.proxy.ProxyManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 

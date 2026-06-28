@@ -1,8 +1,8 @@
-package com.abdownloadmanager.shared.pages.home.queue
+package com.xetondownloadmanager.shared.pages.home.queue
 
 import androidx.compose.runtime.Stable
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.util.ui.icon.MyIcons
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.util.ui.icon.MyIcons
 import com.xeton.downloader.db.QueueModel
 import com.xeton.downloader.queue.DefaultQueueInfo
 import com.xeton.downloader.queue.DownloadQueue

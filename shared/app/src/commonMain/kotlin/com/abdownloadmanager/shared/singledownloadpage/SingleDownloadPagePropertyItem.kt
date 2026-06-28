@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.singledownloadpage
+package com.xetondownloadmanager.shared.singledownloadpage
 
 import androidx.compose.runtime.Immutable
 import com.xeton.util.compose.StringSource

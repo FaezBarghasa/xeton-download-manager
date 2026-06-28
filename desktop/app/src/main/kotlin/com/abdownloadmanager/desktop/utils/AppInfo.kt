@@ -1,9 +1,9 @@
-package com.abdownloadmanager.desktop.utils
+package com.xetondownloadmanager.desktop.utils
 
-import com.abdownloadmanager.desktop.AppArguments
-import com.abdownloadmanager.shared.util.SharedConstants
-import com.abdownloadmanager.desktop.storage.DesktopDefinedPaths
-import com.abdownloadmanager.shared.util.AppVersion
+import com.xetondownloadmanager.desktop.AppArguments
+import com.xetondownloadmanager.shared.util.SharedConstants
+import com.xetondownloadmanager.desktop.storage.DesktopDefinedPaths
+import com.xetondownloadmanager.shared.util.AppVersion
 import com.xeton.util.platform.Platform
 import okio.Path.Companion.toOkioPath
 import java.io.File
@@ -34,9 +34,9 @@ object AppInfo {
             ?.parentFile // executable path
             ?.let {
                 when (Platform.getCurrentPlatform()) {
-                    Platform.Desktop.Linux -> it.parentFile // <installationFolder>/bin/ABDownloadManager
-                    Platform.Desktop.MacOS -> it.findAppFolder() // /Applications/ABDownloadManager.app
-                    Platform.Desktop.Windows -> it // <installationFolder>/ABDownloadManager.exe
+                    Platform.Desktop.Linux -> it.parentFile // <installationFolder>/bin/XetonDownloadManager
+                    Platform.Desktop.MacOS -> it.findAppFolder() // /Applications/XetonDownloadManager.app
+                    Platform.Desktop.Windows -> it // <installationFolder>/XetonDownloadManager.exe
                     else -> null
                 }?.path
             }

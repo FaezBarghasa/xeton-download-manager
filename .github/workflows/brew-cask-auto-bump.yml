@@ -1,4 +1,4 @@
-name: Auto bump ab-download-manager homebrew cask
+name: Auto bump xeton-download-manager homebrew cask
 
 on:
   release:

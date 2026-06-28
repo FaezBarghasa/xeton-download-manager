@@ -1,15 +1,15 @@
-package com.abdownloadmanager.desktop.pages.newQueue
+package com.xetondownloadmanager.desktop.pages.newQueue
 
-import com.abdownloadmanager.desktop.window.custom.WindowTitle
-import com.abdownloadmanager.shared.ui.widget.ActionButton
-import com.abdownloadmanager.shared.ui.widget.MyTextField
+import com.xetondownloadmanager.desktop.window.custom.WindowTitle
+import com.xetondownloadmanager.shared.ui.widget.ActionButton
+import com.xetondownloadmanager.shared.ui.widget.MyTextField
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.unit.dp
-import com.abdownloadmanager.resources.Res
+import com.xetondownloadmanager.resources.Res
 import com.xeton.util.compose.resources.myStringResource
 
 @Composable

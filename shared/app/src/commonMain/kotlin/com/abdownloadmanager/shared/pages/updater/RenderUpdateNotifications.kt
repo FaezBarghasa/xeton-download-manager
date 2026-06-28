@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.pages.updater
+package com.xetondownloadmanager.shared.pages.updater
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -6,10 +6,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.ui.widget.NotificationType
-import com.abdownloadmanager.shared.ui.widget.ShowNotification
-import com.abdownloadmanager.shared.util.mvi.HandleEffects
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.ui.widget.NotificationType
+import com.xetondownloadmanager.shared.ui.widget.ShowNotification
+import com.xetondownloadmanager.shared.util.mvi.HandleEffects
 import com.xeton.util.compose.StringSource
 import com.xeton.util.compose.StringSource.*
 import com.xeton.util.compose.asStringSource

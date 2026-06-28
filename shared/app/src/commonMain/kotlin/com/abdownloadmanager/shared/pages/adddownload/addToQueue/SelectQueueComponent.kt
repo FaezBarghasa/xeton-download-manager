@@ -1,11 +1,11 @@
-package com.abdownloadmanager.shared.pages.adddownload.addToQueue
+package com.xetondownloadmanager.shared.pages.adddownload.addToQueue
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.abdownloadmanager.shared.storage.ISelectQueueStorage
-import com.abdownloadmanager.shared.storage.SelectQueueSettings
-import com.abdownloadmanager.shared.util.BaseComponent
+import com.xetondownloadmanager.shared.storage.ISelectQueueStorage
+import com.xetondownloadmanager.shared.storage.SelectQueueSettings
+import com.xetondownloadmanager.shared.util.BaseComponent
 import com.arkivanov.decompose.ComponentContext
 import com.xeton.downloader.queue.DefaultQueueInfo
 import com.xeton.downloader.queue.QueueManager

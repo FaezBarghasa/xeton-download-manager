@@ -1,4 +1,4 @@
-package com.abdownloadmanager.github
+package com.xetondownloadmanager.github
 
 import com.xeton.util.await
 import kotlinx.serialization.SerialName

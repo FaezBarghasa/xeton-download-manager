@@ -1,11 +1,11 @@
-package com.abdownloadmanager.shared.downloaderinui.http.edit
+package com.xetondownloadmanager.shared.downloaderinui.http.edit
 
-import com.abdownloadmanager.shared.downloaderinui.DownloadSize
-import com.abdownloadmanager.shared.downloaderinui.edit.CanEditDownloadResult
-import com.abdownloadmanager.shared.downloaderinui.edit.CanEditWarnings
-import com.abdownloadmanager.shared.downloaderinui.edit.DownloadConflictDetector
-import com.abdownloadmanager.shared.downloaderinui.edit.EditDownloadChecker
-import com.abdownloadmanager.shared.downloaderinui.http.add.HttpLinkChecker
+import com.xetondownloadmanager.shared.downloaderinui.DownloadSize
+import com.xetondownloadmanager.shared.downloaderinui.edit.CanEditDownloadResult
+import com.xetondownloadmanager.shared.downloaderinui.edit.CanEditWarnings
+import com.xetondownloadmanager.shared.downloaderinui.edit.DownloadConflictDetector
+import com.xetondownloadmanager.shared.downloaderinui.edit.EditDownloadChecker
+import com.xetondownloadmanager.shared.downloaderinui.http.add.HttpLinkChecker
 import com.xeton.downloader.connection.response.HttpResponseInfo
 import com.xeton.downloader.downloaditem.IDownloadItem
 import com.xeton.downloader.downloaditem.http.HttpDownloadCredentials

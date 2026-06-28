@@ -1,6 +1,6 @@
-package com.abdownloadmanager.android.util
+package com.xetondownloadmanager.android.util
 
-import com.abdownloadmanager.shared.ui.theme.ThemeManager
+import com.xetondownloadmanager.shared.ui.theme.ThemeManager
 import com.xeton.util.compose.localizationmanager.LanguageManager
 import com.xeton.util.guardedEntry
 import org.koin.core.component.KoinComponent

@@ -1,4 +1,4 @@
-package com.abdownloadmanager.android.util
+package com.xetondownloadmanager.android.util
 
 import android.annotation.SuppressLint
 import android.app.Notification
@@ -13,16 +13,16 @@ import androidx.compose.runtime.*
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
-import com.abdownloadmanager.android.R
-import com.abdownloadmanager.android.pages.singledownload.SingleDownloadPageActivity
-import com.abdownloadmanager.android.service.KeepAliveServiceReason
-import com.abdownloadmanager.android.storage.AppSettingsStorage
-import com.abdownloadmanager.android.ui.MainActivity
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.util.SizeAndSpeedUnitProvider
-import com.abdownloadmanager.shared.util.TimeNames
-import com.abdownloadmanager.shared.util.convertPositiveSpeedToHumanReadable
-import com.abdownloadmanager.shared.util.convertTimeRemainingToHumanReadable
+import com.xetondownloadmanager.android.R
+import com.xetondownloadmanager.android.pages.singledownload.SingleDownloadPageActivity
+import com.xetondownloadmanager.android.service.KeepAliveServiceReason
+import com.xetondownloadmanager.android.storage.AppSettingsStorage
+import com.xetondownloadmanager.android.ui.MainActivity
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.util.SizeAndSpeedUnitProvider
+import com.xetondownloadmanager.shared.util.TimeNames
+import com.xetondownloadmanager.shared.util.convertPositiveSpeedToHumanReadable
+import com.xetondownloadmanager.shared.util.convertTimeRemainingToHumanReadable
 import com.xeton.downloader.DownloadManagerEvents
 import com.xeton.downloader.DownloadManagerMinimalControl
 import com.xeton.downloader.downloaditem.DownloadJobStatus

@@ -1,12 +1,12 @@
-package com.abdownloadmanager.desktop.pages.confirmexit
+package com.xetondownloadmanager.desktop.pages.confirmexit
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import com.abdownloadmanager.desktop.AppComponent
-import com.abdownloadmanager.desktop.ui.widget.ConfirmDialog
-import com.abdownloadmanager.desktop.ui.widget.ConfirmDialogType
-import com.abdownloadmanager.resources.Res
+import com.xetondownloadmanager.desktop.AppComponent
+import com.xetondownloadmanager.desktop.ui.widget.ConfirmDialog
+import com.xetondownloadmanager.desktop.ui.widget.ConfirmDialogType
+import com.xetondownloadmanager.resources.Res
 import com.xeton.util.compose.asStringSource
 
 @Composable

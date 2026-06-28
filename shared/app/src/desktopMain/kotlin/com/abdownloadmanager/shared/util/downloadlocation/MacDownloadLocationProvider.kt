@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.util.downloadlocation
+package com.xetondownloadmanager.shared.util.downloadlocation
 
 import java.io.File
 

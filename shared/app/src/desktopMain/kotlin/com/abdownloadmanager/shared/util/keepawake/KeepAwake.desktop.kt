@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.util.keepawake
+package com.xetondownloadmanager.shared.util.keepawake
 
 import com.xeton.util.platform.Platform
 import com.xeton.util.platform.asDesktop

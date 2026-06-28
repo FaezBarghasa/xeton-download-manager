@@ -1,4 +1,4 @@
-package com.abdownloadmanager.desktop.window.custom
+package com.xetondownloadmanager.desktop.window.custom
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect

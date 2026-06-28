@@ -1,4 +1,4 @@
-package com.abdownloadmanager.desktop.ui.configurable.comon.renderer
+package com.xetondownloadmanager.desktop.ui.configurable.comon.renderer
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.padding
@@ -11,13 +11,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.abdownloadmanager.desktop.ui.configurable.ConfigTemplate
-import com.abdownloadmanager.shared.ui.configurable.ConfigurableRenderer
-import com.abdownloadmanager.desktop.ui.configurable.TitleAndDescription
-import com.abdownloadmanager.shared.ui.configurable.ConfigurableUiProps
-import com.abdownloadmanager.shared.ui.configurable.isConfigEnabled
-import com.abdownloadmanager.shared.ui.configurable.item.FloatConfigurable
-import com.abdownloadmanager.shared.ui.widget.FloatTextField
+import com.xetondownloadmanager.desktop.ui.configurable.ConfigTemplate
+import com.xetondownloadmanager.shared.ui.configurable.ConfigurableRenderer
+import com.xetondownloadmanager.desktop.ui.configurable.TitleAndDescription
+import com.xetondownloadmanager.shared.ui.configurable.ConfigurableUiProps
+import com.xetondownloadmanager.shared.ui.configurable.isConfigEnabled
+import com.xetondownloadmanager.shared.ui.configurable.item.FloatConfigurable
+import com.xetondownloadmanager.shared.ui.widget.FloatTextField
 
 object FloatConfigurableRenderer : ConfigurableRenderer<FloatConfigurable> {
     @Composable

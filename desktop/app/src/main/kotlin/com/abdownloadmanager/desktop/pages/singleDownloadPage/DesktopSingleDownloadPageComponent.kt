@@ -1,16 +1,16 @@
-package com.abdownloadmanager.desktop.pages.singleDownloadPage
+package com.xetondownloadmanager.desktop.pages.singleDownloadPage
 
 import arrow.optics.copy
-import com.abdownloadmanager.desktop.storage.DesktopExtraDownloadItemSettings
-import com.abdownloadmanager.desktop.storage.PageStatesStorage
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.pagemanager.DownloadErrorDialogManager
-import com.abdownloadmanager.shared.repository.BaseAppRepository
-import com.abdownloadmanager.shared.singledownloadpage.BaseSingleDownloadComponent
-import com.abdownloadmanager.shared.storage.BaseAppSettingsStorage
-import com.abdownloadmanager.shared.storage.ExtraDownloadSettingsStorage
-import com.abdownloadmanager.shared.ui.configurable.item.BooleanConfigurable
-import com.abdownloadmanager.shared.util.*
+import com.xetondownloadmanager.desktop.storage.DesktopExtraDownloadItemSettings
+import com.xetondownloadmanager.desktop.storage.PageStatesStorage
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.pagemanager.DownloadErrorDialogManager
+import com.xetondownloadmanager.shared.repository.BaseAppRepository
+import com.xetondownloadmanager.shared.singledownloadpage.BaseSingleDownloadComponent
+import com.xetondownloadmanager.shared.storage.BaseAppSettingsStorage
+import com.xetondownloadmanager.shared.storage.ExtraDownloadSettingsStorage
+import com.xetondownloadmanager.shared.ui.configurable.item.BooleanConfigurable
+import com.xetondownloadmanager.shared.util.*
 import com.arkivanov.decompose.ComponentContext
 import com.xeton.util.compose.asStringSource
 import com.xeton.util.desktop.poweraction.PowerActionConfig

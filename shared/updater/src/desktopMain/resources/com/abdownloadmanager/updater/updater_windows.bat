@@ -1,6 +1,6 @@
 @echo off
 
-set APP_NAME=ABDownloadManager
+set APP_NAME=XetonDownloadManager
 call :main "%1" "%2"
 goto :eof
 
@@ -25,7 +25,7 @@ if errorlevel 1 (
 :removeCurrentInstallation
 setlocal
     set installationFolder=%~1
-    set filesToRemove=("app" "runtime" "ABDownloadManager.exe" "ABDownloadManager.ico")
+    set filesToRemove=("app" "runtime" "XetonDownloadManager.exe" "XetonDownloadManager.ico")
     for %%f in %filesToRemove% do (
         if exist %installationFolder%\%%f (
             if exist %installationFolder%\%%f\* (

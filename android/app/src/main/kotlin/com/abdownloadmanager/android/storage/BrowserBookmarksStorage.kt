@@ -1,8 +1,8 @@
-package com.abdownloadmanager.android.storage
+package com.xetondownloadmanager.android.storage
 
 import androidx.compose.runtime.Immutable
 import androidx.datastore.core.DataStore
-import com.abdownloadmanager.shared.util.ConfigBaseSettingsByJson
+import com.xetondownloadmanager.shared.util.ConfigBaseSettingsByJson
 import kotlinx.serialization.Serializable
 
 @Serializable

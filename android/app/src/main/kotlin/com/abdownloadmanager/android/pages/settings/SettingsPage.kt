@@ -1,4 +1,4 @@
-package com.abdownloadmanager.android.pages.settings
+package com.xetondownloadmanager.android.pages.settings
 
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.background
@@ -24,17 +24,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import com.abdownloadmanager.android.ui.page.FooterFade
-import com.abdownloadmanager.android.ui.page.PageUi
-import com.abdownloadmanager.android.ui.page.PageHeader
-import com.abdownloadmanager.android.ui.page.PageTitle
-import com.abdownloadmanager.android.ui.page.createAlphaForHeader
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.ui.configurable.RenderConfigurableGroup
-import com.abdownloadmanager.shared.ui.widget.TransparentIconActionButton
-import com.abdownloadmanager.shared.util.ui.VerticalScrollableContent
-import com.abdownloadmanager.shared.util.ui.icon.MyIcons
-import com.abdownloadmanager.shared.util.ui.myColors
+import com.xetondownloadmanager.android.ui.page.FooterFade
+import com.xetondownloadmanager.android.ui.page.PageUi
+import com.xetondownloadmanager.android.ui.page.PageHeader
+import com.xetondownloadmanager.android.ui.page.PageTitle
+import com.xetondownloadmanager.android.ui.page.createAlphaForHeader
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.ui.configurable.RenderConfigurableGroup
+import com.xetondownloadmanager.shared.ui.widget.TransparentIconActionButton
+import com.xetondownloadmanager.shared.util.ui.VerticalScrollableContent
+import com.xetondownloadmanager.shared.util.ui.icon.MyIcons
+import com.xetondownloadmanager.shared.util.ui.myColors
 import com.xeton.util.compose.asStringSource
 import com.xeton.util.compose.resources.myStringResource
 

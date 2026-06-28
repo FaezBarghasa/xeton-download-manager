@@ -1,15 +1,15 @@
-package com.abdownloadmanager.shared.ui
+package com.xetondownloadmanager.shared.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import com.abdownloadmanager.shared.repository.BaseAppRepository
-import com.abdownloadmanager.shared.storage.BaseAppSettingsStorage
-import com.abdownloadmanager.shared.ui.configurable.ConfigurableRendererRegistry
-import com.abdownloadmanager.shared.ui.configurable.LocalConfigurationRendererRegistry
-import com.abdownloadmanager.shared.util.LocalUseRelativeDateTime
-import com.abdownloadmanager.shared.util.ProvideSizeAndSpeedUnit
+import com.xetondownloadmanager.shared.repository.BaseAppRepository
+import com.xetondownloadmanager.shared.storage.BaseAppSettingsStorage
+import com.xetondownloadmanager.shared.ui.configurable.ConfigurableRendererRegistry
+import com.xetondownloadmanager.shared.ui.configurable.LocalConfigurationRendererRegistry
+import com.xetondownloadmanager.shared.util.LocalUseRelativeDateTime
+import com.xetondownloadmanager.shared.util.ProvideSizeAndSpeedUnit
 import com.xeton.util.compose.IIconResolver
 import com.xeton.util.compose.LocalIconFromUriResolver
 

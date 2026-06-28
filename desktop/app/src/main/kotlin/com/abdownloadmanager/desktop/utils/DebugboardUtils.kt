@@ -1,4 +1,4 @@
-package com.abdownloadmanager.desktop.utils
+package com.xetondownloadmanager.desktop.utils
 //
 //import com.xeton.debugboard.core.plugin.watcher.RemoveWatch
 //import kotlinx.coroutines.CoroutineScope

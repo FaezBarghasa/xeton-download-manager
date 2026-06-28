@@ -1,8 +1,8 @@
-package com.abdownloadmanager.android.action
+package com.xetondownloadmanager.android.action
 
-import com.abdownloadmanager.android.util.pagemanager.IBrowserPageManager
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.util.ui.icon.MyIcons
+import com.xetondownloadmanager.android.util.pagemanager.IBrowserPageManager
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.util.ui.icon.MyIcons
 import com.xeton.util.compose.action.AnAction
 import com.xeton.util.compose.action.simpleAction
 import com.xeton.util.compose.asStringSource

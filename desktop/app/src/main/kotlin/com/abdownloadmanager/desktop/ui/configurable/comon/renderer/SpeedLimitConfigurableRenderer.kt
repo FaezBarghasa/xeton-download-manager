@@ -1,4 +1,4 @@
-package com.abdownloadmanager.desktop.ui.configurable.comon.renderer
+package com.xetondownloadmanager.desktop.ui.configurable.comon.renderer
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
@@ -16,17 +16,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.abdownloadmanager.desktop.ui.configurable.ConfigTemplate
-import com.abdownloadmanager.shared.ui.configurable.ConfigurableRenderer
-import com.abdownloadmanager.shared.ui.configurable.RenderSpinner
-import com.abdownloadmanager.desktop.ui.configurable.TitleAndDescription
-import com.abdownloadmanager.shared.ui.configurable.ConfigurableUiProps
-import com.abdownloadmanager.shared.ui.configurable.isConfigEnabled
-import com.abdownloadmanager.shared.ui.configurable.item.SpeedLimitConfigurable
-import com.abdownloadmanager.shared.ui.widget.CheckBox
-import com.abdownloadmanager.shared.ui.widget.DoubleTextField
-import com.abdownloadmanager.shared.ui.widget.Text
-import com.abdownloadmanager.shared.util.LocalSpeedUnit
+import com.xetondownloadmanager.desktop.ui.configurable.ConfigTemplate
+import com.xetondownloadmanager.shared.ui.configurable.ConfigurableRenderer
+import com.xetondownloadmanager.shared.ui.configurable.RenderSpinner
+import com.xetondownloadmanager.desktop.ui.configurable.TitleAndDescription
+import com.xetondownloadmanager.shared.ui.configurable.ConfigurableUiProps
+import com.xetondownloadmanager.shared.ui.configurable.isConfigEnabled
+import com.xetondownloadmanager.shared.ui.configurable.item.SpeedLimitConfigurable
+import com.xetondownloadmanager.shared.ui.widget.CheckBox
+import com.xetondownloadmanager.shared.ui.widget.DoubleTextField
+import com.xetondownloadmanager.shared.ui.widget.Text
+import com.xetondownloadmanager.shared.util.LocalSpeedUnit
 import com.xeton.util.datasize.SizeConverter
 import com.xeton.util.datasize.SizeFactors
 import com.xeton.util.datasize.SizeUnit

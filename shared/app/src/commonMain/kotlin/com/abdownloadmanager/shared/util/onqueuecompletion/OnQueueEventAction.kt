@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.util.onqueuecompletion
+package com.xetondownloadmanager.shared.util.onqueuecompletion
 
 interface OnQueueEventAction {
     suspend fun onQueueCompleted(queueId: Long)

@@ -1,9 +1,9 @@
-package com.abdownloadmanager.desktop.window.custom
+package com.xetondownloadmanager.desktop.window.custom
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.ui.widget.Tooltip
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.ui.widget.Tooltip
 import com.xeton.util.compose.StringSource
 import com.xeton.util.compose.asStringSource
 

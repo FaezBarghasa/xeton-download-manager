@@ -1,7 +1,7 @@
-package com.abdownloadmanager.updateapplier
+package com.xetondownloadmanager.updateapplier
 
-import com.abdownloadmanager.updatechecker.UpdateInfo
-import com.abdownloadmanager.updatechecker.UpdateSource
+import com.xetondownloadmanager.updatechecker.UpdateInfo
+import com.xetondownloadmanager.updatechecker.UpdateSource
 
 abstract class BaseUpdateApplier : UpdateApplier {
     abstract override fun updateSupported(): Boolean

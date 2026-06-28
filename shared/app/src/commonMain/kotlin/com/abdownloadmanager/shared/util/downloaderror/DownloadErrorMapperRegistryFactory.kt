@@ -1,6 +1,6 @@
-package com.abdownloadmanager.shared.util.downloaderror
+package com.xetondownloadmanager.shared.util.downloaderror
 
-import com.abdownloadmanager.shared.util.downloaderror.definederrors.*
+import com.xetondownloadmanager.shared.util.downloaderror.definederrors.*
 
 class DownloadErrorMapperRegistryFactory {
     private fun getAvailableMappers(): List<DownloadErrorMapper> {

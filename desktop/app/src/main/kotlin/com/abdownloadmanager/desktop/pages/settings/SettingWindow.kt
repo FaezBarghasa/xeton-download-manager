@@ -1,14 +1,14 @@
-package com.abdownloadmanager.desktop.pages.settings
+package com.xetondownloadmanager.desktop.pages.settings
 
-import com.abdownloadmanager.desktop.window.custom.CustomWindow
-import com.abdownloadmanager.shared.util.mvi.HandleEffects
+import com.xetondownloadmanager.desktop.window.custom.CustomWindow
+import com.xetondownloadmanager.shared.util.mvi.HandleEffects
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
-import com.abdownloadmanager.shared.settings.BaseSettingsComponent
+import com.xetondownloadmanager.shared.settings.BaseSettingsComponent
 
 @Composable
 fun SettingWindow(

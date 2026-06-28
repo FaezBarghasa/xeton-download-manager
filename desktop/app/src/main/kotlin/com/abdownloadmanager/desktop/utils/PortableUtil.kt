@@ -1,6 +1,6 @@
-package com.abdownloadmanager.desktop.utils
+package com.xetondownloadmanager.desktop.utils
 
-import com.abdownloadmanager.shared.util.SharedConstants
+import com.xetondownloadmanager.shared.util.SharedConstants
 import java.io.File
 
 object PortableUtil {

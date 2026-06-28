@@ -1,4 +1,4 @@
-package com.abdownloadmanager.android.pages.browser
+package com.xetondownloadmanager.android.pages.browser
 
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets

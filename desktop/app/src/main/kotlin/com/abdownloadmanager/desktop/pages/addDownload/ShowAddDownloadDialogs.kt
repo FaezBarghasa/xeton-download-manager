@@ -1,4 +1,4 @@
-package com.abdownloadmanager.desktop.pages.addDownload
+package com.xetondownloadmanager.desktop.pages.addDownload
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -11,18 +11,18 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
-import com.abdownloadmanager.desktop.DesktopAddDownloadDialogManager
-import com.abdownloadmanager.desktop.pages.addDownload.multiple.DesktopAddMultiDownloadComponent
-import com.abdownloadmanager.desktop.pages.addDownload.multiple.AddMultiItemPage
-import com.abdownloadmanager.desktop.pages.addDownload.single.AddDownloadPage
-import com.abdownloadmanager.shared.pages.adddownload.single.BaseAddSingleDownloadComponent
-import com.abdownloadmanager.desktop.window.custom.CustomWindow
-import com.abdownloadmanager.desktop.window.custom.WindowIcon
-import com.abdownloadmanager.desktop.window.custom.WindowTitle
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.pages.adddownload.AddDownloadComponent
-import com.abdownloadmanager.shared.util.ui.icon.MyIcons
-import com.abdownloadmanager.shared.util.ui.theme.LocalUiScale
+import com.xetondownloadmanager.desktop.DesktopAddDownloadDialogManager
+import com.xetondownloadmanager.desktop.pages.addDownload.multiple.DesktopAddMultiDownloadComponent
+import com.xetondownloadmanager.desktop.pages.addDownload.multiple.AddMultiItemPage
+import com.xetondownloadmanager.desktop.pages.addDownload.single.AddDownloadPage
+import com.xetondownloadmanager.shared.pages.adddownload.single.BaseAddSingleDownloadComponent
+import com.xetondownloadmanager.desktop.window.custom.CustomWindow
+import com.xetondownloadmanager.desktop.window.custom.WindowIcon
+import com.xetondownloadmanager.desktop.window.custom.WindowTitle
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.pages.adddownload.AddDownloadComponent
+import com.xetondownloadmanager.shared.util.ui.icon.MyIcons
+import com.xetondownloadmanager.shared.util.ui.theme.LocalUiScale
 import com.xeton.util.compose.resources.myStringResource
 import com.xeton.util.desktop.PlatformAppActivator
 import com.xeton.util.desktop.screen.applyUiScale

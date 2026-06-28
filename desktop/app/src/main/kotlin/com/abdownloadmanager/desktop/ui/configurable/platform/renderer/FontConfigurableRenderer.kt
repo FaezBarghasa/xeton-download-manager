@@ -1,4 +1,4 @@
-package com.abdownloadmanager.desktop.ui.configurable.platform.renderer
+package com.xetondownloadmanager.desktop.ui.configurable.platform.renderer
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -10,15 +10,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
-import com.abdownloadmanager.desktop.ui.configurable.platform.item.FontConfigurable
-import com.abdownloadmanager.desktop.ui.configurable.ConfigTemplate
-import com.abdownloadmanager.shared.ui.configurable.ConfigurableRenderer
-import com.abdownloadmanager.shared.ui.configurable.RenderSpinner
-import com.abdownloadmanager.desktop.ui.configurable.TitleAndDescription
-import com.abdownloadmanager.shared.ui.configurable.ConfigurableUiProps
-import com.abdownloadmanager.shared.ui.configurable.isConfigEnabled
-import com.abdownloadmanager.shared.ui.widget.Text
-import com.abdownloadmanager.shared.util.ui.theme.myTextSizes
+import com.xetondownloadmanager.desktop.ui.configurable.platform.item.FontConfigurable
+import com.xetondownloadmanager.desktop.ui.configurable.ConfigTemplate
+import com.xetondownloadmanager.shared.ui.configurable.ConfigurableRenderer
+import com.xetondownloadmanager.shared.ui.configurable.RenderSpinner
+import com.xetondownloadmanager.desktop.ui.configurable.TitleAndDescription
+import com.xetondownloadmanager.shared.ui.configurable.ConfigurableUiProps
+import com.xetondownloadmanager.shared.ui.configurable.isConfigEnabled
+import com.xetondownloadmanager.shared.ui.widget.Text
+import com.xetondownloadmanager.shared.util.ui.theme.myTextSizes
 import com.xeton.util.ifThen
 
 object FontConfigurableRenderer : ConfigurableRenderer<FontConfigurable> {

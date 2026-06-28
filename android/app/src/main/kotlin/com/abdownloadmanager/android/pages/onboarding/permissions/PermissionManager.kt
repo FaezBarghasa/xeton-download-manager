@@ -1,4 +1,4 @@
-package com.abdownloadmanager.android.pages.onboarding.permissions
+package com.xetondownloadmanager.android.pages.onboarding.permissions
 
 import android.content.Context
 import android.content.pm.PackageManager

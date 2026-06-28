@@ -1,14 +1,14 @@
-package com.abdownloadmanager.shared.pages.updater
+package com.xetondownloadmanager.shared.pages.updater
 
-import com.abdownloadmanager.UpdateCheckStatus
-import com.abdownloadmanager.shared.util.AppVersion
-import com.abdownloadmanager.shared.util.BaseComponent
-import com.abdownloadmanager.UpdateManager
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.pagemanager.NotificationSender
-import com.abdownloadmanager.shared.ui.widget.MessageDialogType
-import com.abdownloadmanager.shared.util.mvi.ContainsEffects
-import com.abdownloadmanager.shared.util.mvi.supportEffects
+import com.xetondownloadmanager.UpdateCheckStatus
+import com.xetondownloadmanager.shared.util.AppVersion
+import com.xetondownloadmanager.shared.util.BaseComponent
+import com.xetondownloadmanager.UpdateManager
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.pagemanager.NotificationSender
+import com.xetondownloadmanager.shared.ui.widget.MessageDialogType
+import com.xetondownloadmanager.shared.util.mvi.ContainsEffects
+import com.xetondownloadmanager.shared.util.mvi.supportEffects
 import com.arkivanov.decompose.ComponentContext
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow

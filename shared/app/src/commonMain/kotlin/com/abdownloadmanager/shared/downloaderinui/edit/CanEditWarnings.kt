@@ -1,7 +1,7 @@
-package com.abdownloadmanager.shared.downloaderinui.edit
+package com.xetondownloadmanager.shared.downloaderinui.edit
 
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.util.convertDurationToHumanReadable
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.util.convertDurationToHumanReadable
 import com.xeton.util.compose.StringSource
 import com.xeton.util.compose.asStringSource
 import com.xeton.util.compose.asStringSourceWithARgs

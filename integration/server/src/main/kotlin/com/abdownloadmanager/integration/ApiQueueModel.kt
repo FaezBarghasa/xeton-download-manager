@@ -1,4 +1,4 @@
-package com.abdownloadmanager.integration
+package com.xetondownloadmanager.integration
 
 import kotlinx.serialization.Serializable
 

@@ -1,8 +1,8 @@
-package com.abdownloadmanager.android.pages.home.sections.sort
+package com.xetondownloadmanager.android.pages.home.sections.sort
 
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.ui.widget.sort.ComparatorProvider
-import com.abdownloadmanager.shared.util.ui.icon.MyIcons
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.ui.widget.sort.ComparatorProvider
+import com.xetondownloadmanager.shared.util.ui.icon.MyIcons
 import com.xeton.downloader.monitor.IDownloadItemState
 import com.xeton.downloader.monitor.statusOrFinished
 import com.xeton.util.compose.IconSource

@@ -34,7 +34,7 @@ fun Project.getAppDataDirName(): String {
 }
 
 fun Project.getApplicationPackageName(): String {
-    return "com.abdownloadmanager"
+    return "com.xetondownloadmanager"
 }
 
 private fun guessTargetFormatBasedOnCurrentOs()= when (Platform.getCurrentPlatform()) {

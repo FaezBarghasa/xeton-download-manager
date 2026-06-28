@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.util.onqueuecompletion
+package com.xetondownloadmanager.shared.util.onqueuecompletion
 
 import com.xeton.downloader.queue.QueueEvent
 import com.xeton.downloader.queue.QueueManager

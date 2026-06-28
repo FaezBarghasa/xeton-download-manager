@@ -1,8 +1,8 @@
-package com.abdownloadmanager.android.pages.browser
+package com.xetondownloadmanager.android.pages.browser
 
 import android.webkit.CookieManager
-import com.abdownloadmanager.android.ui.widget.WebViewState
-import com.abdownloadmanager.shared.pages.adddownload.AddDownloadCredentialsInUiProps
+import com.xetondownloadmanager.android.ui.widget.WebViewState
+import com.xetondownloadmanager.shared.pages.adddownload.AddDownloadCredentialsInUiProps
 import com.xeton.downloader.downloaditem.http.HttpDownloadCredentials
 import com.xeton.util.HttpUrlUtils
 import kotlinx.coroutines.CoroutineScope

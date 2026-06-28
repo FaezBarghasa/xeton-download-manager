@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.pagemanager
+package com.xetondownloadmanager.shared.pagemanager
 
 interface CategoryDialogManager {
     fun openCategoryDialog(categoryId: Long)

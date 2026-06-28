@@ -1,10 +1,10 @@
-package com.abdownloadmanager.shared.pages.category
+package com.xetondownloadmanager.shared.pages.category
 
-import com.abdownloadmanager.shared.repository.BaseAppRepository
-import com.abdownloadmanager.shared.util.BaseComponent
-import com.abdownloadmanager.shared.util.category.Category
-import com.abdownloadmanager.shared.util.category.CategoryManager
-import com.abdownloadmanager.shared.util.category.iconSource
+import com.xetondownloadmanager.shared.repository.BaseAppRepository
+import com.xetondownloadmanager.shared.util.BaseComponent
+import com.xetondownloadmanager.shared.util.category.Category
+import com.xetondownloadmanager.shared.util.category.CategoryManager
+import com.xetondownloadmanager.shared.util.category.iconSource
 import com.arkivanov.decompose.ComponentContext
 import com.xeton.util.compose.IIconResolver
 import com.xeton.util.compose.IconSource

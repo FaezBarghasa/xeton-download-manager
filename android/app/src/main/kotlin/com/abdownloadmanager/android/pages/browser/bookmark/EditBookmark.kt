@@ -1,4 +1,4 @@
-package com.abdownloadmanager.android.pages.browser.bookmark
+package com.xetondownloadmanager.android.pages.browser.bookmark
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -17,11 +17,11 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import com.abdownloadmanager.android.storage.BrowserBookmark
-import com.abdownloadmanager.android.ui.configurable.SheetInput
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.ui.widget.MyTextField
-import com.abdownloadmanager.shared.util.ui.theme.mySpacings
+import com.xetondownloadmanager.android.storage.BrowserBookmark
+import com.xetondownloadmanager.android.ui.configurable.SheetInput
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.ui.widget.MyTextField
+import com.xetondownloadmanager.shared.util.ui.theme.mySpacings
 import com.xeton.util.compose.asStringSource
 import com.xeton.util.compose.resources.myStringResource
 

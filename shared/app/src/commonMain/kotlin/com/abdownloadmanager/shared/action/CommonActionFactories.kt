@@ -1,15 +1,15 @@
-package com.abdownloadmanager.shared.action
+package com.xetondownloadmanager.shared.action
 
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.pagemanager.*
-import com.abdownloadmanager.shared.pages.adddownload.AddDownloadCredentialsInUiProps
-import com.abdownloadmanager.shared.pages.updater.UpdateComponent
-import com.abdownloadmanager.shared.util.ClipboardUtil
-import com.abdownloadmanager.shared.util.DownloadSystem
-import com.abdownloadmanager.shared.util.SharedConstants
-import com.abdownloadmanager.shared.util.category.Category
-import com.abdownloadmanager.shared.util.extractors.linkextractor.DefaultDownloadCredentialsExtractor
-import com.abdownloadmanager.shared.util.ui.icon.MyIcons
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.pagemanager.*
+import com.xetondownloadmanager.shared.pages.adddownload.AddDownloadCredentialsInUiProps
+import com.xetondownloadmanager.shared.pages.updater.UpdateComponent
+import com.xetondownloadmanager.shared.util.ClipboardUtil
+import com.xetondownloadmanager.shared.util.DownloadSystem
+import com.xetondownloadmanager.shared.util.SharedConstants
+import com.xetondownloadmanager.shared.util.category.Category
+import com.xetondownloadmanager.shared.util.extractors.linkextractor.DefaultDownloadCredentialsExtractor
+import com.xetondownloadmanager.shared.util.ui.icon.MyIcons
 import com.xeton.downloader.queue.DownloadQueue
 import com.xeton.downloader.queue.QueueManager
 import com.xeton.downloader.queue.inactiveQueuesFlow

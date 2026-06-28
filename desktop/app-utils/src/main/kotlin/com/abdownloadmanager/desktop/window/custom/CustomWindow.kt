@@ -1,6 +1,6 @@
-package com.abdownloadmanager.desktop.window.custom
+package com.xetondownloadmanager.desktop.window.custom
 
-import com.abdownloadmanager.shared.util.ui.WithContentColor
+import com.xetondownloadmanager.shared.util.ui.WithContentColor
 import com.xeton.util.compose.IconSource
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -30,19 +30,19 @@ import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowState
-import com.abdownloadmanager.desktop.window.custom.titlebar.TitleBar
-import com.abdownloadmanager.shared.util.PopUpContainer
-import com.abdownloadmanager.shared.util.ResponsiveBox
-import com.abdownloadmanager.shared.util.ui.WithTitleBarDirection
-import com.abdownloadmanager.shared.util.ui.icon.MyIcons
-import com.abdownloadmanager.shared.util.ui.myColors
-import com.abdownloadmanager.shared.util.ui.theme.LocalUiScale
-import com.abdownloadmanager.shared.util.ui.theme.UiScaledContent
+import com.xetondownloadmanager.desktop.window.custom.titlebar.TitleBar
+import com.xetondownloadmanager.shared.util.PopUpContainer
+import com.xetondownloadmanager.shared.util.ResponsiveBox
+import com.xetondownloadmanager.shared.util.ui.WithTitleBarDirection
+import com.xetondownloadmanager.shared.util.ui.icon.MyIcons
+import com.xetondownloadmanager.shared.util.ui.myColors
+import com.xetondownloadmanager.shared.util.ui.theme.LocalUiScale
+import com.xetondownloadmanager.shared.util.ui.theme.UiScaledContent
 import com.jetbrains.JBR
 import com.jetbrains.WindowDecorations
 import com.jetbrains.WindowMove
 import com.xeton.util.desktop.LocalFrameWindowScope
-import com.abdownloadmanager.shared.ui.util.LocalWindow
+import com.xetondownloadmanager.shared.ui.util.LocalWindow
 import com.xeton.util.desktop.screen.applyUiScale
 import com.xeton.util.ifThen
 import kotlinx.coroutines.Dispatchers

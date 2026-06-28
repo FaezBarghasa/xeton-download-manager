@@ -1,10 +1,10 @@
-package com.abdownloadmanager.shared.downloaderinui
+package com.xetondownloadmanager.shared.downloaderinui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import com.abdownloadmanager.shared.util.LocalSizeUnit
-import com.abdownloadmanager.shared.util.convertDurationToHumanReadable
-import com.abdownloadmanager.shared.util.convertPositiveSizeToHumanReadable
+import com.xetondownloadmanager.shared.util.LocalSizeUnit
+import com.xetondownloadmanager.shared.util.convertDurationToHumanReadable
+import com.xetondownloadmanager.shared.util.convertPositiveSizeToHumanReadable
 import com.xeton.util.compose.StringSource
 import com.xeton.util.datasize.ConvertSizeConfig
 

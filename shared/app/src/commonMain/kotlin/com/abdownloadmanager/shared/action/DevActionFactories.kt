@@ -1,8 +1,8 @@
-package com.abdownloadmanager.shared.action
+package com.xetondownloadmanager.shared.action
 
-import com.abdownloadmanager.shared.pagemanager.NotificationSender
-import com.abdownloadmanager.shared.ui.widget.MessageDialogType
-import com.abdownloadmanager.shared.util.ui.icon.MyIcons
+import com.xetondownloadmanager.shared.pagemanager.NotificationSender
+import com.xetondownloadmanager.shared.ui.widget.MessageDialogType
+import com.xetondownloadmanager.shared.util.ui.icon.MyIcons
 import com.xeton.util.compose.action.AnAction
 import com.xeton.util.compose.action.MenuItem
 import com.xeton.util.compose.action.simpleAction

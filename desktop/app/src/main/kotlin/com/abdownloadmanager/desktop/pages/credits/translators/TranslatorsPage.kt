@@ -1,4 +1,4 @@
-package com.abdownloadmanager.desktop.pages.credits.translators
+package com.xetondownloadmanager.desktop.pages.credits.translators
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -12,22 +12,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.abdownloadmanager.desktop.di.Di
-import com.abdownloadmanager.shared.ui.widget.MaybeLinkText
-import com.abdownloadmanager.shared.util.ui.myColors
-import com.abdownloadmanager.shared.util.ui.theme.myTextSizes
-import com.abdownloadmanager.shared.ui.widget.Text
-import com.abdownloadmanager.shared.ui.widget.table.customtable.Table
-import com.abdownloadmanager.shared.ui.widget.table.customtable.TableState
-import com.abdownloadmanager.shared.ui.widget.table.customtable.styled.MyStyledTableHeader
-import com.abdownloadmanager.desktop.utils.AppInfo
-import com.abdownloadmanager.shared.util.div
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.pages.credits.translators.LanguageTranslationInfo
-import com.abdownloadmanager.shared.pages.credits.translators.TranslatorData
-import com.abdownloadmanager.shared.ui.widget.PrimaryMainActionButton
-import com.abdownloadmanager.shared.util.ui.LocalContentColor
-import com.abdownloadmanager.shared.util.ui.WithContentAlpha
+import com.xetondownloadmanager.desktop.di.Di
+import com.xetondownloadmanager.shared.ui.widget.MaybeLinkText
+import com.xetondownloadmanager.shared.util.ui.myColors
+import com.xetondownloadmanager.shared.util.ui.theme.myTextSizes
+import com.xetondownloadmanager.shared.ui.widget.Text
+import com.xetondownloadmanager.shared.ui.widget.table.customtable.Table
+import com.xetondownloadmanager.shared.ui.widget.table.customtable.TableState
+import com.xetondownloadmanager.shared.ui.widget.table.customtable.styled.MyStyledTableHeader
+import com.xetondownloadmanager.desktop.utils.AppInfo
+import com.xetondownloadmanager.shared.util.div
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.pages.credits.translators.LanguageTranslationInfo
+import com.xetondownloadmanager.shared.pages.credits.translators.TranslatorData
+import com.xetondownloadmanager.shared.ui.widget.PrimaryMainActionButton
+import com.xetondownloadmanager.shared.util.ui.LocalContentColor
+import com.xetondownloadmanager.shared.util.ui.WithContentAlpha
 import com.xeton.util.URLOpener
 import com.xeton.util.compose.localizationmanager.LanguageNameProvider
 import com.xeton.util.compose.localizationmanager.MyLocale
@@ -229,7 +229,7 @@ private fun rememberLanguageTranslationInfo(): List<LanguageTranslationInfo> {
     return remember {
         val json = Di.get<Json>()
         val translatorData = FileSystem.RESOURCES.read(
-            "/com/abdownloadmanager/resources/credits/translators.json".toPath(),
+            "/com/xetondownloadmanager/resources/credits/translators.json".toPath(),
             {
                 readUtf8()
             }

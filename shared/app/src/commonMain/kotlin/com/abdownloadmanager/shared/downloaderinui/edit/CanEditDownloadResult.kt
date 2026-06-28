@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.downloaderinui.edit
+package com.xetondownloadmanager.shared.downloaderinui.edit
 
 sealed interface CanEditDownloadResult {
     data object FileNameAlreadyExists : CanEditDownloadResult

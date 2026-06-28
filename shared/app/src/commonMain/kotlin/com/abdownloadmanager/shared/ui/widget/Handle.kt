@@ -1,7 +1,7 @@
-package com.abdownloadmanager.shared.ui.widget
+package com.xetondownloadmanager.shared.ui.widget
 
-import com.abdownloadmanager.shared.util.ui.myColors
-import com.abdownloadmanager.shared.util.div
+import com.xetondownloadmanager.shared.util.ui.myColors
+import com.xetondownloadmanager.shared.util.div
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
@@ -24,8 +24,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
-import com.abdownloadmanager.shared.ui.modifier.MyPointerHoverIcon
-import com.abdownloadmanager.shared.ui.modifier.myPointerHoverIcon
+import com.xetondownloadmanager.shared.ui.modifier.MyPointerHoverIcon
+import com.xetondownloadmanager.shared.ui.modifier.myPointerHoverIcon
 
 @Composable
 fun Handle(

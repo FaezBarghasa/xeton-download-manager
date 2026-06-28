@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.util.category
+package com.xetondownloadmanager.shared.util.category
 
 class InMemoryCategoryStorage : CategoryStorage {
     private var categories = emptyList<Category>()

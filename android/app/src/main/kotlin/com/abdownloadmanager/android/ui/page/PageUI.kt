@@ -1,4 +1,4 @@
-package com.abdownloadmanager.android.ui.page
+package com.xetondownloadmanager.android.ui.page
 
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Box
@@ -28,11 +28,11 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontWeight
-import com.abdownloadmanager.shared.ui.widget.Text
-import com.abdownloadmanager.shared.util.div
-import com.abdownloadmanager.shared.util.ui.LocalContentColor
-import com.abdownloadmanager.shared.util.ui.theme.mySpacings
-import com.abdownloadmanager.shared.util.ui.theme.myTextSizes
+import com.xetondownloadmanager.shared.ui.widget.Text
+import com.xetondownloadmanager.shared.util.div
+import com.xetondownloadmanager.shared.util.ui.LocalContentColor
+import com.xetondownloadmanager.shared.util.ui.theme.mySpacings
+import com.xetondownloadmanager.shared.util.ui.theme.myTextSizes
 import com.xeton.util.compose.pxToDp
 
 @Immutable

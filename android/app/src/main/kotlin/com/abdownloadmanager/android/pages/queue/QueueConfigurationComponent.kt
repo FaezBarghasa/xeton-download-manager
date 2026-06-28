@@ -1,14 +1,14 @@
-package com.abdownloadmanager.android.pages.queue
+package com.xetondownloadmanager.android.pages.queue
 
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.ui.configurable.ConfigurableGroup
-import com.abdownloadmanager.shared.ui.configurable.item.BooleanConfigurable
-import com.abdownloadmanager.shared.ui.configurable.item.DayOfWeekConfigurable
-import com.abdownloadmanager.shared.ui.configurable.item.IntConfigurable
-import com.abdownloadmanager.shared.ui.configurable.item.StringConfigurable
-import com.abdownloadmanager.shared.ui.configurable.item.TimeConfigurable
-import com.abdownloadmanager.shared.util.BaseComponent
-import com.abdownloadmanager.shared.util.newScopeBasedOn
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.ui.configurable.ConfigurableGroup
+import com.xetondownloadmanager.shared.ui.configurable.item.BooleanConfigurable
+import com.xetondownloadmanager.shared.ui.configurable.item.DayOfWeekConfigurable
+import com.xetondownloadmanager.shared.ui.configurable.item.IntConfigurable
+import com.xetondownloadmanager.shared.ui.configurable.item.StringConfigurable
+import com.xetondownloadmanager.shared.ui.configurable.item.TimeConfigurable
+import com.xetondownloadmanager.shared.util.BaseComponent
+import com.xetondownloadmanager.shared.util.newScopeBasedOn
 import com.arkivanov.decompose.ComponentContext
 import com.xeton.downloader.queue.DownloadQueue
 import com.xeton.downloader.queue.QueueManager

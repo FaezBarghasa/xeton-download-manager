@@ -1,4 +1,4 @@
-package com.abdownloadmanager.resources.icons
+package com.xetondownloadmanager.resources.icons
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush

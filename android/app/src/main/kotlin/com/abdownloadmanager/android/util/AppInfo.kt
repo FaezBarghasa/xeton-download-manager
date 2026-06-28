@@ -1,9 +1,9 @@
-package com.abdownloadmanager.android.util
+package com.xetondownloadmanager.android.util
 
 import android.app.Application
-import com.abdownloadmanager.android.BuildConfig
-import com.abdownloadmanager.shared.util.AppVersion
-import com.abdownloadmanager.shared.util.SharedConstants
+import com.xetondownloadmanager.android.BuildConfig
+import com.xetondownloadmanager.shared.util.AppVersion
+import com.xetondownloadmanager.shared.util.SharedConstants
 import com.xeton.util.platform.Platform
 import okio.Path.Companion.toOkioPath
 

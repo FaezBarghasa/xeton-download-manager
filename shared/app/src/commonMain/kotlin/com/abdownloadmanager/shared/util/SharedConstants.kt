@@ -1,9 +1,9 @@
-package com.abdownloadmanager.shared.util
+package com.xetondownloadmanager.shared.util
 
-import com.abdownloadmanager.shared.BuildConfig
-import com.abdownloadmanager.shared.util.BaseConstants
-import com.abdownloadmanager.shared.util.BrowserIntegrationModel
-import com.abdownloadmanager.shared.util.BrowserType
+import com.xetondownloadmanager.shared.BuildConfig
+import com.xetondownloadmanager.shared.util.BaseConstants
+import com.xetondownloadmanager.shared.util.BrowserIntegrationModel
+import com.xetondownloadmanager.shared.util.BrowserType
 
 object SharedConstants : BaseConstants {
     override val appName: String = BuildConfig.APP_NAME

@@ -1,4 +1,4 @@
-package com.abdownloadmanager.desktop.pages.enterurl
+package com.xetondownloadmanager.desktop.pages.enterurl
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -30,22 +30,22 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.rememberDialogState
-import com.abdownloadmanager.shared.ui.widget.MyTextFieldWithIcons
-import com.abdownloadmanager.shared.ui.widget.MyTextFieldIcon
-import com.abdownloadmanager.shared.util.ClipboardUtil
-import com.abdownloadmanager.desktop.window.custom.BaseOptionDialog
-import com.abdownloadmanager.desktop.window.moveSafe
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.downloaderinui.TADownloaderInUI
-import com.abdownloadmanager.shared.pages.enterurl.DownloaderSelection
-import com.abdownloadmanager.shared.ui.widget.ActionButton
-import com.abdownloadmanager.shared.ui.widget.Text
-import com.abdownloadmanager.shared.util.div
-import com.abdownloadmanager.shared.util.ui.WithContentColor
-import com.abdownloadmanager.shared.util.ui.icon.MyIcons
-import com.abdownloadmanager.shared.util.ui.myColors
-import com.abdownloadmanager.shared.util.ui.theme.myShapes
-import com.abdownloadmanager.shared.util.ui.widget.MyIcon
+import com.xetondownloadmanager.shared.ui.widget.MyTextFieldWithIcons
+import com.xetondownloadmanager.shared.ui.widget.MyTextFieldIcon
+import com.xetondownloadmanager.shared.util.ClipboardUtil
+import com.xetondownloadmanager.desktop.window.custom.BaseOptionDialog
+import com.xetondownloadmanager.desktop.window.moveSafe
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.downloaderinui.TADownloaderInUI
+import com.xetondownloadmanager.shared.pages.enterurl.DownloaderSelection
+import com.xetondownloadmanager.shared.ui.widget.ActionButton
+import com.xetondownloadmanager.shared.ui.widget.Text
+import com.xetondownloadmanager.shared.util.div
+import com.xetondownloadmanager.shared.util.ui.WithContentColor
+import com.xetondownloadmanager.shared.util.ui.icon.MyIcons
+import com.xetondownloadmanager.shared.util.ui.myColors
+import com.xetondownloadmanager.shared.util.ui.theme.myShapes
+import com.xetondownloadmanager.shared.util.ui.widget.MyIcon
 import com.xeton.util.compose.resources.myStringResource
 import java.awt.MouseInfo
 

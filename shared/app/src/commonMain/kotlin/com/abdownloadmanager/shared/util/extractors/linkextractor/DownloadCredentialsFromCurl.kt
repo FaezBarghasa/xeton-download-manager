@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.util.extractors.linkextractor
+package com.xetondownloadmanager.shared.util.extractors.linkextractor
 
 import com.xeton.downloader.downloaditem.http.HttpDownloadCredentials
 

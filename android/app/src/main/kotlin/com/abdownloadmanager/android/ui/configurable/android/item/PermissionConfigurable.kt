@@ -1,7 +1,7 @@
-package com.abdownloadmanager.android.ui.configurable.android.item
+package com.xetondownloadmanager.android.ui.configurable.android.item
 
-import com.abdownloadmanager.android.pages.onboarding.permissions.AppPermission
-import com.abdownloadmanager.shared.ui.configurable.Configurable
+import com.xetondownloadmanager.android.pages.onboarding.permissions.AppPermission
+import com.xetondownloadmanager.shared.ui.configurable.Configurable
 import com.xeton.util.compose.StringSource
 import com.xeton.util.compose.asStringSource
 import kotlinx.coroutines.flow.MutableStateFlow

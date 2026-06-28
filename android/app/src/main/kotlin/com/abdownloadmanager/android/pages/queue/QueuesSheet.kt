@@ -1,4 +1,4 @@
-package com.abdownloadmanager.android.pages.queue
+package com.xetondownloadmanager.android.pages.queue
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -9,16 +9,16 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.abdownloadmanager.android.ui.SheetHeader
-import com.abdownloadmanager.android.ui.SheetTitle
-import com.abdownloadmanager.android.ui.SheetUI
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.ui.configurable.ConfigurableGroup
-import com.abdownloadmanager.shared.ui.configurable.RenderConfigurableGroup
-import com.abdownloadmanager.shared.util.OnFullyDismissed
-import com.abdownloadmanager.shared.util.ResponsiveDialog
-import com.abdownloadmanager.shared.util.ResponsiveDialogScope
-import com.abdownloadmanager.shared.util.rememberResponsiveDialogState
+import com.xetondownloadmanager.android.ui.SheetHeader
+import com.xetondownloadmanager.android.ui.SheetTitle
+import com.xetondownloadmanager.android.ui.SheetUI
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.ui.configurable.ConfigurableGroup
+import com.xetondownloadmanager.shared.ui.configurable.RenderConfigurableGroup
+import com.xetondownloadmanager.shared.util.OnFullyDismissed
+import com.xetondownloadmanager.shared.util.ResponsiveDialog
+import com.xetondownloadmanager.shared.util.ResponsiveDialogScope
+import com.xetondownloadmanager.shared.util.rememberResponsiveDialogState
 import com.xeton.util.compose.resources.myStringResource
 
 @Composable

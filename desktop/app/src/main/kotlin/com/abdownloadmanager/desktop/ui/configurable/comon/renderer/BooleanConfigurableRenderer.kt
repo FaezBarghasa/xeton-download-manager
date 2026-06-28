@@ -1,16 +1,16 @@
-package com.abdownloadmanager.desktop.ui.configurable.comon.renderer
+package com.xetondownloadmanager.desktop.ui.configurable.comon.renderer
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import com.abdownloadmanager.desktop.ui.configurable.ConfigTemplate
-import com.abdownloadmanager.shared.ui.configurable.ConfigurableRenderer
-import com.abdownloadmanager.desktop.ui.configurable.TitleAndDescription
-import com.abdownloadmanager.shared.ui.configurable.ConfigurableUiProps
-import com.abdownloadmanager.shared.ui.configurable.isConfigEnabled
-import com.abdownloadmanager.shared.ui.configurable.item.BooleanConfigurable
-import com.abdownloadmanager.shared.ui.widget.CheckBox
-import com.abdownloadmanager.shared.ui.widget.Switch
+import com.xetondownloadmanager.desktop.ui.configurable.ConfigTemplate
+import com.xetondownloadmanager.shared.ui.configurable.ConfigurableRenderer
+import com.xetondownloadmanager.desktop.ui.configurable.TitleAndDescription
+import com.xetondownloadmanager.shared.ui.configurable.ConfigurableUiProps
+import com.xetondownloadmanager.shared.ui.configurable.isConfigEnabled
+import com.xetondownloadmanager.shared.ui.configurable.item.BooleanConfigurable
+import com.xetondownloadmanager.shared.ui.widget.CheckBox
+import com.xetondownloadmanager.shared.ui.widget.Switch
 
 object BooleanConfigurableRenderer : ConfigurableRenderer<BooleanConfigurable> {
     @Composable

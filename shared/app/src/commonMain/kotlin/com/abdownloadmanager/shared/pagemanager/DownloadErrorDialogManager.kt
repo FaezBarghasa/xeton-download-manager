@@ -1,6 +1,6 @@
-package com.abdownloadmanager.shared.pagemanager
+package com.xetondownloadmanager.shared.pagemanager
 
-import com.abdownloadmanager.shared.util.downloaderror.DownloadErrorReason
+import com.xetondownloadmanager.shared.util.downloaderror.DownloadErrorReason
 import com.xeton.downloader.downloaditem.IDownloadItem
 
 interface DownloadErrorDialogManager {

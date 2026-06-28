@@ -1,4 +1,4 @@
-package com.abdownloadmanager.desktop.pages.category
+package com.xetondownloadmanager.desktop.pages.category
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -8,9 +8,9 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
-import com.abdownloadmanager.desktop.window.custom.CustomWindow
-import com.abdownloadmanager.shared.pages.category.CategoryComponent
-import com.abdownloadmanager.shared.util.ui.theme.LocalUiScale
+import com.xetondownloadmanager.desktop.window.custom.CustomWindow
+import com.xetondownloadmanager.shared.pages.category.CategoryComponent
+import com.xetondownloadmanager.shared.util.ui.theme.LocalUiScale
 import com.xeton.util.desktop.screen.applyUiScale
 
 @Composable

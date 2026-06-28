@@ -1,12 +1,12 @@
-package com.abdownloadmanager.android.service
+package com.xetondownloadmanager.android.service
 
 import android.app.Service
 import android.content.Intent
 import android.util.Log
 import androidx.core.app.ServiceCompat
-import com.abdownloadmanager.android.util.ABDMServiceNotificationManager
-import com.abdownloadmanager.android.util.AndroidConstants
-import com.abdownloadmanager.android.util.AndroidUi
+import com.xetondownloadmanager.android.util.ABDMServiceNotificationManager
+import com.xetondownloadmanager.android.util.AndroidConstants
+import com.xetondownloadmanager.android.util.AndroidUi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first

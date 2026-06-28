@@ -1,4 +1,4 @@
-package com.abdownloadmanager.desktop.window.custom.titlebar
+package com.xetondownloadmanager.desktop.window.custom.titlebar
 
 interface SystemButtonPositionProvider {
     fun getPositions(): SystemButtonsPosition?

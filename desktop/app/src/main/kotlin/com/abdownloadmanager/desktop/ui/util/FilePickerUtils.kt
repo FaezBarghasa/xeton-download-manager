@@ -1,7 +1,7 @@
-package com.abdownloadmanager.desktop.ui.util
+package com.xetondownloadmanager.desktop.ui.util
 
 import androidx.compose.runtime.Composable
-import com.abdownloadmanager.shared.ui.util.LocalWindow
+import com.xetondownloadmanager.shared.ui.util.LocalWindow
 import io.github.vinceglb.filekit.compose.PickerResultLauncher
 import io.github.vinceglb.filekit.compose.rememberDirectoryPickerLauncher
 import io.github.vinceglb.filekit.compose.rememberFilePickerLauncher

@@ -1,8 +1,8 @@
-package com.abdownloadmanager.desktop
+package com.xetondownloadmanager.desktop
 
-import com.abdownloadmanager.desktop.utils.IntegrationPortBroadcaster
-import com.abdownloadmanager.desktop.utils.singleInstance.Command
-import com.abdownloadmanager.desktop.utils.singleInstance.MutableSingleInstanceServerHandler
+import com.xetondownloadmanager.desktop.utils.IntegrationPortBroadcaster
+import com.xetondownloadmanager.desktop.utils.singleInstance.Command
+import com.xetondownloadmanager.desktop.utils.singleInstance.MutableSingleInstanceServerHandler
 import kotlinx.coroutines.runBlocking
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject

@@ -1,4 +1,4 @@
-package com.abdownloadmanager.android.ui.configurable
+package com.xetondownloadmanager.android.ui.configurable
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
@@ -26,14 +26,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.abdownloadmanager.shared.ui.configurable.Configurable
-import com.abdownloadmanager.shared.ui.configurable.Help
-import com.abdownloadmanager.shared.ui.configurable.isConfigEnabled
-import com.abdownloadmanager.shared.ui.widget.Text
-import com.abdownloadmanager.shared.util.ui.WithContentAlpha
-import com.abdownloadmanager.shared.util.ui.icon.MyIcons
-import com.abdownloadmanager.shared.util.ui.theme.myTextSizes
-import com.abdownloadmanager.shared.util.ui.widget.MyIcon
+import com.xetondownloadmanager.shared.ui.configurable.Configurable
+import com.xetondownloadmanager.shared.ui.configurable.Help
+import com.xetondownloadmanager.shared.ui.configurable.isConfigEnabled
+import com.xetondownloadmanager.shared.ui.widget.Text
+import com.xetondownloadmanager.shared.util.ui.WithContentAlpha
+import com.xetondownloadmanager.shared.util.ui.icon.MyIcons
+import com.xetondownloadmanager.shared.util.ui.theme.myTextSizes
+import com.xetondownloadmanager.shared.util.ui.widget.MyIcon
 import com.xeton.util.compose.modifiers.autoMirror
 import com.xeton.util.ifThen
 

@@ -1,4 +1,4 @@
-package com.abdownloadmanager.desktop.pages.batchdownload
+package com.xetondownloadmanager.desktop.pages.batchdownload
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -6,10 +6,10 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
-import com.abdownloadmanager.desktop.window.custom.CustomWindow
-import com.abdownloadmanager.shared.pages.batchdownload.BaseBatchDownloadComponent
-import com.abdownloadmanager.shared.util.ui.theme.LocalUiScale
-import com.abdownloadmanager.shared.util.mvi.HandleEffects
+import com.xetondownloadmanager.desktop.window.custom.CustomWindow
+import com.xetondownloadmanager.shared.pages.batchdownload.BaseBatchDownloadComponent
+import com.xetondownloadmanager.shared.util.ui.theme.LocalUiScale
+import com.xetondownloadmanager.shared.util.mvi.HandleEffects
 import com.xeton.util.desktop.screen.applyUiScale
 
 @Composable

@@ -1,8 +1,8 @@
-package com.abdownloadmanager
+package com.xetondownloadmanager
 
-import com.abdownloadmanager.updateapplier.UpdateApplier
-import com.abdownloadmanager.updatechecker.UpdateChecker
-import com.abdownloadmanager.updatechecker.UpdateInfo
+import com.xetondownloadmanager.updateapplier.UpdateApplier
+import com.xetondownloadmanager.updatechecker.UpdateChecker
+import com.xetondownloadmanager.updatechecker.UpdateInfo
 import com.xeton.util.AppVersionTracker
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

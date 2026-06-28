@@ -1,8 +1,8 @@
-package com.abdownloadmanager.android.storage
+package com.xetondownloadmanager.android.storage
 
 import androidx.datastore.core.DataStore
 import arrow.optics.optics
-import com.abdownloadmanager.shared.util.ConfigBaseSettingsByJson
+import com.xetondownloadmanager.shared.util.ConfigBaseSettingsByJson
 import kotlinx.serialization.Serializable
 
 @optics

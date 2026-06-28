@@ -1,6 +1,6 @@
-package com.abdownloadmanager.shared.util.notification
+package com.xetondownloadmanager.shared.util.notification
 
-import com.abdownloadmanager.shared.ui.widget.NotificationType
+import com.xetondownloadmanager.shared.ui.widget.NotificationType
 
 
 expect fun platformNotificationSound(): INotificationSound

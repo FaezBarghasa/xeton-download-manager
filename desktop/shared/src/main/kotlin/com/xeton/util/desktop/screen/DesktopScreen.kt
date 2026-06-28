@@ -1,7 +1,7 @@
 package com.xeton.util.desktop.screen
 
 import androidx.compose.ui.unit.*
-import com.abdownloadmanager.shared.util.ui.theme.DEFAULT_UI_SCALE
+import com.xetondownloadmanager.shared.util.ui.theme.DEFAULT_UI_SCALE
 import java.awt.GraphicsEnvironment
 
 fun getGlobalScale(): Float {

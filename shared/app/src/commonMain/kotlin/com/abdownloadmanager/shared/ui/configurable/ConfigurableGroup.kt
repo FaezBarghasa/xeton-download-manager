@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.ui.configurable
+package com.xetondownloadmanager.shared.ui.configurable
 
 import androidx.compose.runtime.Stable
 import com.xeton.util.compose.StringSource

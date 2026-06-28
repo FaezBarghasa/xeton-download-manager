@@ -1,3 +1,3 @@
-package com.abdownloadmanager.shared.util
+package com.xetondownloadmanager.shared.util
 
 const val DOUBLE_CLICK_DELAY = 500L

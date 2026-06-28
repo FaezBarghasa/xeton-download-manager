@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.ui.theme
+package com.xetondownloadmanager.shared.ui.theme
 
 import androidx.compose.foundation.ContextMenuItem
 import androidx.compose.foundation.ContextMenuRepresentation
@@ -7,8 +7,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
-import com.abdownloadmanager.shared.ui.widget.menu.custom.SubMenu
-import com.abdownloadmanager.shared.ui.widget.rememberMyPopupPositionProviderAtPosition
+import com.xetondownloadmanager.shared.ui.widget.menu.custom.SubMenu
+import com.xetondownloadmanager.shared.ui.widget.rememberMyPopupPositionProviderAtPosition
 import com.xeton.util.compose.action.buildMenu
 import com.xeton.util.compose.asStringSource
 

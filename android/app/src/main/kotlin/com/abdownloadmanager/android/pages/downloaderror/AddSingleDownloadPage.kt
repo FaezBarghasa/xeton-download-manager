@@ -1,4 +1,4 @@
-package com.abdownloadmanager.android.pages.downloaderror
+package com.xetondownloadmanager.android.pages.downloaderror
 
 
 import androidx.compose.foundation.background
@@ -12,19 +12,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.abdownloadmanager.android.ui.SheetHeader
-import com.abdownloadmanager.android.ui.SheetTitle
-import com.abdownloadmanager.android.ui.SheetUI
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.downloaderror.DownloadErrorComponent
-import com.abdownloadmanager.shared.ui.widget.*
-import com.abdownloadmanager.shared.util.*
-import com.abdownloadmanager.shared.util.downloaderror.DownloadErrorReason
-import com.abdownloadmanager.shared.util.ui.icon.MyIcons
-import com.abdownloadmanager.shared.util.ui.myColors
-import com.abdownloadmanager.shared.util.ui.theme.mySpacings
-import com.abdownloadmanager.shared.util.ui.theme.myTextSizes
-import com.abdownloadmanager.shared.util.ui.widget.MyIcon
+import com.xetondownloadmanager.android.ui.SheetHeader
+import com.xetondownloadmanager.android.ui.SheetTitle
+import com.xetondownloadmanager.android.ui.SheetUI
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.downloaderror.DownloadErrorComponent
+import com.xetondownloadmanager.shared.ui.widget.*
+import com.xetondownloadmanager.shared.util.*
+import com.xetondownloadmanager.shared.util.downloaderror.DownloadErrorReason
+import com.xetondownloadmanager.shared.util.ui.icon.MyIcons
+import com.xetondownloadmanager.shared.util.ui.myColors
+import com.xetondownloadmanager.shared.util.ui.theme.mySpacings
+import com.xetondownloadmanager.shared.util.ui.theme.myTextSizes
+import com.xetondownloadmanager.shared.util.ui.widget.MyIcon
 import com.xeton.util.compose.asStringSource
 import com.xeton.util.compose.resources.myStringResource
 

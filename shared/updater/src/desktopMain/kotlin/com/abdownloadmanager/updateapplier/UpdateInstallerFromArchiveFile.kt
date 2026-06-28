@@ -1,4 +1,4 @@
-package com.abdownloadmanager.updateapplier
+package com.xetondownloadmanager.updateapplier
 
 import com.xeton.util.platform.Platform
 import okio.FileSystem
@@ -27,7 +27,7 @@ class UpdateInstallerFromArchiveFile(
 ) : UpdateInstaller {
     private fun getScriptPath(logFile: String): String {
         val platform = Platform.getCurrentPlatform()
-        val updaterPath = "com/abdownloadmanager/updater"
+        val updaterPath = "com/xetondownloadmanager/updater"
         val scriptForPlatform = when (platform) {
             Platform.Desktop.Linux -> "$updaterPath/updater_linux.sh"
             Platform.Desktop.MacOS -> "$updaterPath/updater_macos.sh"

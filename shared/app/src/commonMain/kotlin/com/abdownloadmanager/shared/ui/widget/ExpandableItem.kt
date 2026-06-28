@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.ui.widget
+package com.xetondownloadmanager.shared.ui.widget
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column

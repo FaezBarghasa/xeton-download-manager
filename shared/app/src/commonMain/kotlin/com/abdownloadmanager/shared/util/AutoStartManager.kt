@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.util
+package com.xetondownloadmanager.shared.util
 
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject

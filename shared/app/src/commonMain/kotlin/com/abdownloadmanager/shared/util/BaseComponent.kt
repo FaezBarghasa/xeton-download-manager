@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.util
+package com.xetondownloadmanager.shared.util
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.essenty.lifecycle.Lifecycle

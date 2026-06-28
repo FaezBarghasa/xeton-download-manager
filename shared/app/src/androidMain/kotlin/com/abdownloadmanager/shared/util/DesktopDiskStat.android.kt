@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.util
+package com.xetondownloadmanager.shared.util
 
 import com.xeton.downloader.utils.IDiskStat
 import java.io.File

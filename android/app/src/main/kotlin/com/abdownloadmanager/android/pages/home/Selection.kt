@@ -1,4 +1,4 @@
-package com.abdownloadmanager.android.pages.home
+package com.xetondownloadmanager.android.pages.home
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -40,15 +40,15 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.abdownloadmanager.android.ui.RenderControlSelections
-import com.abdownloadmanager.android.ui.SelectionControlButton
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.ui.widget.alphaFlicker
-import com.abdownloadmanager.shared.util.div
-import com.abdownloadmanager.shared.util.ui.icon.MyIcons
-import com.abdownloadmanager.shared.util.ui.myColors
-import com.abdownloadmanager.shared.util.ui.theme.myShapes
-import com.abdownloadmanager.shared.util.ui.widget.MyIcon
+import com.xetondownloadmanager.android.ui.RenderControlSelections
+import com.xetondownloadmanager.android.ui.SelectionControlButton
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.ui.widget.alphaFlicker
+import com.xetondownloadmanager.shared.util.div
+import com.xetondownloadmanager.shared.util.ui.icon.MyIcons
+import com.xetondownloadmanager.shared.util.ui.myColors
+import com.xetondownloadmanager.shared.util.ui.theme.myShapes
+import com.xetondownloadmanager.shared.util.ui.widget.MyIcon
 import com.xeton.util.compose.IconSource
 import com.xeton.util.compose.StringSource
 import com.xeton.util.compose.action.MenuItem

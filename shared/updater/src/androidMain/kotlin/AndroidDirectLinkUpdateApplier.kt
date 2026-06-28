@@ -1,10 +1,10 @@
-import com.abdownloadmanager.InstallableArch
-import com.abdownloadmanager.updateapplier.BaseUpdateApplier
-import com.abdownloadmanager.updateapplier.UpdateDownloader
-import com.abdownloadmanager.updateapplier.UpdateInstaller
-import com.abdownloadmanager.updateapplier.UpdatePreparer
-import com.abdownloadmanager.updatechecker.UpdateInfo
-import com.abdownloadmanager.updatechecker.UpdateSource
+import com.xetondownloadmanager.InstallableArch
+import com.xetondownloadmanager.updateapplier.BaseUpdateApplier
+import com.xetondownloadmanager.updateapplier.UpdateDownloader
+import com.xetondownloadmanager.updateapplier.UpdateInstaller
+import com.xetondownloadmanager.updateapplier.UpdatePreparer
+import com.xetondownloadmanager.updatechecker.UpdateInfo
+import com.xetondownloadmanager.updatechecker.UpdateSource
 
 /**
  * this update applier works for direct downloads!

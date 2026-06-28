@@ -1,4 +1,4 @@
-package com.abdownloadmanager.integration
+package com.xetondownloadmanager.integration
 
 typealias Header = Map<String, String>
 

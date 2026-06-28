@@ -19,7 +19,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "ABDownloadManager"
+rootProject.name = "XetonDownloadManager"
 
 include("android:app")
 include("desktop:app")

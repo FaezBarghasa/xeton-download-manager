@@ -1,12 +1,12 @@
-package com.abdownloadmanager.shared.downloaderinui
+package com.xetondownloadmanager.shared.downloaderinui
 
-import com.abdownloadmanager.shared.downloaderinui.add.NewDownloadInputs
-import com.abdownloadmanager.shared.downloaderinui.add.NewDownloadInputsFactory
-import com.abdownloadmanager.shared.downloaderinui.add.NewDownloadUiChecker
-import com.abdownloadmanager.shared.downloaderinui.edit.EditDownloadCheckerFactory
-import com.abdownloadmanager.shared.downloaderinui.edit.EditDownloadInputs
-import com.abdownloadmanager.shared.downloaderinui.edit.EditDownloadInputsFactory
-import com.abdownloadmanager.shared.util.DownloadSystem
+import com.xetondownloadmanager.shared.downloaderinui.add.NewDownloadInputs
+import com.xetondownloadmanager.shared.downloaderinui.add.NewDownloadInputsFactory
+import com.xetondownloadmanager.shared.downloaderinui.add.NewDownloadUiChecker
+import com.xetondownloadmanager.shared.downloaderinui.edit.EditDownloadCheckerFactory
+import com.xetondownloadmanager.shared.downloaderinui.edit.EditDownloadInputs
+import com.xetondownloadmanager.shared.downloaderinui.edit.EditDownloadInputsFactory
+import com.xetondownloadmanager.shared.util.DownloadSystem
 import com.xeton.downloader.Downloader
 import com.xeton.downloader.connection.IResponseInfo
 import com.xeton.downloader.downloaditem.DownloadJob

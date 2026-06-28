@@ -1,6 +1,6 @@
-package com.abdownloadmanager.android.util
+package com.xetondownloadmanager.android.util
 
-import com.abdownloadmanager.shared.util.DefinedPaths
+import com.xetondownloadmanager.shared.util.DefinedPaths
 import okio.Path
 
 class AndroidDefinedPaths(

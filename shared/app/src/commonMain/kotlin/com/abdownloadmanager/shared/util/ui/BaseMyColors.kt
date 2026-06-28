@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.util.ui
+package com.xetondownloadmanager.shared.util.ui
 
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.xeton.util.compose.IIconResolver

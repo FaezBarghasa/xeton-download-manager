@@ -1,4 +1,4 @@
-package com.abdownloadmanager.android.pages.home
+package com.xetondownloadmanager.android.pages.home
 
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.width
@@ -11,8 +11,8 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
-import com.abdownloadmanager.android.ui.menu.RenderMenuInSinglePage
-import com.abdownloadmanager.shared.ui.widget.rememberMyComponentRectPositionProvider
+import com.xetondownloadmanager.android.ui.menu.RenderMenuInSinglePage
+import com.xetondownloadmanager.shared.ui.widget.rememberMyComponentRectPositionProvider
 
 @Composable
 fun RenderAddMenu(component: HomeComponent) {

@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.util.notification
+package com.xetondownloadmanager.shared.util.notification
 
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject

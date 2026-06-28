@@ -1,6 +1,6 @@
-package com.abdownloadmanager.desktop.pages.batchdownload
+package com.xetondownloadmanager.desktop.pages.batchdownload
 
-import com.abdownloadmanager.shared.pages.batchdownload.BaseBatchDownloadComponent
+import com.xetondownloadmanager.shared.pages.batchdownload.BaseBatchDownloadComponent
 import com.arkivanov.decompose.ComponentContext
 
 class DesktopBatchDownloadComponent(

@@ -1,6 +1,6 @@
-package com.abdownloadmanager.shared.util.extractors.linkextractor
+package com.xetondownloadmanager.shared.util.extractors.linkextractor
 
-import com.abdownloadmanager.shared.util.extractors.Extractor
+import com.xetondownloadmanager.shared.util.extractors.Extractor
 import com.xeton.util.HttpUrlUtils
 
 object StringUrlExtractor : Extractor<String, List<String>> {

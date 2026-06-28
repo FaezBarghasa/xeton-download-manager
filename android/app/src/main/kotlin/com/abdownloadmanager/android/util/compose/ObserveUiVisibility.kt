@@ -1,4 +1,4 @@
-package com.abdownloadmanager.android.util.compose
+package com.xetondownloadmanager.android.util.compose
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect

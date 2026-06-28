@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.ui.widget.menu.native
+package com.xetondownloadmanager.shared.ui.widget.menu.native
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
@@ -14,9 +14,9 @@ import androidx.compose.ui.input.key.KeyShortcut
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.MenuScope
-import com.abdownloadmanager.shared.util.LocalShortCutManager
-import com.abdownloadmanager.shared.util.PlatformKeyStroke
-import com.abdownloadmanager.shared.util.ShortcutManager
+import com.xetondownloadmanager.shared.util.LocalShortCutManager
+import com.xetondownloadmanager.shared.util.PlatformKeyStroke
+import com.xetondownloadmanager.shared.util.ShortcutManager
 import com.xeton.util.compose.IconSource
 import com.xeton.util.compose.action.MenuItem
 

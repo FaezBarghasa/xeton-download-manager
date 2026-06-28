@@ -1,4 +1,4 @@
-package com.abdownloadmanager
+package com.xetondownloadmanager
 
 import io.github.z4kn4fein.semver.Version
 import com.xeton.util.platform.Arch

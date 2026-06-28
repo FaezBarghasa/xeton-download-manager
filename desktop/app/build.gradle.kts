@@ -86,7 +86,7 @@ tasks.processResources {
     from(tasks.named("exportLibraryDefinitions"))
 }
 
-val desktopPackageName = "com.abdownloadmanager.desktop"
+val desktopPackageName = "com.xetondownloadmanager.desktop"
 compose {
     desktop {
         application {
@@ -120,7 +120,7 @@ compose {
                 }
                 packageVersion = getAppVersionStringForPackaging()
                 packageName = getAppName()
-                vendor = "abdownloadmanager.com"
+                vendor = "xetondownloadmanager.com"
                 appResourcesRootDir.set(project.layout.projectDirectory.dir("resources"))
                 val menuGroupName = getPrettifiedAppName()
                 licenseFile.set(rootProject.file("LICENSE"))
@@ -175,10 +175,10 @@ installerPlugin {
         iconFile = project.file("icons/icon.ico")
         nsisTemplate = project.file("resources/installer/nsis-script-template.nsi")
         extraParams = mapOf(
-            "app_publisher" to "abdownloadmanager.com",
+            "app_publisher" to "xetondownloadmanager.com",
             "app_version_with_build" to "${getAppVersionStringForPackaging(Exe)}.0",
-            "source_code_url" to "https://github.com/amir1376/ab-download-manager",
-            "project_website" to "www.abdownloadmanager.com",
+            "source_code_url" to "https://github.com/amir1376/xeton-download-manager",
+            "project_website" to "www.xetondownloadmanager.com",
             "copyright" to "© 2024-present AB Download Manager App",
             "header_image_file" to project.file("resources/installer/abdm-header-image.bmp"),
             "sidebar_image_file" to project.file("resources/installer/abdm-sidebar-image.bmp")

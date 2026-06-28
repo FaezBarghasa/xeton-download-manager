@@ -4,7 +4,7 @@ set -euo pipefail
 # set -x
 
 
-APP_NAME="ABDownloadManager"
+APP_NAME="XetonDownloadManager"
 
 LOG_FILE="/tmp/ab-dm-uninstaller.log"
 
@@ -85,7 +85,7 @@ delete_app() {
 
     logger "removing $APP_NAME desktop file ..."
     # --- Remove the .desktop file in ~/.local/share/applications
-    remove_if_exists "$HOME/.local/share/applications/com.abdownloadmanager.desktop"
+    remove_if_exists "$HOME/.local/share/applications/com.xetondownloadmanager.desktop"
 
     logger "removing $APP_NAME link ..."
     remove_if_exists "$HOME/.local/bin/$APP_NAME"
@@ -94,7 +94,7 @@ delete_app() {
     remove_if_exists "$HOME/.local/$APP_NAME"
 
     logger "removing $APP_NAME autostart at boot file ..."
-    remove_if_exists "$HOME/.config/autostart/com.abdownloadmanager.desktop"
+    remove_if_exists "$HOME/.config/autostart/com.xetondownloadmanager.desktop"
 
     if [ -e "$HOME/.abdm" ]; then
         logger "removing $APP_NAME settings and download lists $HOME/.abdm"

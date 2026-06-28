@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.util.keepawake
+package com.xetondownloadmanager.shared.util.keepawake
 
 actual fun platformKeepAwake(): KeepAwake {
     return instance

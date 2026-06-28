@@ -1,7 +1,7 @@
-package com.abdownloadmanager.desktop.utils.native_messaging
+package com.xetondownloadmanager.desktop.utils.native_messaging
 
-import com.abdownloadmanager.desktop.utils.AppInfo
-import com.abdownloadmanager.desktop.utils.isAppInstalled
+import com.xetondownloadmanager.desktop.utils.AppInfo
+import com.xetondownloadmanager.desktop.utils.isAppInstalled
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

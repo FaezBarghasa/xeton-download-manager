@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.downloaderinui.hls
+package com.xetondownloadmanager.shared.downloaderinui.hls
 
 import com.xeton.downloader.downloaditem.hls.HLSDownloadJob
 import com.xeton.downloader.monitor.DurationBasedProcessingDownloadItemState

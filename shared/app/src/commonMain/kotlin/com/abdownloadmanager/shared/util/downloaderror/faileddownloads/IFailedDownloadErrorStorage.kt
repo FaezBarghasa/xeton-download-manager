@@ -1,6 +1,6 @@
-package com.abdownloadmanager.shared.util.downloaderror.faileddownloads
+package com.xetondownloadmanager.shared.util.downloaderror.faileddownloads
 
-import com.abdownloadmanager.shared.util.downloaderror.DownloadErrorReason
+import com.xetondownloadmanager.shared.util.downloaderror.DownloadErrorReason
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

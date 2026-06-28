@@ -1,6 +1,6 @@
-package com.abdownloadmanager.shared.ui.configurable
+package com.xetondownloadmanager.shared.ui.configurable
 
-import com.abdownloadmanager.shared.ui.configurable.item.*
+import com.xetondownloadmanager.shared.ui.configurable.item.*
 
 interface ContainsConfigurableRenderers {
     fun getAllRenderers(): Map<Configurable.Key, ConfigurableRenderer<*>>

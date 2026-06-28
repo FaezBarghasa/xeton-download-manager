@@ -1,16 +1,16 @@
-package com.abdownloadmanager.shared.pages.checksum
+package com.xetondownloadmanager.shared.pages.checksum
 
 import androidx.compose.runtime.Immutable
 import arrow.core.Some
-import com.abdownloadmanager.shared.util.BaseComponent
-import com.abdownloadmanager.shared.util.DownloadSystem
-import com.abdownloadmanager.shared.util.FileChecksum
-import com.abdownloadmanager.shared.util.FileChecksumAlgorithm
-import com.abdownloadmanager.shared.util.HashUtil
-import com.abdownloadmanager.shared.util.mvi.ContainsEffects
-import com.abdownloadmanager.shared.util.mvi.ContainsScreenState
-import com.abdownloadmanager.shared.util.mvi.SupportsScreenState
-import com.abdownloadmanager.shared.util.mvi.supportEffects
+import com.xetondownloadmanager.shared.util.BaseComponent
+import com.xetondownloadmanager.shared.util.DownloadSystem
+import com.xetondownloadmanager.shared.util.FileChecksum
+import com.xetondownloadmanager.shared.util.FileChecksumAlgorithm
+import com.xetondownloadmanager.shared.util.HashUtil
+import com.xetondownloadmanager.shared.util.mvi.ContainsEffects
+import com.xetondownloadmanager.shared.util.mvi.ContainsScreenState
+import com.xetondownloadmanager.shared.util.mvi.SupportsScreenState
+import com.xetondownloadmanager.shared.util.mvi.supportEffects
 import com.arkivanov.decompose.ComponentContext
 import com.xeton.downloader.downloaditem.DownloadStatus
 import com.xeton.downloader.downloaditem.IDownloadItem

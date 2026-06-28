@@ -1,14 +1,14 @@
-package com.abdownloadmanager.android.pages.settings
+package com.xetondownloadmanager.android.pages.settings
 
-import com.abdownloadmanager.android.storage.AppSettingsStorage
-import com.abdownloadmanager.android.util.pagemanager.PermissionsPageManager
-import com.abdownloadmanager.shared.pagemanager.PerHostSettingsPageManager
-import com.abdownloadmanager.shared.repository.BaseAppRepository
-import com.abdownloadmanager.shared.settings.BaseSettingsComponent
-import com.abdownloadmanager.shared.settings.CommonSettings
-import com.abdownloadmanager.shared.ui.configurable.ConfigurableGroup
-import com.abdownloadmanager.shared.ui.theme.ThemeManager
-import com.abdownloadmanager.shared.util.proxy.ProxyManager
+import com.xetondownloadmanager.android.storage.AppSettingsStorage
+import com.xetondownloadmanager.android.util.pagemanager.PermissionsPageManager
+import com.xetondownloadmanager.shared.pagemanager.PerHostSettingsPageManager
+import com.xetondownloadmanager.shared.repository.BaseAppRepository
+import com.xetondownloadmanager.shared.settings.BaseSettingsComponent
+import com.xetondownloadmanager.shared.settings.CommonSettings
+import com.xetondownloadmanager.shared.ui.configurable.ConfigurableGroup
+import com.xetondownloadmanager.shared.ui.theme.ThemeManager
+import com.xetondownloadmanager.shared.util.proxy.ProxyManager
 import com.arkivanov.decompose.ComponentContext
 import com.xeton.util.compose.localizationmanager.LanguageManager
 import com.xeton.util.flow.mapStateFlow

@@ -1,7 +1,7 @@
 @file:OptIn(ExperimentalUnsignedTypes::class)
 @file:Suppress("unused", "MemberVisibilityCanBePrivate")
 
-package com.abdownloadmanager.shared.util
+package com.xetondownloadmanager.shared.util
 
 import java.net.NetworkInterface
 

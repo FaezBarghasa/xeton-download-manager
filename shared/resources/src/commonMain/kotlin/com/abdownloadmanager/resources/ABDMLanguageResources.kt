@@ -1,11 +1,11 @@
-package com.abdownloadmanager.resources
+package com.xetondownloadmanager.resources
 
 import com.xeton.resources.contracts.MyLanguageResource
 import okio.FileSystem
 import okio.Path.Companion.toPath
 
 object ABDMLanguageResources {
-    private const val LOCALES_DIRECTORY = "com/abdownloadmanager/resources/locales/"
+    private const val LOCALES_DIRECTORY = "com/xetondownloadmanager/resources/locales/"
     val defaultLanguageResource = run {
         val defaultName = "en_US"
         MyLanguageResource.BundledLanguageResource(
@@ -45,6 +45,6 @@ internal object ResourceUtil {
 object ABDMResources {
     fun getTranslatorsContent(): String {
         return ResourceUtil
-            .readResourceAsString("com/abdownloadmanager/resources/credits/translators.json")
+            .readResourceAsString("com/xetondownloadmanager/resources/credits/translators.json")
     }
 }

@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.util
+package com.xetondownloadmanager.shared.util
 
 fun <T> T.isAnyOf(vararg conditions: (T) -> Boolean): Boolean {
     return conditions.any {

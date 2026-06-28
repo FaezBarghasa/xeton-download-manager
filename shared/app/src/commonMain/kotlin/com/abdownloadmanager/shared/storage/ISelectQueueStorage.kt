@@ -1,4 +1,4 @@
-package com.abdownloadmanager.shared.storage
+package com.xetondownloadmanager.shared.storage
 
 import com.xeton.downloader.queue.DefaultQueueInfo
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -1,7 +1,7 @@
-package com.abdownloadmanager.android.util
+package com.xetondownloadmanager.android.util
 
-import com.abdownloadmanager.shared.util.DownloadItemOpener
-import com.abdownloadmanager.shared.util.DownloadSystem
+import com.xetondownloadmanager.shared.util.DownloadItemOpener
+import com.xetondownloadmanager.shared.util.DownloadSystem
 import com.xeton.downloader.downloaditem.IDownloadItem
 import com.xeton.util.osfileutil.FileUtils
 import java.io.File

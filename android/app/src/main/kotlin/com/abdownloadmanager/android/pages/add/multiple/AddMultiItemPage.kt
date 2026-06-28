@@ -1,4 +1,4 @@
-package com.abdownloadmanager.android.pages.add.multiple
+package com.xetondownloadmanager.android.pages.add.multiple
 
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
@@ -10,23 +10,23 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.abdownloadmanager.android.pages.add.shared.CategoryAddButton
-import com.abdownloadmanager.android.pages.add.shared.CategorySelect
-import com.abdownloadmanager.android.pages.add.shared.ExtraConfig
-import com.abdownloadmanager.android.pages.add.shared.LocationTextField
-import com.abdownloadmanager.android.pages.add.shared.ShowAddToQueueDialog
-import com.abdownloadmanager.android.ui.RenderControlSelections
-import com.abdownloadmanager.android.ui.SelectionControlButton
-import com.abdownloadmanager.android.ui.page.PageHeader
-import com.abdownloadmanager.android.ui.page.PageTitleWithDescription
-import com.abdownloadmanager.android.ui.page.PageUi
-import com.abdownloadmanager.shared.ui.widget.*
-import com.abdownloadmanager.shared.util.ui.myColors
-import com.abdownloadmanager.shared.util.div
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.util.category.Category
-import com.abdownloadmanager.shared.util.ui.icon.MyIcons
-import com.abdownloadmanager.shared.util.ui.theme.mySpacings
+import com.xetondownloadmanager.android.pages.add.shared.CategoryAddButton
+import com.xetondownloadmanager.android.pages.add.shared.CategorySelect
+import com.xetondownloadmanager.android.pages.add.shared.ExtraConfig
+import com.xetondownloadmanager.android.pages.add.shared.LocationTextField
+import com.xetondownloadmanager.android.pages.add.shared.ShowAddToQueueDialog
+import com.xetondownloadmanager.android.ui.RenderControlSelections
+import com.xetondownloadmanager.android.ui.SelectionControlButton
+import com.xetondownloadmanager.android.ui.page.PageHeader
+import com.xetondownloadmanager.android.ui.page.PageTitleWithDescription
+import com.xetondownloadmanager.android.ui.page.PageUi
+import com.xetondownloadmanager.shared.ui.widget.*
+import com.xetondownloadmanager.shared.util.ui.myColors
+import com.xetondownloadmanager.shared.util.div
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.util.category.Category
+import com.xetondownloadmanager.shared.util.ui.icon.MyIcons
+import com.xetondownloadmanager.shared.util.ui.theme.mySpacings
 import com.xeton.util.compose.asStringSource
 import com.xeton.util.compose.resources.myStringResource
 

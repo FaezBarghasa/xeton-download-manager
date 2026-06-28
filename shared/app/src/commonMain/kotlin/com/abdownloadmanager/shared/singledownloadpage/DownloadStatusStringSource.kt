@@ -1,7 +1,7 @@
-package com.abdownloadmanager.shared.singledownloadpage
+package com.xetondownloadmanager.shared.singledownloadpage
 
-import com.abdownloadmanager.resources.Res
-import com.abdownloadmanager.shared.util.downloaderror.DownloadErrorReason
+import com.xetondownloadmanager.resources.Res
+import com.xetondownloadmanager.shared.util.downloaderror.DownloadErrorReason
 import com.xeton.downloader.downloaditem.DownloadJobStatus
 import com.xeton.downloader.monitor.IDownloadItemState
 import com.xeton.downloader.monitor.ProcessingDownloadItemState

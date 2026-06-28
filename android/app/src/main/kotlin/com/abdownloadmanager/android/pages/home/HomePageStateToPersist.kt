@@ -1,8 +1,8 @@
-package com.abdownloadmanager.android.pages.home
+package com.xetondownloadmanager.android.pages.home
 
 import arrow.optics.optics
-import com.abdownloadmanager.android.pages.home.sections.sort.DownloadSortBy
-import com.abdownloadmanager.shared.ui.widget.sort.Sort
+import com.xetondownloadmanager.android.pages.home.sections.sort.DownloadSortBy
+import com.xetondownloadmanager.shared.ui.widget.sort.Sort
 import kotlinx.serialization.Serializable
 
 @optics

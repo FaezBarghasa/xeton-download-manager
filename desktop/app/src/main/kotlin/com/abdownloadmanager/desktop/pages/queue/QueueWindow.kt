@@ -1,7 +1,7 @@
-package com.abdownloadmanager.desktop.pages.queue
+package com.xetondownloadmanager.desktop.pages.queue
 
-import com.abdownloadmanager.desktop.window.custom.CustomWindow
-import com.abdownloadmanager.shared.util.mvi.HandleEffects
+import com.xetondownloadmanager.desktop.window.custom.CustomWindow
+import com.xetondownloadmanager.shared.util.mvi.HandleEffects
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.window.rememberWindowState
 
