@@ -29,4 +29,12 @@ kotlin {
         val features = getFeatures().map { "-X$it" }
         freeCompilerArgs.set(optIns + features)
     }
+
+    // Enable iOS targets conditionally on macOS hosts
+    val isMac = System.getProperty("os.name").contains("Mac", ignoreCase = true)
+    if (isMac) {
+        iosX64()
+        iosArm64()
+        iosSimulatorArm64()
+    }
 }

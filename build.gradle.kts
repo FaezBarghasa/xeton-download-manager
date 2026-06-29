@@ -95,6 +95,6 @@ tasks.register<Exec>("generateUniFFIBindings") {
         "cargo", "run", "--bin", "uniffi-bindgen",
         "generate", "src/xeton_core.udl",
         "--language", "kotlin",
-        "--out-dir", "../../downloader/core/src/commonMain/kotlin/ir/amirab/xeton_core_ffi"
+        "--out-dir", "../../downloader/core/src/commonMain/kotlin/com/xeton/xeton_core_ffi"
     )
 }

@@ -66,7 +66,7 @@ open class RustBuffer : Structure() {
     companion object {
         internal fun alloc(size: ULong = 0UL) = uniffiRustCall() { status ->
             // Note: need to convert the size to a `Long` value to make this work with JVM.
-            UniffiLib.INSTANCE.ffi_xeton_core_rustbuffer_alloc(size.toLong(), status)
+            UniffiLib.ffi_xeton_core_rustbuffer_alloc(size.toLong(), status)
         }.also {
             if(it.data == null) {
                throw RuntimeException("RustBuffer.alloc() returned null data pointer (size=${size})")
@@ -82,49 +82,15 @@ open class RustBuffer : Structure() {
         }
 
         internal fun free(buf: RustBuffer.ByValue) = uniffiRustCall() { status ->
-            UniffiLib.INSTANCE.ffi_xeton_core_rustbuffer_free(buf, status)
+            UniffiLib.ffi_xeton_core_rustbuffer_free(buf, status)
         }
     }
 
     @Suppress("TooGenericExceptionThrown")
     fun asByteBuffer() =
-        this.data?.getByteBuffer(0, this.len.toLong())?.also {
+        this.data?.getByteBuffer(0, this.len)?.also {
             it.order(ByteOrder.BIG_ENDIAN)
         }
-}
-
-/**
- * The equivalent of the `*mut RustBuffer` type.
- * Required for callbacks taking in an out pointer.
- *
- * Size is the sum of all values in the struct.
- *
- * @suppress
- */
-class RustBufferByReference : ByReference(16) {
-    /**
-     * Set the pointed-to `RustBuffer` to the given value.
-     */
-    fun setValue(value: RustBuffer.ByValue) {
-        // NOTE: The offsets are as they are in the C-like struct.
-        val pointer = getPointer()
-        pointer.setLong(0, value.capacity)
-        pointer.setLong(8, value.len)
-        pointer.setPointer(16, value.data)
-    }
-
-    /**
-     * Get a `RustBuffer.ByValue` from this reference.
-     */
-    fun getValue(): RustBuffer.ByValue {
-        val pointer = getPointer()
-        val value = RustBuffer.ByValue()
-        value.writeField("capacity", pointer.getLong(0))
-        value.writeField("len", pointer.getLong(8))
-        value.writeField("data", pointer.getLong(16))
-
-        return value
-    }
 }
 
 // This is a helper for safely passing byte references into the rust code.
@@ -323,8 +289,9 @@ internal inline fun<T> uniffiTraitInterfaceCall(
     try {
         writeReturn(makeCall())
     } catch(e: kotlin.Exception) {
+        val err = try { e.stackTraceToString() } catch(_: Throwable) { "" }
         callStatus.code = UNIFFI_CALL_UNEXPECTED_ERROR
-        callStatus.error_buf = FfiConverterString.lower(e.toString())
+        callStatus.error_buf = FfiConverterString.lower(err)
     }
 }
 
@@ -341,26 +308,39 @@ internal inline fun<T, reified E: Throwable> uniffiTraitInterfaceCallWithError(
             callStatus.code = UNIFFI_CALL_ERROR
             callStatus.error_buf = lowerError(e)
         } else {
+            val err = try { e.stackTraceToString() } catch(_: Throwable) { "" }
             callStatus.code = UNIFFI_CALL_UNEXPECTED_ERROR
-            callStatus.error_buf = FfiConverterString.lower(e.toString())
+            callStatus.error_buf = FfiConverterString.lower(err)
         }
     }
 }
+// Initial value and increment amount for handles. 
+// These ensure that Kotlin-generated handles always have the lowest bit set
+private const val UNIFFI_HANDLEMAP_INITIAL = 1.toLong()
+private const val UNIFFI_HANDLEMAP_DELTA = 2.toLong()
+
 // Map handles to objects
 //
 // This is used pass an opaque 64-bit handle representing a foreign object to the Rust code.
 internal class UniffiHandleMap<T: Any> {
     private val map = ConcurrentHashMap<Long, T>()
-    private val counter = java.util.concurrent.atomic.AtomicLong(0)
+    // Start 
+    private val counter = java.util.concurrent.atomic.AtomicLong(UNIFFI_HANDLEMAP_INITIAL)
 
     val size: Int
         get() = map.size
 
     // Insert a new object into the handle map and get a handle for it
     fun insert(obj: T): Long {
-        val handle = counter.getAndAdd(1)
+        val handle = counter.getAndAdd(UNIFFI_HANDLEMAP_DELTA)
         map.put(handle, obj)
         return handle
+    }
+
+    // Clone a handle, creating a new one
+    fun clone(handle: Long): Long {
+        val obj = map.get(handle) ?: throw InternalException("UniffiHandleMap.clone: Invalid handle")
+        return insert(obj)
     }
 
     // Get an object from the handle map
@@ -385,609 +365,639 @@ private fun findLibraryName(componentName: String): String {
     return "uniffi_xeton_core"
 }
 
-private inline fun <reified Lib : Library> loadIndirect(
-    componentName: String
-): Lib {
-    return Native.load<Lib>(findLibraryName(componentName), Lib::class.java)
-}
-
 // Define FFI callback types
 internal interface UniffiRustFutureContinuationCallback : com.sun.jna.Callback {
     fun callback(`data`: Long,`pollResult`: Byte,)
 }
-internal interface UniffiForeignFutureFree : com.sun.jna.Callback {
+internal interface UniffiForeignFutureDroppedCallback : com.sun.jna.Callback {
     fun callback(`handle`: Long,)
 }
 internal interface UniffiCallbackInterfaceFree : com.sun.jna.Callback {
     fun callback(`handle`: Long,)
 }
+internal interface UniffiCallbackInterfaceClone : com.sun.jna.Callback {
+    fun callback(`handle`: Long,)
+    : Long
+}
 @Structure.FieldOrder("handle", "free")
-internal open class UniffiForeignFuture(
+internal open class UniffiForeignFutureDroppedCallbackStruct(
     @JvmField internal var `handle`: Long = 0.toLong(),
-    @JvmField internal var `free`: UniffiForeignFutureFree? = null,
+    @JvmField internal var `free`: UniffiForeignFutureDroppedCallback? = null,
 ) : Structure() {
     class UniffiByValue(
         `handle`: Long = 0.toLong(),
-        `free`: UniffiForeignFutureFree? = null,
-    ): UniffiForeignFuture(`handle`,`free`,), Structure.ByValue
+        `free`: UniffiForeignFutureDroppedCallback? = null,
+    ): UniffiForeignFutureDroppedCallbackStruct(`handle`,`free`,), Structure.ByValue
 
-   internal fun uniffiSetValue(other: UniffiForeignFuture) {
+   internal fun uniffiSetValue(other: UniffiForeignFutureDroppedCallbackStruct) {
         `handle` = other.`handle`
         `free` = other.`free`
     }
 
 }
 @Structure.FieldOrder("returnValue", "callStatus")
-internal open class UniffiForeignFutureStructU8(
+internal open class UniffiForeignFutureResultU8(
     @JvmField internal var `returnValue`: Byte = 0.toByte(),
     @JvmField internal var `callStatus`: UniffiRustCallStatus.ByValue = UniffiRustCallStatus.ByValue(),
 ) : Structure() {
     class UniffiByValue(
         `returnValue`: Byte = 0.toByte(),
         `callStatus`: UniffiRustCallStatus.ByValue = UniffiRustCallStatus.ByValue(),
-    ): UniffiForeignFutureStructU8(`returnValue`,`callStatus`,), Structure.ByValue
+    ): UniffiForeignFutureResultU8(`returnValue`,`callStatus`,), Structure.ByValue
 
-   internal fun uniffiSetValue(other: UniffiForeignFutureStructU8) {
+   internal fun uniffiSetValue(other: UniffiForeignFutureResultU8) {
         `returnValue` = other.`returnValue`
         `callStatus` = other.`callStatus`
     }
 
 }
 internal interface UniffiForeignFutureCompleteU8 : com.sun.jna.Callback {
-    fun callback(`callbackData`: Long,`result`: UniffiForeignFutureStructU8.UniffiByValue,)
+    fun callback(`callbackData`: Long,`result`: UniffiForeignFutureResultU8.UniffiByValue,)
 }
 @Structure.FieldOrder("returnValue", "callStatus")
-internal open class UniffiForeignFutureStructI8(
+internal open class UniffiForeignFutureResultI8(
     @JvmField internal var `returnValue`: Byte = 0.toByte(),
     @JvmField internal var `callStatus`: UniffiRustCallStatus.ByValue = UniffiRustCallStatus.ByValue(),
 ) : Structure() {
     class UniffiByValue(
         `returnValue`: Byte = 0.toByte(),
         `callStatus`: UniffiRustCallStatus.ByValue = UniffiRustCallStatus.ByValue(),
-    ): UniffiForeignFutureStructI8(`returnValue`,`callStatus`,), Structure.ByValue
+    ): UniffiForeignFutureResultI8(`returnValue`,`callStatus`,), Structure.ByValue
 
-   internal fun uniffiSetValue(other: UniffiForeignFutureStructI8) {
+   internal fun uniffiSetValue(other: UniffiForeignFutureResultI8) {
         `returnValue` = other.`returnValue`
         `callStatus` = other.`callStatus`
     }
 
 }
 internal interface UniffiForeignFutureCompleteI8 : com.sun.jna.Callback {
-    fun callback(`callbackData`: Long,`result`: UniffiForeignFutureStructI8.UniffiByValue,)
+    fun callback(`callbackData`: Long,`result`: UniffiForeignFutureResultI8.UniffiByValue,)
 }
 @Structure.FieldOrder("returnValue", "callStatus")
-internal open class UniffiForeignFutureStructU16(
+internal open class UniffiForeignFutureResultU16(
     @JvmField internal var `returnValue`: Short = 0.toShort(),
     @JvmField internal var `callStatus`: UniffiRustCallStatus.ByValue = UniffiRustCallStatus.ByValue(),
 ) : Structure() {
     class UniffiByValue(
         `returnValue`: Short = 0.toShort(),
         `callStatus`: UniffiRustCallStatus.ByValue = UniffiRustCallStatus.ByValue(),
-    ): UniffiForeignFutureStructU16(`returnValue`,`callStatus`,), Structure.ByValue
+    ): UniffiForeignFutureResultU16(`returnValue`,`callStatus`,), Structure.ByValue
 
-   internal fun uniffiSetValue(other: UniffiForeignFutureStructU16) {
+   internal fun uniffiSetValue(other: UniffiForeignFutureResultU16) {
         `returnValue` = other.`returnValue`
         `callStatus` = other.`callStatus`
     }
 
 }
 internal interface UniffiForeignFutureCompleteU16 : com.sun.jna.Callback {
-    fun callback(`callbackData`: Long,`result`: UniffiForeignFutureStructU16.UniffiByValue,)
+    fun callback(`callbackData`: Long,`result`: UniffiForeignFutureResultU16.UniffiByValue,)
 }
 @Structure.FieldOrder("returnValue", "callStatus")
-internal open class UniffiForeignFutureStructI16(
+internal open class UniffiForeignFutureResultI16(
     @JvmField internal var `returnValue`: Short = 0.toShort(),
     @JvmField internal var `callStatus`: UniffiRustCallStatus.ByValue = UniffiRustCallStatus.ByValue(),
 ) : Structure() {
     class UniffiByValue(
         `returnValue`: Short = 0.toShort(),
         `callStatus`: UniffiRustCallStatus.ByValue = UniffiRustCallStatus.ByValue(),
-    ): UniffiForeignFutureStructI16(`returnValue`,`callStatus`,), Structure.ByValue
+    ): UniffiForeignFutureResultI16(`returnValue`,`callStatus`,), Structure.ByValue
 
-   internal fun uniffiSetValue(other: UniffiForeignFutureStructI16) {
+   internal fun uniffiSetValue(other: UniffiForeignFutureResultI16) {
         `returnValue` = other.`returnValue`
         `callStatus` = other.`callStatus`
     }
 
 }
 internal interface UniffiForeignFutureCompleteI16 : com.sun.jna.Callback {
-    fun callback(`callbackData`: Long,`result`: UniffiForeignFutureStructI16.UniffiByValue,)
+    fun callback(`callbackData`: Long,`result`: UniffiForeignFutureResultI16.UniffiByValue,)
 }
 @Structure.FieldOrder("returnValue", "callStatus")
-internal open class UniffiForeignFutureStructU32(
+internal open class UniffiForeignFutureResultU32(
     @JvmField internal var `returnValue`: Int = 0,
     @JvmField internal var `callStatus`: UniffiRustCallStatus.ByValue = UniffiRustCallStatus.ByValue(),
 ) : Structure() {
     class UniffiByValue(
         `returnValue`: Int = 0,
         `callStatus`: UniffiRustCallStatus.ByValue = UniffiRustCallStatus.ByValue(),
-    ): UniffiForeignFutureStructU32(`returnValue`,`callStatus`,), Structure.ByValue
+    ): UniffiForeignFutureResultU32(`returnValue`,`callStatus`,), Structure.ByValue
 
-   internal fun uniffiSetValue(other: UniffiForeignFutureStructU32) {
+   internal fun uniffiSetValue(other: UniffiForeignFutureResultU32) {
         `returnValue` = other.`returnValue`
         `callStatus` = other.`callStatus`
     }
 
 }
 internal interface UniffiForeignFutureCompleteU32 : com.sun.jna.Callback {
-    fun callback(`callbackData`: Long,`result`: UniffiForeignFutureStructU32.UniffiByValue,)
+    fun callback(`callbackData`: Long,`result`: UniffiForeignFutureResultU32.UniffiByValue,)
 }
 @Structure.FieldOrder("returnValue", "callStatus")
-internal open class UniffiForeignFutureStructI32(
+internal open class UniffiForeignFutureResultI32(
     @JvmField internal var `returnValue`: Int = 0,
     @JvmField internal var `callStatus`: UniffiRustCallStatus.ByValue = UniffiRustCallStatus.ByValue(),
 ) : Structure() {
     class UniffiByValue(
         `returnValue`: Int = 0,
         `callStatus`: UniffiRustCallStatus.ByValue = UniffiRustCallStatus.ByValue(),
-    ): UniffiForeignFutureStructI32(`returnValue`,`callStatus`,), Structure.ByValue
+    ): UniffiForeignFutureResultI32(`returnValue`,`callStatus`,), Structure.ByValue
 
-   internal fun uniffiSetValue(other: UniffiForeignFutureStructI32) {
+   internal fun uniffiSetValue(other: UniffiForeignFutureResultI32) {
         `returnValue` = other.`returnValue`
         `callStatus` = other.`callStatus`
     }
 
 }
 internal interface UniffiForeignFutureCompleteI32 : com.sun.jna.Callback {
-    fun callback(`callbackData`: Long,`result`: UniffiForeignFutureStructI32.UniffiByValue,)
+    fun callback(`callbackData`: Long,`result`: UniffiForeignFutureResultI32.UniffiByValue,)
 }
 @Structure.FieldOrder("returnValue", "callStatus")
-internal open class UniffiForeignFutureStructU64(
+internal open class UniffiForeignFutureResultU64(
     @JvmField internal var `returnValue`: Long = 0.toLong(),
     @JvmField internal var `callStatus`: UniffiRustCallStatus.ByValue = UniffiRustCallStatus.ByValue(),
 ) : Structure() {
     class UniffiByValue(
         `returnValue`: Long = 0.toLong(),
         `callStatus`: UniffiRustCallStatus.ByValue = UniffiRustCallStatus.ByValue(),
-    ): UniffiForeignFutureStructU64(`returnValue`,`callStatus`,), Structure.ByValue
+    ): UniffiForeignFutureResultU64(`returnValue`,`callStatus`,), Structure.ByValue
 
-   internal fun uniffiSetValue(other: UniffiForeignFutureStructU64) {
+   internal fun uniffiSetValue(other: UniffiForeignFutureResultU64) {
         `returnValue` = other.`returnValue`
         `callStatus` = other.`callStatus`
     }
 
 }
 internal interface UniffiForeignFutureCompleteU64 : com.sun.jna.Callback {
-    fun callback(`callbackData`: Long,`result`: UniffiForeignFutureStructU64.UniffiByValue,)
+    fun callback(`callbackData`: Long,`result`: UniffiForeignFutureResultU64.UniffiByValue,)
 }
 @Structure.FieldOrder("returnValue", "callStatus")
-internal open class UniffiForeignFutureStructI64(
+internal open class UniffiForeignFutureResultI64(
     @JvmField internal var `returnValue`: Long = 0.toLong(),
     @JvmField internal var `callStatus`: UniffiRustCallStatus.ByValue = UniffiRustCallStatus.ByValue(),
 ) : Structure() {
     class UniffiByValue(
         `returnValue`: Long = 0.toLong(),
         `callStatus`: UniffiRustCallStatus.ByValue = UniffiRustCallStatus.ByValue(),
-    ): UniffiForeignFutureStructI64(`returnValue`,`callStatus`,), Structure.ByValue
+    ): UniffiForeignFutureResultI64(`returnValue`,`callStatus`,), Structure.ByValue
 
-   internal fun uniffiSetValue(other: UniffiForeignFutureStructI64) {
+   internal fun uniffiSetValue(other: UniffiForeignFutureResultI64) {
         `returnValue` = other.`returnValue`
         `callStatus` = other.`callStatus`
     }
 
 }
 internal interface UniffiForeignFutureCompleteI64 : com.sun.jna.Callback {
-    fun callback(`callbackData`: Long,`result`: UniffiForeignFutureStructI64.UniffiByValue,)
+    fun callback(`callbackData`: Long,`result`: UniffiForeignFutureResultI64.UniffiByValue,)
 }
 @Structure.FieldOrder("returnValue", "callStatus")
-internal open class UniffiForeignFutureStructF32(
+internal open class UniffiForeignFutureResultF32(
     @JvmField internal var `returnValue`: Float = 0.0f,
     @JvmField internal var `callStatus`: UniffiRustCallStatus.ByValue = UniffiRustCallStatus.ByValue(),
 ) : Structure() {
     class UniffiByValue(
         `returnValue`: Float = 0.0f,
         `callStatus`: UniffiRustCallStatus.ByValue = UniffiRustCallStatus.ByValue(),
-    ): UniffiForeignFutureStructF32(`returnValue`,`callStatus`,), Structure.ByValue
+    ): UniffiForeignFutureResultF32(`returnValue`,`callStatus`,), Structure.ByValue
 
-   internal fun uniffiSetValue(other: UniffiForeignFutureStructF32) {
+   internal fun uniffiSetValue(other: UniffiForeignFutureResultF32) {
         `returnValue` = other.`returnValue`
         `callStatus` = other.`callStatus`
     }
 
 }
 internal interface UniffiForeignFutureCompleteF32 : com.sun.jna.Callback {
-    fun callback(`callbackData`: Long,`result`: UniffiForeignFutureStructF32.UniffiByValue,)
+    fun callback(`callbackData`: Long,`result`: UniffiForeignFutureResultF32.UniffiByValue,)
 }
 @Structure.FieldOrder("returnValue", "callStatus")
-internal open class UniffiForeignFutureStructF64(
+internal open class UniffiForeignFutureResultF64(
     @JvmField internal var `returnValue`: Double = 0.0,
     @JvmField internal var `callStatus`: UniffiRustCallStatus.ByValue = UniffiRustCallStatus.ByValue(),
 ) : Structure() {
     class UniffiByValue(
         `returnValue`: Double = 0.0,
         `callStatus`: UniffiRustCallStatus.ByValue = UniffiRustCallStatus.ByValue(),
-    ): UniffiForeignFutureStructF64(`returnValue`,`callStatus`,), Structure.ByValue
+    ): UniffiForeignFutureResultF64(`returnValue`,`callStatus`,), Structure.ByValue
 
-   internal fun uniffiSetValue(other: UniffiForeignFutureStructF64) {
+   internal fun uniffiSetValue(other: UniffiForeignFutureResultF64) {
         `returnValue` = other.`returnValue`
         `callStatus` = other.`callStatus`
     }
 
 }
 internal interface UniffiForeignFutureCompleteF64 : com.sun.jna.Callback {
-    fun callback(`callbackData`: Long,`result`: UniffiForeignFutureStructF64.UniffiByValue,)
+    fun callback(`callbackData`: Long,`result`: UniffiForeignFutureResultF64.UniffiByValue,)
 }
 @Structure.FieldOrder("returnValue", "callStatus")
-internal open class UniffiForeignFutureStructPointer(
-    @JvmField internal var `returnValue`: Pointer = Pointer.NULL,
-    @JvmField internal var `callStatus`: UniffiRustCallStatus.ByValue = UniffiRustCallStatus.ByValue(),
-) : Structure() {
-    class UniffiByValue(
-        `returnValue`: Pointer = Pointer.NULL,
-        `callStatus`: UniffiRustCallStatus.ByValue = UniffiRustCallStatus.ByValue(),
-    ): UniffiForeignFutureStructPointer(`returnValue`,`callStatus`,), Structure.ByValue
-
-   internal fun uniffiSetValue(other: UniffiForeignFutureStructPointer) {
-        `returnValue` = other.`returnValue`
-        `callStatus` = other.`callStatus`
-    }
-
-}
-internal interface UniffiForeignFutureCompletePointer : com.sun.jna.Callback {
-    fun callback(`callbackData`: Long,`result`: UniffiForeignFutureStructPointer.UniffiByValue,)
-}
-@Structure.FieldOrder("returnValue", "callStatus")
-internal open class UniffiForeignFutureStructRustBuffer(
+internal open class UniffiForeignFutureResultRustBuffer(
     @JvmField internal var `returnValue`: RustBuffer.ByValue = RustBuffer.ByValue(),
     @JvmField internal var `callStatus`: UniffiRustCallStatus.ByValue = UniffiRustCallStatus.ByValue(),
 ) : Structure() {
     class UniffiByValue(
         `returnValue`: RustBuffer.ByValue = RustBuffer.ByValue(),
         `callStatus`: UniffiRustCallStatus.ByValue = UniffiRustCallStatus.ByValue(),
-    ): UniffiForeignFutureStructRustBuffer(`returnValue`,`callStatus`,), Structure.ByValue
+    ): UniffiForeignFutureResultRustBuffer(`returnValue`,`callStatus`,), Structure.ByValue
 
-   internal fun uniffiSetValue(other: UniffiForeignFutureStructRustBuffer) {
+   internal fun uniffiSetValue(other: UniffiForeignFutureResultRustBuffer) {
         `returnValue` = other.`returnValue`
         `callStatus` = other.`callStatus`
     }
 
 }
 internal interface UniffiForeignFutureCompleteRustBuffer : com.sun.jna.Callback {
-    fun callback(`callbackData`: Long,`result`: UniffiForeignFutureStructRustBuffer.UniffiByValue,)
+    fun callback(`callbackData`: Long,`result`: UniffiForeignFutureResultRustBuffer.UniffiByValue,)
 }
 @Structure.FieldOrder("callStatus")
-internal open class UniffiForeignFutureStructVoid(
+internal open class UniffiForeignFutureResultVoid(
     @JvmField internal var `callStatus`: UniffiRustCallStatus.ByValue = UniffiRustCallStatus.ByValue(),
 ) : Structure() {
     class UniffiByValue(
         `callStatus`: UniffiRustCallStatus.ByValue = UniffiRustCallStatus.ByValue(),
-    ): UniffiForeignFutureStructVoid(`callStatus`,), Structure.ByValue
+    ): UniffiForeignFutureResultVoid(`callStatus`,), Structure.ByValue
 
-   internal fun uniffiSetValue(other: UniffiForeignFutureStructVoid) {
+   internal fun uniffiSetValue(other: UniffiForeignFutureResultVoid) {
         `callStatus` = other.`callStatus`
     }
 
 }
 internal interface UniffiForeignFutureCompleteVoid : com.sun.jna.Callback {
-    fun callback(`callbackData`: Long,`result`: UniffiForeignFutureStructVoid.UniffiByValue,)
+    fun callback(`callbackData`: Long,`result`: UniffiForeignFutureResultVoid.UniffiByValue,)
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // A JNA Library to expose the extern-C FFI definitions.
 // This is an implementation detail which will be called internally by the public API.
 
-internal interface UniffiLib : Library {
-    companion object {
-        internal val INSTANCE: UniffiLib by lazy {
-            loadIndirect<UniffiLib>(componentName = "xeton_core")
-            .also { lib: UniffiLib ->
-                uniffiCheckContractApiVersion(lib)
-                uniffiCheckApiChecksums(lib)
-                }
-        }
-        
-        // The Cleaner for the whole library
-        internal val CLEANER: UniffiCleaner by lazy {
-            UniffiCleaner.create()
-        }
+// For large crates we prevent `MethodTooLargeException` (see #2340)
+// N.B. the name of the extension is very misleading, since it is
+// rather `InterfaceTooLargeException`, caused by too many methods
+// in the interface for large crates.
+//
+// By splitting the otherwise huge interface into two parts
+// * UniffiLib (this)
+// * IntegrityCheckingUniffiLib
+// And all checksum methods are put into `IntegrityCheckingUniffiLib`
+// we allow for ~2x as many methods in the UniffiLib interface.
+//
+// Note: above all written when we used JNA's `loadIndirect` etc.
+// We now use JNA's "direct mapping" - unclear if same considerations apply exactly.
+internal object IntegrityCheckingUniffiLib {
+    init {
+        Native.register(IntegrityCheckingUniffiLib::class.java, findLibraryName(componentName = "xeton_core"))
+        uniffiCheckContractApiVersion(this)
+        uniffiCheckApiChecksums(this)
     }
+    external fun uniffi_xeton_core_checksum_func_extract_audio(
+    ): Int
+    external fun uniffi_xeton_core_checksum_func_extract_media_info(
+    ): Int
+    external fun uniffi_xeton_core_checksum_func_merge_video_audio(
+    ): Int
+    external fun uniffi_xeton_core_checksum_method_downloader_get_status(
+    ): Int
+    external fun uniffi_xeton_core_checksum_method_downloader_pause(
+    ): Int
+    external fun uniffi_xeton_core_checksum_method_downloader_start(
+    ): Int
+    external fun uniffi_xeton_core_checksum_method_syncservice_discovered_devices(
+    ): Int
+    external fun uniffi_xeton_core_checksum_method_syncservice_pair(
+    ): Int
+    external fun uniffi_xeton_core_checksum_method_syncservice_push_link(
+    ): Int
+    external fun uniffi_xeton_core_checksum_method_syncservice_start_discovery(
+    ): Int
+    external fun uniffi_xeton_core_checksum_method_syncservice_stop_discovery(
+    ): Int
+    external fun uniffi_xeton_core_checksum_method_xetonengine_add_download(
+    ): Int
+    external fun uniffi_xeton_core_checksum_method_xetonengine_boot(
+    ): Int
+    external fun uniffi_xeton_core_checksum_method_xetonengine_delete_download(
+    ): Int
+    external fun uniffi_xeton_core_checksum_method_xetonengine_get_download_list(
+    ): Int
+    external fun uniffi_xeton_core_checksum_method_xetonengine_get_torrent_metadata(
+    ): Int
+    external fun uniffi_xeton_core_checksum_method_xetonengine_next_event(
+    ): Int
+    external fun uniffi_xeton_core_checksum_method_xetonengine_pause(
+    ): Int
+    external fun uniffi_xeton_core_checksum_method_xetonengine_reload_settings(
+    ): Int
+    external fun uniffi_xeton_core_checksum_method_xetonengine_reset(
+    ): Int
+    external fun uniffi_xeton_core_checksum_method_xetonengine_resume(
+    ): Int
+    external fun uniffi_xeton_core_checksum_method_xetonengine_set_global_speed_limit(
+    ): Int
+    external fun uniffi_xeton_core_checksum_method_xetonengine_set_proxy(
+    ): Int
+    external fun uniffi_xeton_core_checksum_method_xetonengine_set_torrent_file_selection(
+    ): Int
+    external fun uniffi_xeton_core_checksum_constructor_downloader_new(
+    ): Int
+    external fun uniffi_xeton_core_checksum_constructor_syncservice_new(
+    ): Int
+    external fun uniffi_xeton_core_checksum_constructor_xetonengine_new(
+    ): Int
+    external fun ffi_xeton_core_uniffi_contract_version(
+    ): Int
 
-    fun uniffi_xeton_core_fn_clone_xetonengine(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
-    ): Pointer
-    fun uniffi_xeton_core_fn_free_xetonengine(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
-    ): Unit
-    fun uniffi_xeton_core_fn_constructor_xetonengine_new(`dataDir`: RustBuffer.ByValue,`settings`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
-    ): Pointer
-    fun uniffi_xeton_core_fn_method_xetonengine_add_download(`ptr`: Pointer,`props`: RustBuffer.ByValue,
-    ): Long
-    fun uniffi_xeton_core_fn_method_xetonengine_boot(`ptr`: Pointer,
-    ): Long
-    fun uniffi_xeton_core_fn_method_xetonengine_delete_download(`ptr`: Pointer,`id`: Long,`removeFile`: Byte,
-    ): Long
-    fun uniffi_xeton_core_fn_method_xetonengine_get_download_list(`ptr`: Pointer,
-    ): Long
-    fun uniffi_xeton_core_fn_method_xetonengine_next_event(`ptr`: Pointer,
-    ): Long
-    fun uniffi_xeton_core_fn_method_xetonengine_pause(`ptr`: Pointer,`id`: Long,
-    ): Long
-    fun uniffi_xeton_core_fn_method_xetonengine_reload_settings(`ptr`: Pointer,`settings`: RustBuffer.ByValue,
-    ): Long
-    fun uniffi_xeton_core_fn_method_xetonengine_reset(`ptr`: Pointer,`id`: Long,
-    ): Long
-    fun uniffi_xeton_core_fn_method_xetonengine_resume(`ptr`: Pointer,`id`: Long,
-    ): Long
-    fun uniffi_xeton_core_fn_method_xetonengine_set_global_speed_limit(`ptr`: Pointer,`bytesPerSecond`: Long,
-    ): Long
-    fun uniffi_xeton_core_fn_method_xetonengine_set_proxy(`ptr`: Pointer,`proxy`: RustBuffer.ByValue,
-    ): Long
-    fun ffi_xeton_core_rustbuffer_alloc(`size`: Long,uniffi_out_err: UniffiRustCallStatus, 
-    ): RustBuffer.ByValue
-    fun ffi_xeton_core_rustbuffer_from_bytes(`bytes`: ForeignBytes.ByValue,uniffi_out_err: UniffiRustCallStatus, 
-    ): RustBuffer.ByValue
-    fun ffi_xeton_core_rustbuffer_free(`buf`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
-    ): Unit
-    fun ffi_xeton_core_rustbuffer_reserve(`buf`: RustBuffer.ByValue,`additional`: Long,uniffi_out_err: UniffiRustCallStatus, 
-    ): RustBuffer.ByValue
-    fun ffi_xeton_core_rust_future_poll_u8(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
-    ): Unit
-    fun ffi_xeton_core_rust_future_cancel_u8(`handle`: Long,
-    ): Unit
-    fun ffi_xeton_core_rust_future_free_u8(`handle`: Long,
-    ): Unit
-    fun ffi_xeton_core_rust_future_complete_u8(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-    ): Byte
-    fun ffi_xeton_core_rust_future_poll_i8(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
-    ): Unit
-    fun ffi_xeton_core_rust_future_cancel_i8(`handle`: Long,
-    ): Unit
-    fun ffi_xeton_core_rust_future_free_i8(`handle`: Long,
-    ): Unit
-    fun ffi_xeton_core_rust_future_complete_i8(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-    ): Byte
-    fun ffi_xeton_core_rust_future_poll_u16(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
-    ): Unit
-    fun ffi_xeton_core_rust_future_cancel_u16(`handle`: Long,
-    ): Unit
-    fun ffi_xeton_core_rust_future_free_u16(`handle`: Long,
-    ): Unit
-    fun ffi_xeton_core_rust_future_complete_u16(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-    ): Short
-    fun ffi_xeton_core_rust_future_poll_i16(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
-    ): Unit
-    fun ffi_xeton_core_rust_future_cancel_i16(`handle`: Long,
-    ): Unit
-    fun ffi_xeton_core_rust_future_free_i16(`handle`: Long,
-    ): Unit
-    fun ffi_xeton_core_rust_future_complete_i16(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-    ): Short
-    fun ffi_xeton_core_rust_future_poll_u32(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
-    ): Unit
-    fun ffi_xeton_core_rust_future_cancel_u32(`handle`: Long,
-    ): Unit
-    fun ffi_xeton_core_rust_future_free_u32(`handle`: Long,
-    ): Unit
-    fun ffi_xeton_core_rust_future_complete_u32(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-    ): Int
-    fun ffi_xeton_core_rust_future_poll_i32(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
-    ): Unit
-    fun ffi_xeton_core_rust_future_cancel_i32(`handle`: Long,
-    ): Unit
-    fun ffi_xeton_core_rust_future_free_i32(`handle`: Long,
-    ): Unit
-    fun ffi_xeton_core_rust_future_complete_i32(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-    ): Int
-    fun ffi_xeton_core_rust_future_poll_u64(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
-    ): Unit
-    fun ffi_xeton_core_rust_future_cancel_u64(`handle`: Long,
-    ): Unit
-    fun ffi_xeton_core_rust_future_free_u64(`handle`: Long,
-    ): Unit
-    fun ffi_xeton_core_rust_future_complete_u64(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-    ): Long
-    fun ffi_xeton_core_rust_future_poll_i64(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
-    ): Unit
-    fun ffi_xeton_core_rust_future_cancel_i64(`handle`: Long,
-    ): Unit
-    fun ffi_xeton_core_rust_future_free_i64(`handle`: Long,
-    ): Unit
-    fun ffi_xeton_core_rust_future_complete_i64(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-    ): Long
-    fun ffi_xeton_core_rust_future_poll_f32(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
-    ): Unit
-    fun ffi_xeton_core_rust_future_cancel_f32(`handle`: Long,
-    ): Unit
-    fun ffi_xeton_core_rust_future_free_f32(`handle`: Long,
-    ): Unit
-    fun ffi_xeton_core_rust_future_complete_f32(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-    ): Float
-    fun ffi_xeton_core_rust_future_poll_f64(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
-    ): Unit
-    fun ffi_xeton_core_rust_future_cancel_f64(`handle`: Long,
-    ): Unit
-    fun ffi_xeton_core_rust_future_free_f64(`handle`: Long,
-    ): Unit
-    fun ffi_xeton_core_rust_future_complete_f64(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-    ): Double
-    fun ffi_xeton_core_rust_future_poll_pointer(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
-    ): Unit
-    fun ffi_xeton_core_rust_future_cancel_pointer(`handle`: Long,
-    ): Unit
-    fun ffi_xeton_core_rust_future_free_pointer(`handle`: Long,
-    ): Unit
-    fun ffi_xeton_core_rust_future_complete_pointer(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-    ): Pointer
-    fun ffi_xeton_core_rust_future_poll_rust_buffer(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
-    ): Unit
-    fun ffi_xeton_core_rust_future_cancel_rust_buffer(`handle`: Long,
-    ): Unit
-    fun ffi_xeton_core_rust_future_free_rust_buffer(`handle`: Long,
-    ): Unit
-    fun ffi_xeton_core_rust_future_complete_rust_buffer(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-    ): RustBuffer.ByValue
-    fun ffi_xeton_core_rust_future_poll_void(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
-    ): Unit
-    fun ffi_xeton_core_rust_future_cancel_void(`handle`: Long,
-    ): Unit
-    fun ffi_xeton_core_rust_future_free_void(`handle`: Long,
-    ): Unit
-    fun ffi_xeton_core_rust_future_complete_void(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
-    ): Unit
-    fun uniffi_xeton_core_checksum_method_xetonengine_add_download(
-    ): Short
-    fun uniffi_xeton_core_checksum_method_xetonengine_boot(
-    ): Short
-    fun uniffi_xeton_core_checksum_method_xetonengine_delete_download(
-    ): Short
-    fun uniffi_xeton_core_checksum_method_xetonengine_get_download_list(
-    ): Short
-    fun uniffi_xeton_core_checksum_method_xetonengine_next_event(
-    ): Short
-    fun uniffi_xeton_core_checksum_method_xetonengine_pause(
-    ): Short
-    fun uniffi_xeton_core_checksum_method_xetonengine_reload_settings(
-    ): Short
-    fun uniffi_xeton_core_checksum_method_xetonengine_reset(
-    ): Short
-    fun uniffi_xeton_core_checksum_method_xetonengine_resume(
-    ): Short
-    fun uniffi_xeton_core_checksum_method_xetonengine_set_global_speed_limit(
-    ): Short
-    fun uniffi_xeton_core_checksum_method_xetonengine_set_proxy(
-    ): Short
-    fun uniffi_xeton_core_checksum_constructor_xetonengine_new(
-    ): Short
-    fun ffi_xeton_core_uniffi_contract_version(
-    ): Int
-    
+        
 }
 
-private fun uniffiCheckContractApiVersion(lib: UniffiLib) {
+internal object UniffiLib {
+    
+    // The Cleaner for the whole library
+    internal val CLEANER: UniffiCleaner by lazy {
+        UniffiCleaner.create()
+    }
+    
+
+    init {
+        Native.register(UniffiLib::class.java, findLibraryName(componentName = "xeton_core"))
+        
+    }
+    external fun uniffi_xeton_core_fn_clone_downloader(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Long
+    external fun uniffi_xeton_core_fn_free_downloader(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Unit
+    external fun uniffi_xeton_core_fn_constructor_downloader_new(`url`: RustBuffer.ByValue,`outputPath`: RustBuffer.ByValue,`segments`: Short,uniffi_out_err: UniffiRustCallStatus, 
+    ): Long
+    external fun uniffi_xeton_core_fn_method_downloader_get_status(`ptr`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
+    external fun uniffi_xeton_core_fn_method_downloader_pause(`ptr`: Long,
+    ): Long
+    external fun uniffi_xeton_core_fn_method_downloader_start(`ptr`: Long,
+    ): Long
+    external fun uniffi_xeton_core_fn_clone_syncservice(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Long
+    external fun uniffi_xeton_core_fn_free_syncservice(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Unit
+    external fun uniffi_xeton_core_fn_constructor_syncservice_new(`deviceName`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+    ): Long
+    external fun uniffi_xeton_core_fn_method_syncservice_discovered_devices(`ptr`: Long,
+    ): Long
+    external fun uniffi_xeton_core_fn_method_syncservice_pair(`ptr`: Long,`peerId`: RustBuffer.ByValue,`pin`: RustBuffer.ByValue,
+    ): Long
+    external fun uniffi_xeton_core_fn_method_syncservice_push_link(`ptr`: Long,`peerId`: RustBuffer.ByValue,`url`: RustBuffer.ByValue,
+    ): Long
+    external fun uniffi_xeton_core_fn_method_syncservice_start_discovery(`ptr`: Long,
+    ): Long
+    external fun uniffi_xeton_core_fn_method_syncservice_stop_discovery(`ptr`: Long,
+    ): Long
+    external fun uniffi_xeton_core_fn_clone_xetonengine(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Long
+    external fun uniffi_xeton_core_fn_free_xetonengine(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Unit
+    external fun uniffi_xeton_core_fn_constructor_xetonengine_new(`dataDir`: RustBuffer.ByValue,`settings`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+    ): Long
+    external fun uniffi_xeton_core_fn_method_xetonengine_add_download(`ptr`: Long,`props`: RustBuffer.ByValue,
+    ): Long
+    external fun uniffi_xeton_core_fn_method_xetonengine_boot(`ptr`: Long,
+    ): Long
+    external fun uniffi_xeton_core_fn_method_xetonengine_delete_download(`ptr`: Long,`id`: Long,`removeFile`: Byte,
+    ): Long
+    external fun uniffi_xeton_core_fn_method_xetonengine_get_download_list(`ptr`: Long,
+    ): Long
+    external fun uniffi_xeton_core_fn_method_xetonengine_get_torrent_metadata(`ptr`: Long,`id`: Long,
+    ): Long
+    external fun uniffi_xeton_core_fn_method_xetonengine_next_event(`ptr`: Long,
+    ): Long
+    external fun uniffi_xeton_core_fn_method_xetonengine_pause(`ptr`: Long,`id`: Long,
+    ): Long
+    external fun uniffi_xeton_core_fn_method_xetonengine_reload_settings(`ptr`: Long,`settings`: RustBuffer.ByValue,
+    ): Long
+    external fun uniffi_xeton_core_fn_method_xetonengine_reset(`ptr`: Long,`id`: Long,
+    ): Long
+    external fun uniffi_xeton_core_fn_method_xetonengine_resume(`ptr`: Long,`id`: Long,
+    ): Long
+    external fun uniffi_xeton_core_fn_method_xetonengine_set_global_speed_limit(`ptr`: Long,`bytesPerSecond`: Long,
+    ): Long
+    external fun uniffi_xeton_core_fn_method_xetonengine_set_proxy(`ptr`: Long,`proxy`: RustBuffer.ByValue,
+    ): Long
+    external fun uniffi_xeton_core_fn_method_xetonengine_set_torrent_file_selection(`ptr`: Long,`id`: Long,`selectedIndices`: RustBuffer.ByValue,
+    ): Long
+    external fun uniffi_xeton_core_fn_func_extract_audio(`inputPath`: RustBuffer.ByValue,`outputPath`: RustBuffer.ByValue,`format`: RustBuffer.ByValue,
+    ): Long
+    external fun uniffi_xeton_core_fn_func_extract_media_info(`url`: RustBuffer.ByValue,
+    ): Long
+    external fun uniffi_xeton_core_fn_func_merge_video_audio(`videoPath`: RustBuffer.ByValue,`audioPath`: RustBuffer.ByValue,`outputPath`: RustBuffer.ByValue,
+    ): Long
+    external fun ffi_xeton_core_rustbuffer_alloc(`size`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
+    external fun ffi_xeton_core_rustbuffer_from_bytes(`bytes`: ForeignBytes.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
+    external fun ffi_xeton_core_rustbuffer_free(`buf`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+    ): Unit
+    external fun ffi_xeton_core_rustbuffer_reserve(`buf`: RustBuffer.ByValue,`additional`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
+    external fun ffi_xeton_core_rust_future_poll_u8(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
+    ): Unit
+    external fun ffi_xeton_core_rust_future_cancel_u8(`handle`: Long,
+    ): Unit
+    external fun ffi_xeton_core_rust_future_free_u8(`handle`: Long,
+    ): Unit
+    external fun ffi_xeton_core_rust_future_complete_u8(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Int
+    external fun ffi_xeton_core_rust_future_poll_i8(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
+    ): Unit
+    external fun ffi_xeton_core_rust_future_cancel_i8(`handle`: Long,
+    ): Unit
+    external fun ffi_xeton_core_rust_future_free_i8(`handle`: Long,
+    ): Unit
+    external fun ffi_xeton_core_rust_future_complete_i8(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Byte
+    external fun ffi_xeton_core_rust_future_poll_u16(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
+    ): Unit
+    external fun ffi_xeton_core_rust_future_cancel_u16(`handle`: Long,
+    ): Unit
+    external fun ffi_xeton_core_rust_future_free_u16(`handle`: Long,
+    ): Unit
+    external fun ffi_xeton_core_rust_future_complete_u16(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Int
+    external fun ffi_xeton_core_rust_future_poll_i16(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
+    ): Unit
+    external fun ffi_xeton_core_rust_future_cancel_i16(`handle`: Long,
+    ): Unit
+    external fun ffi_xeton_core_rust_future_free_i16(`handle`: Long,
+    ): Unit
+    external fun ffi_xeton_core_rust_future_complete_i16(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Short
+    external fun ffi_xeton_core_rust_future_poll_u32(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
+    ): Unit
+    external fun ffi_xeton_core_rust_future_cancel_u32(`handle`: Long,
+    ): Unit
+    external fun ffi_xeton_core_rust_future_free_u32(`handle`: Long,
+    ): Unit
+    external fun ffi_xeton_core_rust_future_complete_u32(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Int
+    external fun ffi_xeton_core_rust_future_poll_i32(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
+    ): Unit
+    external fun ffi_xeton_core_rust_future_cancel_i32(`handle`: Long,
+    ): Unit
+    external fun ffi_xeton_core_rust_future_free_i32(`handle`: Long,
+    ): Unit
+    external fun ffi_xeton_core_rust_future_complete_i32(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Int
+    external fun ffi_xeton_core_rust_future_poll_u64(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
+    ): Unit
+    external fun ffi_xeton_core_rust_future_cancel_u64(`handle`: Long,
+    ): Unit
+    external fun ffi_xeton_core_rust_future_free_u64(`handle`: Long,
+    ): Unit
+    external fun ffi_xeton_core_rust_future_complete_u64(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Long
+    external fun ffi_xeton_core_rust_future_poll_i64(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
+    ): Unit
+    external fun ffi_xeton_core_rust_future_cancel_i64(`handle`: Long,
+    ): Unit
+    external fun ffi_xeton_core_rust_future_free_i64(`handle`: Long,
+    ): Unit
+    external fun ffi_xeton_core_rust_future_complete_i64(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Long
+    external fun ffi_xeton_core_rust_future_poll_f32(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
+    ): Unit
+    external fun ffi_xeton_core_rust_future_cancel_f32(`handle`: Long,
+    ): Unit
+    external fun ffi_xeton_core_rust_future_free_f32(`handle`: Long,
+    ): Unit
+    external fun ffi_xeton_core_rust_future_complete_f32(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Float
+    external fun ffi_xeton_core_rust_future_poll_f64(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
+    ): Unit
+    external fun ffi_xeton_core_rust_future_cancel_f64(`handle`: Long,
+    ): Unit
+    external fun ffi_xeton_core_rust_future_free_f64(`handle`: Long,
+    ): Unit
+    external fun ffi_xeton_core_rust_future_complete_f64(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Double
+    external fun ffi_xeton_core_rust_future_poll_rust_buffer(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
+    ): Unit
+    external fun ffi_xeton_core_rust_future_cancel_rust_buffer(`handle`: Long,
+    ): Unit
+    external fun ffi_xeton_core_rust_future_free_rust_buffer(`handle`: Long,
+    ): Unit
+    external fun ffi_xeton_core_rust_future_complete_rust_buffer(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
+    external fun ffi_xeton_core_rust_future_poll_void(`handle`: Long,`callback`: UniffiRustFutureContinuationCallback,`callbackData`: Long,
+    ): Unit
+    external fun ffi_xeton_core_rust_future_cancel_void(`handle`: Long,
+    ): Unit
+    external fun ffi_xeton_core_rust_future_free_void(`handle`: Long,
+    ): Unit
+    external fun ffi_xeton_core_rust_future_complete_void(`handle`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): Unit
+
+        
+}
+
+private fun uniffiCheckContractApiVersion(lib: IntegrityCheckingUniffiLib) {
     // Get the bindings contract version from our ComponentInterface
-    val bindings_contract_version = 26
+    val bindings_contract_version = 30
     // Get the scaffolding contract version by calling the into the dylib
     val scaffolding_contract_version = lib.ffi_xeton_core_uniffi_contract_version()
     if (bindings_contract_version != scaffolding_contract_version) {
         throw RuntimeException("UniFFI contract version mismatch: try cleaning and rebuilding your project")
     }
 }
-
 @Suppress("UNUSED_PARAMETER")
-private fun uniffiCheckApiChecksums(lib: UniffiLib) {
-    if (lib.uniffi_xeton_core_checksum_method_xetonengine_add_download() != 59431.toShort()) {
+private fun uniffiCheckApiChecksums(lib: IntegrityCheckingUniffiLib) {
+    if (lib.uniffi_xeton_core_checksum_func_extract_audio() != 36202) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_xeton_core_checksum_method_xetonengine_boot() != 8579.toShort()) {
+    if (lib.uniffi_xeton_core_checksum_func_extract_media_info() != 53463) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_xeton_core_checksum_method_xetonengine_delete_download() != 16936.toShort()) {
+    if (lib.uniffi_xeton_core_checksum_func_merge_video_audio() != 44669) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_xeton_core_checksum_method_xetonengine_get_download_list() != 63829.toShort()) {
+    if (lib.uniffi_xeton_core_checksum_method_downloader_get_status() != 24374) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_xeton_core_checksum_method_xetonengine_next_event() != 56824.toShort()) {
+    if (lib.uniffi_xeton_core_checksum_method_downloader_pause() != 6656) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_xeton_core_checksum_method_xetonengine_pause() != 14791.toShort()) {
+    if (lib.uniffi_xeton_core_checksum_method_downloader_start() != 8428) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_xeton_core_checksum_method_xetonengine_reload_settings() != 40343.toShort()) {
+    if (lib.uniffi_xeton_core_checksum_method_syncservice_discovered_devices() != 53859) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_xeton_core_checksum_method_xetonengine_reset() != 50640.toShort()) {
+    if (lib.uniffi_xeton_core_checksum_method_syncservice_pair() != 58804) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_xeton_core_checksum_method_xetonengine_resume() != 3664.toShort()) {
+    if (lib.uniffi_xeton_core_checksum_method_syncservice_push_link() != 11917) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_xeton_core_checksum_method_xetonengine_set_global_speed_limit() != 63490.toShort()) {
+    if (lib.uniffi_xeton_core_checksum_method_syncservice_start_discovery() != 64249) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_xeton_core_checksum_method_xetonengine_set_proxy() != 58371.toShort()) {
+    if (lib.uniffi_xeton_core_checksum_method_syncservice_stop_discovery() != 25412) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_xeton_core_checksum_constructor_xetonengine_new() != 46845.toShort()) {
+    if (lib.uniffi_xeton_core_checksum_method_xetonengine_add_download() != 8923) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
+    if (lib.uniffi_xeton_core_checksum_method_xetonengine_boot() != 16135) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_xeton_core_checksum_method_xetonengine_delete_download() != 46627) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_xeton_core_checksum_method_xetonengine_get_download_list() != 21067) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_xeton_core_checksum_method_xetonengine_get_torrent_metadata() != 14263) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_xeton_core_checksum_method_xetonengine_next_event() != 34750) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_xeton_core_checksum_method_xetonengine_pause() != 12204) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_xeton_core_checksum_method_xetonengine_reload_settings() != 42165) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_xeton_core_checksum_method_xetonengine_reset() != 45968) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_xeton_core_checksum_method_xetonengine_resume() != 64658) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_xeton_core_checksum_method_xetonengine_set_global_speed_limit() != 65273) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_xeton_core_checksum_method_xetonengine_set_proxy() != 17069) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_xeton_core_checksum_method_xetonengine_set_torrent_file_selection() != 2052) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_xeton_core_checksum_constructor_downloader_new() != 3809) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_xeton_core_checksum_constructor_syncservice_new() != 36823) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_xeton_core_checksum_constructor_xetonengine_new() != 22543) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+}
+
+/**
+ * @suppress
+ */
+public fun uniffiEnsureInitialized() {
+    IntegrityCheckingUniffiLib
+    // UniffiLib() initialized as objects are used, but we still need to explicitly
+    // reference it so initialization across crates works as expected.
+    UniffiLib
 }
 
 // Async support
 // Async return type handlers
 
 internal const val UNIFFI_RUST_FUTURE_POLL_READY = 0.toByte()
-internal const val UNIFFI_RUST_FUTURE_POLL_MAYBE_READY = 1.toByte()
+internal const val UNIFFI_RUST_FUTURE_POLL_WAKE = 1.toByte()
 
 internal val uniffiContinuationHandleMap = UniffiHandleMap<CancellableContinuation<Byte>>()
 
@@ -1040,8 +1050,33 @@ interface Disposable {
     fun destroy()
     companion object {
         fun destroy(vararg args: Any?) {
-            args.filterIsInstance<Disposable>()
-                .forEach(Disposable::destroy)
+            for (arg in args) {
+                when (arg) {
+                    is Disposable -> arg.destroy()
+                    is ArrayList<*> -> {
+                        for (idx in arg.indices) {
+                            val element = arg[idx]
+                            if (element is Disposable) {
+                                element.destroy()
+                            }
+                        }
+                    }
+                    is Map<*, *> -> {
+                        for (element in arg.values) {
+                            if (element is Disposable) {
+                                element.destroy()
+                            }
+                        }
+                    }
+                    is Iterable<*> -> {
+                        for (element in arg) {
+                            if (element is Disposable) {
+                                element.destroy()
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
@@ -1062,11 +1097,113 @@ inline fun <T : Disposable?, R> T.use(block: (T) -> R) =
     }
 
 /** 
+ * Placeholder object used to signal that we're constructing an interface with a FFI handle.
+ *
+ * This is the first argument for interface constructors that input a raw handle. It exists is that
+ * so we can avoid signature conflicts when an interface has a regular constructor than inputs a
+ * Long.
+ *
+ * @suppress
+ * */
+object UniffiWithHandle
+
+/** 
  * Used to instantiate an interface without an actual pointer, for fakes in tests, mostly.
  *
  * @suppress
  * */
-object NoPointer
+object NoHandle
+/**
+ * The cleaner interface for Object finalization code to run.
+ * This is the entry point to any implementation that we're using.
+ *
+ * The cleaner registers objects and returns cleanables, so now we are
+ * defining a `UniffiCleaner` with a `UniffiClenaer.Cleanable` to abstract the
+ * different implmentations available at compile time.
+ *
+ * @suppress
+ */
+interface UniffiCleaner {
+    interface Cleanable {
+        fun clean()
+    }
+
+    fun register(value: Any, cleanUpTask: Runnable): UniffiCleaner.Cleanable
+
+    companion object
+}
+
+// The fallback Jna cleaner, which is available for both Android, and the JVM.
+private class UniffiJnaCleaner : UniffiCleaner {
+    private val cleaner = com.sun.jna.internal.Cleaner.getCleaner()
+
+    override fun register(value: Any, cleanUpTask: Runnable): UniffiCleaner.Cleanable =
+        UniffiJnaCleanable(cleaner.register(value, cleanUpTask))
+}
+
+private class UniffiJnaCleanable(
+    private val cleanable: com.sun.jna.internal.Cleaner.Cleanable,
+) : UniffiCleaner.Cleanable {
+    override fun clean() = cleanable.clean()
+}
+
+
+// We decide at uniffi binding generation time whether we were
+// using Android or not.
+// There are further runtime checks to chose the correct implementation
+// of the cleaner.
+private fun UniffiCleaner.Companion.create(): UniffiCleaner =
+    try {
+        // For safety's sake: if the library hasn't been run in android_cleaner = true
+        // mode, but is being run on Android, then we still need to think about
+        // Android API versions.
+        // So we check if java.lang.ref.Cleaner is there, and use that…
+        java.lang.Class.forName("java.lang.ref.Cleaner")
+        JavaLangRefCleaner()
+    } catch (e: ClassNotFoundException) {
+        // … otherwise, fallback to the JNA cleaner.
+        UniffiJnaCleaner()
+    }
+
+private class JavaLangRefCleaner : UniffiCleaner {
+    val cleaner = java.lang.ref.Cleaner.create()
+
+    override fun register(value: Any, cleanUpTask: Runnable): UniffiCleaner.Cleanable =
+        JavaLangRefCleanable(cleaner.register(value, cleanUpTask))
+}
+
+private class JavaLangRefCleanable(
+    val cleanable: java.lang.ref.Cleaner.Cleanable
+) : UniffiCleaner.Cleanable {
+    override fun clean() = cleanable.clean()
+}
+
+/**
+ * @suppress
+ */
+public object FfiConverterUShort: FfiConverter<UShort, Short> {
+    override fun lift(value: Short): UShort {
+        return value.toUShort()
+    }
+
+    fun lift(value: Int): UShort {
+        return value.toUShort()
+    }
+
+    override fun read(buf: ByteBuffer): UShort {
+        return lift(buf.getShort())
+    }
+
+    override fun lower(value: UShort): Short {
+        return value.toShort()
+    }
+
+    override fun allocationSize(value: UShort) = 2UL
+
+    override fun write(value: UShort, buf: ByteBuffer) {
+        buf.putShort(value.toShort())
+    }
+}
 
 /**
  * @suppress
@@ -1195,21 +1332,18 @@ public object FfiConverterString: FfiConverter<String, RustBuffer.ByValue> {
 }
 
 
-// This template implements a class for working with a Rust struct via a Pointer/Arc<T>
+// This template implements a class for working with a Rust struct via a handle
 // to the live Rust struct on the other side of the FFI.
-//
-// Each instance implements core operations for working with the Rust `Arc<T>` and the
-// Kotlin Pointer to work with the live Rust struct on the other side of the FFI.
 //
 // There's some subtlety here, because we have to be careful not to operate on a Rust
 // struct after it has been dropped, and because we must expose a public API for freeing
 // theq Kotlin wrapper object in lieu of reliable finalizers. The core requirements are:
 //
-//   * Each instance holds an opaque pointer to the underlying Rust struct.
-//     Method calls need to read this pointer from the object's state and pass it in to
+//   * Each instance holds an opaque handle to the underlying Rust struct.
+//     Method calls need to read this handle from the object's state and pass it in to
 //     the Rust FFI.
 //
-//   * When an instance is no longer needed, its pointer should be passed to a
+//   * When an instance is no longer needed, its handle should be passed to a
 //     special destructor function provided by the Rust FFI, which will drop the
 //     underlying Rust struct.
 //
@@ -1234,13 +1368,13 @@ public object FfiConverterString: FfiConverter<String, RustBuffer.ByValue> {
 //      2. the thread is shared across the whole library. This can be tuned by using `android_cleaner = true`,
 //         or `android = true` in the [`kotlin` section of the `uniffi.toml` file](https://mozilla.github.io/uniffi-rs/kotlin/configuration.html).
 //
-// If we try to implement this with mutual exclusion on access to the pointer, there is the
+// If we try to implement this with mutual exclusion on access to the handle, there is the
 // possibility of a race between a method call and a concurrent call to `destroy`:
 //
-//    * Thread A starts a method call, reads the value of the pointer, but is interrupted
-//      before it can pass the pointer over the FFI to Rust.
+//    * Thread A starts a method call, reads the value of the handle, but is interrupted
+//      before it can pass the handle over the FFI to Rust.
 //    * Thread B calls `destroy` and frees the underlying Rust struct.
-//    * Thread A resumes, passing the already-read pointer value to Rust and triggering
+//    * Thread A resumes, passing the already-read handle value to Rust and triggering
 //      a use-after-free.
 //
 // One possible solution would be to use a `ReadWriteLock`, with each method call taking
@@ -1293,69 +1427,667 @@ public object FfiConverterString: FfiConverter<String, RustBuffer.ByValue> {
 //
 
 
-/**
- * The cleaner interface for Object finalization code to run.
- * This is the entry point to any implementation that we're using.
- *
- * The cleaner registers objects and returns cleanables, so now we are
- * defining a `UniffiCleaner` with a `UniffiClenaer.Cleanable` to abstract the
- * different implmentations available at compile time.
- *
- * @suppress
- */
-interface UniffiCleaner {
-    interface Cleanable {
-        fun clean()
-    }
-
-    fun register(value: Any, cleanUpTask: Runnable): UniffiCleaner.Cleanable
-
+public interface DownloaderInterface {
+    
+    fun `getStatus`(): DownloadStatus
+    
+    suspend fun `pause`()
+    
+    suspend fun `start`()
+    
     companion object
 }
 
-// The fallback Jna cleaner, which is available for both Android, and the JVM.
-private class UniffiJnaCleaner : UniffiCleaner {
-    private val cleaner = com.sun.jna.internal.Cleaner.getCleaner()
+open class Downloader: Disposable, AutoCloseable, DownloaderInterface
+{
 
-    override fun register(value: Any, cleanUpTask: Runnable): UniffiCleaner.Cleanable =
-        UniffiJnaCleanable(cleaner.register(value, cleanUpTask))
-}
-
-private class UniffiJnaCleanable(
-    private val cleanable: com.sun.jna.internal.Cleaner.Cleanable,
-) : UniffiCleaner.Cleanable {
-    override fun clean() = cleanable.clean()
-}
-
-// We decide at uniffi binding generation time whether we were
-// using Android or not.
-// There are further runtime checks to chose the correct implementation
-// of the cleaner.
-private fun UniffiCleaner.Companion.create(): UniffiCleaner =
-    try {
-        // For safety's sake: if the library hasn't been run in android_cleaner = true
-        // mode, but is being run on Android, then we still need to think about
-        // Android API versions.
-        // So we check if java.lang.ref.Cleaner is there, and use that…
-        java.lang.Class.forName("java.lang.ref.Cleaner")
-        JavaLangRefCleaner()
-    } catch (e: ClassNotFoundException) {
-        // … otherwise, fallback to the JNA cleaner.
-        UniffiJnaCleaner()
+    @Suppress("UNUSED_PARAMETER")
+    /**
+     * @suppress
+     */
+    constructor(withHandle: UniffiWithHandle, handle: Long) {
+        this.handle = handle
+        this.cleanable = UniffiLib.CLEANER.register(this, UniffiCleanAction(handle))
     }
 
-private class JavaLangRefCleaner : UniffiCleaner {
-    val cleaner = java.lang.ref.Cleaner.create()
+    /**
+     * @suppress
+     *
+     * This constructor can be used to instantiate a fake object. Only used for tests. Any
+     * attempt to actually use an object constructed this way will fail as there is no
+     * connected Rust object.
+     */
+    @Suppress("UNUSED_PARAMETER")
+    constructor(noHandle: NoHandle) {
+        this.handle = 0
+        this.cleanable = null
+    }
+    constructor(`url`: kotlin.String, `outputPath`: kotlin.String, `segments`: kotlin.UShort) :
+        this(UniffiWithHandle, 
+    uniffiRustCall() { _status ->
+    UniffiLib.uniffi_xeton_core_fn_constructor_downloader_new(
+    
+        FfiConverterString.lower(`url`),FfiConverterString.lower(`outputPath`),FfiConverterUShort.lower(`segments`),_status)
+}
+    )
 
-    override fun register(value: Any, cleanUpTask: Runnable): UniffiCleaner.Cleanable =
-        JavaLangRefCleanable(cleaner.register(value, cleanUpTask))
+    protected val handle: Long
+    protected val cleanable: UniffiCleaner.Cleanable?
+
+    private val wasDestroyed = AtomicBoolean(false)
+    private val callCounter = AtomicLong(1)
+
+    override fun destroy() {
+        // Only allow a single call to this method.
+        // TODO: maybe we should log a warning if called more than once?
+        if (this.wasDestroyed.compareAndSet(false, true)) {
+            // This decrement always matches the initial count of 1 given at creation time.
+            if (this.callCounter.decrementAndGet() == 0L) {
+                cleanable?.clean()
+            }
+        }
+    }
+
+    @Synchronized
+    override fun close() {
+        this.destroy()
+    }
+
+    internal inline fun <R> callWithHandle(block: (handle: Long) -> R): R {
+        // Check and increment the call counter, to keep the object alive.
+        // This needs a compare-and-set retry loop in case of concurrent updates.
+        do {
+            val c = this.callCounter.get()
+            if (c == 0L) {
+                throw IllegalStateException("${this.javaClass.simpleName} object has already been destroyed")
+            }
+            if (c == Long.MAX_VALUE) {
+                throw IllegalStateException("${this.javaClass.simpleName} call counter would overflow")
+            }
+        } while (! this.callCounter.compareAndSet(c, c + 1L))
+        // Now we can safely do the method call without the handle being freed concurrently.
+        try {
+            return block(this.uniffiCloneHandle())
+        } finally {
+            // This decrement always matches the increment we performed above.
+            if (this.callCounter.decrementAndGet() == 0L) {
+                cleanable?.clean()
+            }
+        }
+    }
+
+    // Use a static inner class instead of a closure so as not to accidentally
+    // capture `this` as part of the cleanable's action.
+    private class UniffiCleanAction(private val handle: Long) : Runnable {
+        override fun run() {
+            if (handle == 0.toLong()) {
+                // Fake object created with `NoHandle`, don't try to free.
+                return;
+            }
+            uniffiRustCall { status ->
+                UniffiLib.uniffi_xeton_core_fn_free_downloader(handle, status)
+            }
+        }
+    }
+
+    /**
+     * @suppress
+     */
+    fun uniffiCloneHandle(): Long {
+        if (handle == 0.toLong()) {
+            throw InternalException("uniffiCloneHandle() called on NoHandle object");
+        }
+        return uniffiRustCall() { status ->
+            UniffiLib.uniffi_xeton_core_fn_clone_downloader(handle, status)
+        }
+    }
+
+    override fun `getStatus`(): DownloadStatus {
+            return FfiConverterTypeDownloadStatus.lift(
+    callWithHandle {
+    uniffiRustCall() { _status ->
+    UniffiLib.uniffi_xeton_core_fn_method_downloader_get_status(
+        it,
+        _status)
+}
+    }
+    )
+    }
+    
+
+    
+    @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
+    override suspend fun `pause`() {
+        return uniffiRustCallAsync(
+        callWithHandle { uniffiHandle ->
+            UniffiLib.uniffi_xeton_core_fn_method_downloader_pause(
+                uniffiHandle,
+                
+            )
+        },
+        { future, callback, continuation -> UniffiLib.ffi_xeton_core_rust_future_poll_void(future, callback, continuation) },
+        { future, continuation -> UniffiLib.ffi_xeton_core_rust_future_complete_void(future, continuation) },
+        { future -> UniffiLib.ffi_xeton_core_rust_future_free_void(future) },
+        // lift function
+        { Unit },
+        
+        // Error FFI converter
+        UniffiNullRustCallStatusErrorHandler,
+    )
+    }
+
+    
+    @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
+    override suspend fun `start`() {
+        return uniffiRustCallAsync(
+        callWithHandle { uniffiHandle ->
+            UniffiLib.uniffi_xeton_core_fn_method_downloader_start(
+                uniffiHandle,
+                
+            )
+        },
+        { future, callback, continuation -> UniffiLib.ffi_xeton_core_rust_future_poll_void(future, callback, continuation) },
+        { future, continuation -> UniffiLib.ffi_xeton_core_rust_future_complete_void(future, continuation) },
+        { future -> UniffiLib.ffi_xeton_core_rust_future_free_void(future) },
+        // lift function
+        { Unit },
+        
+        // Error FFI converter
+        UniffiNullRustCallStatusErrorHandler,
+    )
+    }
+
+    
+
+    
+
+
+    
+    
+    /**
+     * @suppress
+     */
+    companion object
+    
 }
 
-private class JavaLangRefCleanable(
-    val cleanable: java.lang.ref.Cleaner.Cleanable
-) : UniffiCleaner.Cleanable {
-    override fun clean() = cleanable.clean()
+
+/**
+ * @suppress
+ */
+public object FfiConverterTypeDownloader: FfiConverter<Downloader, Long> {
+    override fun lower(value: Downloader): Long {
+        return value.uniffiCloneHandle()
+    }
+
+    override fun lift(value: Long): Downloader {
+        return Downloader(UniffiWithHandle, value)
+    }
+
+    override fun read(buf: ByteBuffer): Downloader {
+        return lift(buf.getLong())
+    }
+
+    override fun allocationSize(value: Downloader) = 8UL
+
+    override fun write(value: Downloader, buf: ByteBuffer) {
+        buf.putLong(lower(value))
+    }
 }
+
+
+// This template implements a class for working with a Rust struct via a handle
+// to the live Rust struct on the other side of the FFI.
+//
+// There's some subtlety here, because we have to be careful not to operate on a Rust
+// struct after it has been dropped, and because we must expose a public API for freeing
+// theq Kotlin wrapper object in lieu of reliable finalizers. The core requirements are:
+//
+//   * Each instance holds an opaque handle to the underlying Rust struct.
+//     Method calls need to read this handle from the object's state and pass it in to
+//     the Rust FFI.
+//
+//   * When an instance is no longer needed, its handle should be passed to a
+//     special destructor function provided by the Rust FFI, which will drop the
+//     underlying Rust struct.
+//
+//   * Given an instance, calling code is expected to call the special
+//     `destroy` method in order to free it after use, either by calling it explicitly
+//     or by using a higher-level helper like the `use` method. Failing to do so risks
+//     leaking the underlying Rust struct.
+//
+//   * We can't assume that calling code will do the right thing, and must be prepared
+//     to handle Kotlin method calls executing concurrently with or even after a call to
+//     `destroy`, and to handle multiple (possibly concurrent!) calls to `destroy`.
+//
+//   * We must never allow Rust code to operate on the underlying Rust struct after
+//     the destructor has been called, and must never call the destructor more than once.
+//     Doing so may trigger memory unsafety.
+//
+//   * To mitigate many of the risks of leaking memory and use-after-free unsafety, a `Cleaner`
+//     is implemented to call the destructor when the Kotlin object becomes unreachable.
+//     This is done in a background thread. This is not a panacea, and client code should be aware that
+//      1. the thread may starve if some there are objects that have poorly performing
+//     `drop` methods or do significant work in their `drop` methods.
+//      2. the thread is shared across the whole library. This can be tuned by using `android_cleaner = true`,
+//         or `android = true` in the [`kotlin` section of the `uniffi.toml` file](https://mozilla.github.io/uniffi-rs/kotlin/configuration.html).
+//
+// If we try to implement this with mutual exclusion on access to the handle, there is the
+// possibility of a race between a method call and a concurrent call to `destroy`:
+//
+//    * Thread A starts a method call, reads the value of the handle, but is interrupted
+//      before it can pass the handle over the FFI to Rust.
+//    * Thread B calls `destroy` and frees the underlying Rust struct.
+//    * Thread A resumes, passing the already-read handle value to Rust and triggering
+//      a use-after-free.
+//
+// One possible solution would be to use a `ReadWriteLock`, with each method call taking
+// a read lock (and thus allowed to run concurrently) and the special `destroy` method
+// taking a write lock (and thus blocking on live method calls). However, we aim not to
+// generate methods with any hidden blocking semantics, and a `destroy` method that might
+// block if called incorrectly seems to meet that bar.
+//
+// So, we achieve our goals by giving each instance an associated `AtomicLong` counter to track
+// the number of in-flight method calls, and an `AtomicBoolean` flag to indicate whether `destroy`
+// has been called. These are updated according to the following rules:
+//
+//    * The initial value of the counter is 1, indicating a live object with no in-flight calls.
+//      The initial value for the flag is false.
+//
+//    * At the start of each method call, we atomically check the counter.
+//      If it is 0 then the underlying Rust struct has already been destroyed and the call is aborted.
+//      If it is nonzero them we atomically increment it by 1 and proceed with the method call.
+//
+//    * At the end of each method call, we atomically decrement and check the counter.
+//      If it has reached zero then we destroy the underlying Rust struct.
+//
+//    * When `destroy` is called, we atomically flip the flag from false to true.
+//      If the flag was already true we silently fail.
+//      Otherwise we atomically decrement and check the counter.
+//      If it has reached zero then we destroy the underlying Rust struct.
+//
+// Astute readers may observe that this all sounds very similar to the way that Rust's `Arc<T>` works,
+// and indeed it is, with the addition of a flag to guard against multiple calls to `destroy`.
+//
+// The overall effect is that the underlying Rust struct is destroyed only when `destroy` has been
+// called *and* all in-flight method calls have completed, avoiding violating any of the expectations
+// of the underlying Rust code.
+//
+// This makes a cleaner a better alternative to _not_ calling `destroy()` as
+// and when the object is finished with, but the abstraction is not perfect: if the Rust object's `drop`
+// method is slow, and/or there are many objects to cleanup, and it's on a low end Android device, then the cleaner
+// thread may be starved, and the app will leak memory.
+//
+// In this case, `destroy`ing manually may be a better solution.
+//
+// The cleaner can live side by side with the manual calling of `destroy`. In the order of responsiveness, uniffi objects
+// with Rust peers are reclaimed:
+//
+// 1. By calling the `destroy` method of the object, which calls `rustObject.free()`. If that doesn't happen:
+// 2. When the object becomes unreachable, AND the Cleaner thread gets to call `rustObject.free()`. If the thread is starved then:
+// 3. The memory is reclaimed when the process terminates.
+//
+// [1] https://stackoverflow.com/questions/24376768/can-java-finalize-an-object-when-it-is-still-in-scope/24380219
+//
+
+
+public interface SyncServiceInterface {
+    
+    suspend fun `discoveredDevices`(): List<PeerDevice>
+    
+    suspend fun `pair`(`peerId`: kotlin.String, `pin`: kotlin.String)
+    
+    suspend fun `pushLink`(`peerId`: kotlin.String, `url`: kotlin.String)
+    
+    suspend fun `startDiscovery`()
+    
+    suspend fun `stopDiscovery`()
+    
+    companion object
+}
+
+open class SyncService: Disposable, AutoCloseable, SyncServiceInterface
+{
+
+    @Suppress("UNUSED_PARAMETER")
+    /**
+     * @suppress
+     */
+    constructor(withHandle: UniffiWithHandle, handle: Long) {
+        this.handle = handle
+        this.cleanable = UniffiLib.CLEANER.register(this, UniffiCleanAction(handle))
+    }
+
+    /**
+     * @suppress
+     *
+     * This constructor can be used to instantiate a fake object. Only used for tests. Any
+     * attempt to actually use an object constructed this way will fail as there is no
+     * connected Rust object.
+     */
+    @Suppress("UNUSED_PARAMETER")
+    constructor(noHandle: NoHandle) {
+        this.handle = 0
+        this.cleanable = null
+    }
+    constructor(`deviceName`: kotlin.String) :
+        this(UniffiWithHandle, 
+    uniffiRustCall() { _status ->
+    UniffiLib.uniffi_xeton_core_fn_constructor_syncservice_new(
+    
+        FfiConverterString.lower(`deviceName`),_status)
+}
+    )
+
+    protected val handle: Long
+    protected val cleanable: UniffiCleaner.Cleanable?
+
+    private val wasDestroyed = AtomicBoolean(false)
+    private val callCounter = AtomicLong(1)
+
+    override fun destroy() {
+        // Only allow a single call to this method.
+        // TODO: maybe we should log a warning if called more than once?
+        if (this.wasDestroyed.compareAndSet(false, true)) {
+            // This decrement always matches the initial count of 1 given at creation time.
+            if (this.callCounter.decrementAndGet() == 0L) {
+                cleanable?.clean()
+            }
+        }
+    }
+
+    @Synchronized
+    override fun close() {
+        this.destroy()
+    }
+
+    internal inline fun <R> callWithHandle(block: (handle: Long) -> R): R {
+        // Check and increment the call counter, to keep the object alive.
+        // This needs a compare-and-set retry loop in case of concurrent updates.
+        do {
+            val c = this.callCounter.get()
+            if (c == 0L) {
+                throw IllegalStateException("${this.javaClass.simpleName} object has already been destroyed")
+            }
+            if (c == Long.MAX_VALUE) {
+                throw IllegalStateException("${this.javaClass.simpleName} call counter would overflow")
+            }
+        } while (! this.callCounter.compareAndSet(c, c + 1L))
+        // Now we can safely do the method call without the handle being freed concurrently.
+        try {
+            return block(this.uniffiCloneHandle())
+        } finally {
+            // This decrement always matches the increment we performed above.
+            if (this.callCounter.decrementAndGet() == 0L) {
+                cleanable?.clean()
+            }
+        }
+    }
+
+    // Use a static inner class instead of a closure so as not to accidentally
+    // capture `this` as part of the cleanable's action.
+    private class UniffiCleanAction(private val handle: Long) : Runnable {
+        override fun run() {
+            if (handle == 0.toLong()) {
+                // Fake object created with `NoHandle`, don't try to free.
+                return;
+            }
+            uniffiRustCall { status ->
+                UniffiLib.uniffi_xeton_core_fn_free_syncservice(handle, status)
+            }
+        }
+    }
+
+    /**
+     * @suppress
+     */
+    fun uniffiCloneHandle(): Long {
+        if (handle == 0.toLong()) {
+            throw InternalException("uniffiCloneHandle() called on NoHandle object");
+        }
+        return uniffiRustCall() { status ->
+            UniffiLib.uniffi_xeton_core_fn_clone_syncservice(handle, status)
+        }
+    }
+
+    
+    @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
+    override suspend fun `discoveredDevices`() : List<PeerDevice> {
+        return uniffiRustCallAsync(
+        callWithHandle { uniffiHandle ->
+            UniffiLib.uniffi_xeton_core_fn_method_syncservice_discovered_devices(
+                uniffiHandle,
+                
+            )
+        },
+        { future, callback, continuation -> UniffiLib.ffi_xeton_core_rust_future_poll_rust_buffer(future, callback, continuation) },
+        { future, continuation -> UniffiLib.ffi_xeton_core_rust_future_complete_rust_buffer(future, continuation) },
+        { future -> UniffiLib.ffi_xeton_core_rust_future_free_rust_buffer(future) },
+        // lift function
+        { FfiConverterSequenceTypePeerDevice.lift(it) },
+        // Error FFI converter
+        UniffiNullRustCallStatusErrorHandler,
+    )
+    }
+
+    
+    @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
+    override suspend fun `pair`(`peerId`: kotlin.String, `pin`: kotlin.String) {
+        return uniffiRustCallAsync(
+        callWithHandle { uniffiHandle ->
+            UniffiLib.uniffi_xeton_core_fn_method_syncservice_pair(
+                uniffiHandle,
+                FfiConverterString.lower(`peerId`),FfiConverterString.lower(`pin`),
+            )
+        },
+        { future, callback, continuation -> UniffiLib.ffi_xeton_core_rust_future_poll_void(future, callback, continuation) },
+        { future, continuation -> UniffiLib.ffi_xeton_core_rust_future_complete_void(future, continuation) },
+        { future -> UniffiLib.ffi_xeton_core_rust_future_free_void(future) },
+        // lift function
+        { Unit },
+        
+        // Error FFI converter
+        UniffiNullRustCallStatusErrorHandler,
+    )
+    }
+
+    
+    @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
+    override suspend fun `pushLink`(`peerId`: kotlin.String, `url`: kotlin.String) {
+        return uniffiRustCallAsync(
+        callWithHandle { uniffiHandle ->
+            UniffiLib.uniffi_xeton_core_fn_method_syncservice_push_link(
+                uniffiHandle,
+                FfiConverterString.lower(`peerId`),FfiConverterString.lower(`url`),
+            )
+        },
+        { future, callback, continuation -> UniffiLib.ffi_xeton_core_rust_future_poll_void(future, callback, continuation) },
+        { future, continuation -> UniffiLib.ffi_xeton_core_rust_future_complete_void(future, continuation) },
+        { future -> UniffiLib.ffi_xeton_core_rust_future_free_void(future) },
+        // lift function
+        { Unit },
+        
+        // Error FFI converter
+        UniffiNullRustCallStatusErrorHandler,
+    )
+    }
+
+    
+    @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
+    override suspend fun `startDiscovery`() {
+        return uniffiRustCallAsync(
+        callWithHandle { uniffiHandle ->
+            UniffiLib.uniffi_xeton_core_fn_method_syncservice_start_discovery(
+                uniffiHandle,
+                
+            )
+        },
+        { future, callback, continuation -> UniffiLib.ffi_xeton_core_rust_future_poll_void(future, callback, continuation) },
+        { future, continuation -> UniffiLib.ffi_xeton_core_rust_future_complete_void(future, continuation) },
+        { future -> UniffiLib.ffi_xeton_core_rust_future_free_void(future) },
+        // lift function
+        { Unit },
+        
+        // Error FFI converter
+        UniffiNullRustCallStatusErrorHandler,
+    )
+    }
+
+    
+    @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
+    override suspend fun `stopDiscovery`() {
+        return uniffiRustCallAsync(
+        callWithHandle { uniffiHandle ->
+            UniffiLib.uniffi_xeton_core_fn_method_syncservice_stop_discovery(
+                uniffiHandle,
+                
+            )
+        },
+        { future, callback, continuation -> UniffiLib.ffi_xeton_core_rust_future_poll_void(future, callback, continuation) },
+        { future, continuation -> UniffiLib.ffi_xeton_core_rust_future_complete_void(future, continuation) },
+        { future -> UniffiLib.ffi_xeton_core_rust_future_free_void(future) },
+        // lift function
+        { Unit },
+        
+        // Error FFI converter
+        UniffiNullRustCallStatusErrorHandler,
+    )
+    }
+
+    
+
+    
+
+
+    
+    
+    /**
+     * @suppress
+     */
+    companion object
+    
+}
+
+
+/**
+ * @suppress
+ */
+public object FfiConverterTypeSyncService: FfiConverter<SyncService, Long> {
+    override fun lower(value: SyncService): Long {
+        return value.uniffiCloneHandle()
+    }
+
+    override fun lift(value: Long): SyncService {
+        return SyncService(UniffiWithHandle, value)
+    }
+
+    override fun read(buf: ByteBuffer): SyncService {
+        return lift(buf.getLong())
+    }
+
+    override fun allocationSize(value: SyncService) = 8UL
+
+    override fun write(value: SyncService, buf: ByteBuffer) {
+        buf.putLong(lower(value))
+    }
+}
+
+
+// This template implements a class for working with a Rust struct via a handle
+// to the live Rust struct on the other side of the FFI.
+//
+// There's some subtlety here, because we have to be careful not to operate on a Rust
+// struct after it has been dropped, and because we must expose a public API for freeing
+// theq Kotlin wrapper object in lieu of reliable finalizers. The core requirements are:
+//
+//   * Each instance holds an opaque handle to the underlying Rust struct.
+//     Method calls need to read this handle from the object's state and pass it in to
+//     the Rust FFI.
+//
+//   * When an instance is no longer needed, its handle should be passed to a
+//     special destructor function provided by the Rust FFI, which will drop the
+//     underlying Rust struct.
+//
+//   * Given an instance, calling code is expected to call the special
+//     `destroy` method in order to free it after use, either by calling it explicitly
+//     or by using a higher-level helper like the `use` method. Failing to do so risks
+//     leaking the underlying Rust struct.
+//
+//   * We can't assume that calling code will do the right thing, and must be prepared
+//     to handle Kotlin method calls executing concurrently with or even after a call to
+//     `destroy`, and to handle multiple (possibly concurrent!) calls to `destroy`.
+//
+//   * We must never allow Rust code to operate on the underlying Rust struct after
+//     the destructor has been called, and must never call the destructor more than once.
+//     Doing so may trigger memory unsafety.
+//
+//   * To mitigate many of the risks of leaking memory and use-after-free unsafety, a `Cleaner`
+//     is implemented to call the destructor when the Kotlin object becomes unreachable.
+//     This is done in a background thread. This is not a panacea, and client code should be aware that
+//      1. the thread may starve if some there are objects that have poorly performing
+//     `drop` methods or do significant work in their `drop` methods.
+//      2. the thread is shared across the whole library. This can be tuned by using `android_cleaner = true`,
+//         or `android = true` in the [`kotlin` section of the `uniffi.toml` file](https://mozilla.github.io/uniffi-rs/kotlin/configuration.html).
+//
+// If we try to implement this with mutual exclusion on access to the handle, there is the
+// possibility of a race between a method call and a concurrent call to `destroy`:
+//
+//    * Thread A starts a method call, reads the value of the handle, but is interrupted
+//      before it can pass the handle over the FFI to Rust.
+//    * Thread B calls `destroy` and frees the underlying Rust struct.
+//    * Thread A resumes, passing the already-read handle value to Rust and triggering
+//      a use-after-free.
+//
+// One possible solution would be to use a `ReadWriteLock`, with each method call taking
+// a read lock (and thus allowed to run concurrently) and the special `destroy` method
+// taking a write lock (and thus blocking on live method calls). However, we aim not to
+// generate methods with any hidden blocking semantics, and a `destroy` method that might
+// block if called incorrectly seems to meet that bar.
+//
+// So, we achieve our goals by giving each instance an associated `AtomicLong` counter to track
+// the number of in-flight method calls, and an `AtomicBoolean` flag to indicate whether `destroy`
+// has been called. These are updated according to the following rules:
+//
+//    * The initial value of the counter is 1, indicating a live object with no in-flight calls.
+//      The initial value for the flag is false.
+//
+//    * At the start of each method call, we atomically check the counter.
+//      If it is 0 then the underlying Rust struct has already been destroyed and the call is aborted.
+//      If it is nonzero them we atomically increment it by 1 and proceed with the method call.
+//
+//    * At the end of each method call, we atomically decrement and check the counter.
+//      If it has reached zero then we destroy the underlying Rust struct.
+//
+//    * When `destroy` is called, we atomically flip the flag from false to true.
+//      If the flag was already true we silently fail.
+//      Otherwise we atomically decrement and check the counter.
+//      If it has reached zero then we destroy the underlying Rust struct.
+//
+// Astute readers may observe that this all sounds very similar to the way that Rust's `Arc<T>` works,
+// and indeed it is, with the addition of a flag to guard against multiple calls to `destroy`.
+//
+// The overall effect is that the underlying Rust struct is destroyed only when `destroy` has been
+// called *and* all in-flight method calls have completed, avoiding violating any of the expectations
+// of the underlying Rust code.
+//
+// This makes a cleaner a better alternative to _not_ calling `destroy()` as
+// and when the object is finished with, but the abstraction is not perfect: if the Rust object's `drop`
+// method is slow, and/or there are many objects to cleanup, and it's on a low end Android device, then the cleaner
+// thread may be starved, and the app will leak memory.
+//
+// In this case, `destroy`ing manually may be a better solution.
+//
+// The cleaner can live side by side with the manual calling of `destroy`. In the order of responsiveness, uniffi objects
+// with Rust peers are reclaimed:
+//
+// 1. By calling the `destroy` method of the object, which calls `rustObject.free()`. If that doesn't happen:
+// 2. When the object becomes unreachable, AND the Cleaner thread gets to call `rustObject.free()`. If the thread is starved then:
+// 3. The memory is reclaimed when the process terminates.
+//
+// [1] https://stackoverflow.com/questions/24376768/can-java-finalize-an-object-when-it-is-still-in-scope/24380219
+//
+
+
 public interface XetonEngineInterface {
     
     suspend fun `addDownload`(`props`: NewDownloadProps): kotlin.Long
@@ -1365,6 +2097,8 @@ public interface XetonEngineInterface {
     suspend fun `deleteDownload`(`id`: kotlin.Long, `removeFile`: kotlin.Boolean)
     
     suspend fun `getDownloadList`(): List<DownloadItem>
+    
+    suspend fun `getTorrentMetadata`(`id`: kotlin.Long): TorrentMetadata?
     
     suspend fun `nextEvent`(): ManagerEvent
     
@@ -1380,36 +2114,46 @@ public interface XetonEngineInterface {
     
     suspend fun `setProxy`(`proxy`: ProxyConfig)
     
+    suspend fun `setTorrentFileSelection`(`id`: kotlin.Long, `selectedIndices`: List<kotlin.UInt>)
+    
     companion object
 }
 
-open class XetonEngine: Disposable, AutoCloseable, XetonEngineInterface {
+open class XetonEngine: Disposable, AutoCloseable, XetonEngineInterface
+{
 
-    constructor(pointer: Pointer) {
-        this.pointer = pointer
-        this.cleanable = UniffiLib.CLEANER.register(this, UniffiCleanAction(pointer))
+    @Suppress("UNUSED_PARAMETER")
+    /**
+     * @suppress
+     */
+    constructor(withHandle: UniffiWithHandle, handle: Long) {
+        this.handle = handle
+        this.cleanable = UniffiLib.CLEANER.register(this, UniffiCleanAction(handle))
     }
 
     /**
+     * @suppress
+     *
      * This constructor can be used to instantiate a fake object. Only used for tests. Any
      * attempt to actually use an object constructed this way will fail as there is no
      * connected Rust object.
      */
     @Suppress("UNUSED_PARAMETER")
-    constructor(noPointer: NoPointer) {
-        this.pointer = null
-        this.cleanable = UniffiLib.CLEANER.register(this, UniffiCleanAction(pointer))
+    constructor(noHandle: NoHandle) {
+        this.handle = 0
+        this.cleanable = null
     }
     constructor(`dataDir`: kotlin.String, `settings`: DownloadSettings) :
-        this(
+        this(UniffiWithHandle, 
     uniffiRustCall() { _status ->
-    UniffiLib.INSTANCE.uniffi_xeton_core_fn_constructor_xetonengine_new(
+    UniffiLib.uniffi_xeton_core_fn_constructor_xetonengine_new(
+    
         FfiConverterString.lower(`dataDir`),FfiConverterTypeDownloadSettings.lower(`settings`),_status)
 }
     )
 
-    protected val pointer: Pointer?
-    protected val cleanable: UniffiCleaner.Cleanable
+    protected val handle: Long
+    protected val cleanable: UniffiCleaner.Cleanable?
 
     private val wasDestroyed = AtomicBoolean(false)
     private val callCounter = AtomicLong(1)
@@ -1420,7 +2164,7 @@ open class XetonEngine: Disposable, AutoCloseable, XetonEngineInterface {
         if (this.wasDestroyed.compareAndSet(false, true)) {
             // This decrement always matches the initial count of 1 given at creation time.
             if (this.callCounter.decrementAndGet() == 0L) {
-                cleanable.clean()
+                cleanable?.clean()
             }
         }
     }
@@ -1430,7 +2174,7 @@ open class XetonEngine: Disposable, AutoCloseable, XetonEngineInterface {
         this.destroy()
     }
 
-    internal inline fun <R> callWithPointer(block: (ptr: Pointer) -> R): R {
+    internal inline fun <R> callWithHandle(block: (handle: Long) -> R): R {
         // Check and increment the call counter, to keep the object alive.
         // This needs a compare-and-set retry loop in case of concurrent updates.
         do {
@@ -1442,32 +2186,40 @@ open class XetonEngine: Disposable, AutoCloseable, XetonEngineInterface {
                 throw IllegalStateException("${this.javaClass.simpleName} call counter would overflow")
             }
         } while (! this.callCounter.compareAndSet(c, c + 1L))
-        // Now we can safely do the method call without the pointer being freed concurrently.
+        // Now we can safely do the method call without the handle being freed concurrently.
         try {
-            return block(this.uniffiClonePointer())
+            return block(this.uniffiCloneHandle())
         } finally {
             // This decrement always matches the increment we performed above.
             if (this.callCounter.decrementAndGet() == 0L) {
-                cleanable.clean()
+                cleanable?.clean()
             }
         }
     }
 
     // Use a static inner class instead of a closure so as not to accidentally
     // capture `this` as part of the cleanable's action.
-    private class UniffiCleanAction(private val pointer: Pointer?) : Runnable {
+    private class UniffiCleanAction(private val handle: Long) : Runnable {
         override fun run() {
-            pointer?.let { ptr ->
-                uniffiRustCall { status ->
-                    UniffiLib.INSTANCE.uniffi_xeton_core_fn_free_xetonengine(ptr, status)
-                }
+            if (handle == 0.toLong()) {
+                // Fake object created with `NoHandle`, don't try to free.
+                return;
+            }
+            uniffiRustCall { status ->
+                UniffiLib.uniffi_xeton_core_fn_free_xetonengine(handle, status)
             }
         }
     }
 
-    fun uniffiClonePointer(): Pointer {
+    /**
+     * @suppress
+     */
+    fun uniffiCloneHandle(): Long {
+        if (handle == 0.toLong()) {
+            throw InternalException("uniffiCloneHandle() called on NoHandle object");
+        }
         return uniffiRustCall() { status ->
-            UniffiLib.INSTANCE.uniffi_xeton_core_fn_clone_xetonengine(pointer!!, status)
+            UniffiLib.uniffi_xeton_core_fn_clone_xetonengine(handle, status)
         }
     }
 
@@ -1475,15 +2227,15 @@ open class XetonEngine: Disposable, AutoCloseable, XetonEngineInterface {
     @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
     override suspend fun `addDownload`(`props`: NewDownloadProps) : kotlin.Long {
         return uniffiRustCallAsync(
-        callWithPointer { thisPtr ->
-            UniffiLib.INSTANCE.uniffi_xeton_core_fn_method_xetonengine_add_download(
-                thisPtr,
+        callWithHandle { uniffiHandle ->
+            UniffiLib.uniffi_xeton_core_fn_method_xetonengine_add_download(
+                uniffiHandle,
                 FfiConverterTypeNewDownloadProps.lower(`props`),
             )
         },
-        { future, callback, continuation -> UniffiLib.INSTANCE.ffi_xeton_core_rust_future_poll_i64(future, callback, continuation) },
-        { future, continuation -> UniffiLib.INSTANCE.ffi_xeton_core_rust_future_complete_i64(future, continuation) },
-        { future -> UniffiLib.INSTANCE.ffi_xeton_core_rust_future_free_i64(future) },
+        { future, callback, continuation -> UniffiLib.ffi_xeton_core_rust_future_poll_i64(future, callback, continuation) },
+        { future, continuation -> UniffiLib.ffi_xeton_core_rust_future_complete_i64(future, continuation) },
+        { future -> UniffiLib.ffi_xeton_core_rust_future_free_i64(future) },
         // lift function
         { FfiConverterLong.lift(it) },
         // Error FFI converter
@@ -1495,15 +2247,15 @@ open class XetonEngine: Disposable, AutoCloseable, XetonEngineInterface {
     @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
     override suspend fun `boot`() {
         return uniffiRustCallAsync(
-        callWithPointer { thisPtr ->
-            UniffiLib.INSTANCE.uniffi_xeton_core_fn_method_xetonengine_boot(
-                thisPtr,
+        callWithHandle { uniffiHandle ->
+            UniffiLib.uniffi_xeton_core_fn_method_xetonengine_boot(
+                uniffiHandle,
                 
             )
         },
-        { future, callback, continuation -> UniffiLib.INSTANCE.ffi_xeton_core_rust_future_poll_void(future, callback, continuation) },
-        { future, continuation -> UniffiLib.INSTANCE.ffi_xeton_core_rust_future_complete_void(future, continuation) },
-        { future -> UniffiLib.INSTANCE.ffi_xeton_core_rust_future_free_void(future) },
+        { future, callback, continuation -> UniffiLib.ffi_xeton_core_rust_future_poll_void(future, callback, continuation) },
+        { future, continuation -> UniffiLib.ffi_xeton_core_rust_future_complete_void(future, continuation) },
+        { future -> UniffiLib.ffi_xeton_core_rust_future_free_void(future) },
         // lift function
         { Unit },
         
@@ -1516,15 +2268,15 @@ open class XetonEngine: Disposable, AutoCloseable, XetonEngineInterface {
     @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
     override suspend fun `deleteDownload`(`id`: kotlin.Long, `removeFile`: kotlin.Boolean) {
         return uniffiRustCallAsync(
-        callWithPointer { thisPtr ->
-            UniffiLib.INSTANCE.uniffi_xeton_core_fn_method_xetonengine_delete_download(
-                thisPtr,
+        callWithHandle { uniffiHandle ->
+            UniffiLib.uniffi_xeton_core_fn_method_xetonengine_delete_download(
+                uniffiHandle,
                 FfiConverterLong.lower(`id`),FfiConverterBoolean.lower(`removeFile`),
             )
         },
-        { future, callback, continuation -> UniffiLib.INSTANCE.ffi_xeton_core_rust_future_poll_void(future, callback, continuation) },
-        { future, continuation -> UniffiLib.INSTANCE.ffi_xeton_core_rust_future_complete_void(future, continuation) },
-        { future -> UniffiLib.INSTANCE.ffi_xeton_core_rust_future_free_void(future) },
+        { future, callback, continuation -> UniffiLib.ffi_xeton_core_rust_future_poll_void(future, callback, continuation) },
+        { future, continuation -> UniffiLib.ffi_xeton_core_rust_future_complete_void(future, continuation) },
+        { future -> UniffiLib.ffi_xeton_core_rust_future_free_void(future) },
         // lift function
         { Unit },
         
@@ -1537,15 +2289,15 @@ open class XetonEngine: Disposable, AutoCloseable, XetonEngineInterface {
     @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
     override suspend fun `getDownloadList`() : List<DownloadItem> {
         return uniffiRustCallAsync(
-        callWithPointer { thisPtr ->
-            UniffiLib.INSTANCE.uniffi_xeton_core_fn_method_xetonengine_get_download_list(
-                thisPtr,
+        callWithHandle { uniffiHandle ->
+            UniffiLib.uniffi_xeton_core_fn_method_xetonengine_get_download_list(
+                uniffiHandle,
                 
             )
         },
-        { future, callback, continuation -> UniffiLib.INSTANCE.ffi_xeton_core_rust_future_poll_rust_buffer(future, callback, continuation) },
-        { future, continuation -> UniffiLib.INSTANCE.ffi_xeton_core_rust_future_complete_rust_buffer(future, continuation) },
-        { future -> UniffiLib.INSTANCE.ffi_xeton_core_rust_future_free_rust_buffer(future) },
+        { future, callback, continuation -> UniffiLib.ffi_xeton_core_rust_future_poll_rust_buffer(future, callback, continuation) },
+        { future, continuation -> UniffiLib.ffi_xeton_core_rust_future_complete_rust_buffer(future, continuation) },
+        { future -> UniffiLib.ffi_xeton_core_rust_future_free_rust_buffer(future) },
         // lift function
         { FfiConverterSequenceTypeDownloadItem.lift(it) },
         // Error FFI converter
@@ -1555,17 +2307,37 @@ open class XetonEngine: Disposable, AutoCloseable, XetonEngineInterface {
 
     
     @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
+    override suspend fun `getTorrentMetadata`(`id`: kotlin.Long) : TorrentMetadata? {
+        return uniffiRustCallAsync(
+        callWithHandle { uniffiHandle ->
+            UniffiLib.uniffi_xeton_core_fn_method_xetonengine_get_torrent_metadata(
+                uniffiHandle,
+                FfiConverterLong.lower(`id`),
+            )
+        },
+        { future, callback, continuation -> UniffiLib.ffi_xeton_core_rust_future_poll_rust_buffer(future, callback, continuation) },
+        { future, continuation -> UniffiLib.ffi_xeton_core_rust_future_complete_rust_buffer(future, continuation) },
+        { future -> UniffiLib.ffi_xeton_core_rust_future_free_rust_buffer(future) },
+        // lift function
+        { FfiConverterOptionalTypeTorrentMetadata.lift(it) },
+        // Error FFI converter
+        UniffiNullRustCallStatusErrorHandler,
+    )
+    }
+
+    
+    @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
     override suspend fun `nextEvent`() : ManagerEvent {
         return uniffiRustCallAsync(
-        callWithPointer { thisPtr ->
-            UniffiLib.INSTANCE.uniffi_xeton_core_fn_method_xetonengine_next_event(
-                thisPtr,
+        callWithHandle { uniffiHandle ->
+            UniffiLib.uniffi_xeton_core_fn_method_xetonengine_next_event(
+                uniffiHandle,
                 
             )
         },
-        { future, callback, continuation -> UniffiLib.INSTANCE.ffi_xeton_core_rust_future_poll_rust_buffer(future, callback, continuation) },
-        { future, continuation -> UniffiLib.INSTANCE.ffi_xeton_core_rust_future_complete_rust_buffer(future, continuation) },
-        { future -> UniffiLib.INSTANCE.ffi_xeton_core_rust_future_free_rust_buffer(future) },
+        { future, callback, continuation -> UniffiLib.ffi_xeton_core_rust_future_poll_rust_buffer(future, callback, continuation) },
+        { future, continuation -> UniffiLib.ffi_xeton_core_rust_future_complete_rust_buffer(future, continuation) },
+        { future -> UniffiLib.ffi_xeton_core_rust_future_free_rust_buffer(future) },
         // lift function
         { FfiConverterTypeManagerEvent.lift(it) },
         // Error FFI converter
@@ -1577,15 +2349,15 @@ open class XetonEngine: Disposable, AutoCloseable, XetonEngineInterface {
     @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
     override suspend fun `pause`(`id`: kotlin.Long) {
         return uniffiRustCallAsync(
-        callWithPointer { thisPtr ->
-            UniffiLib.INSTANCE.uniffi_xeton_core_fn_method_xetonengine_pause(
-                thisPtr,
+        callWithHandle { uniffiHandle ->
+            UniffiLib.uniffi_xeton_core_fn_method_xetonengine_pause(
+                uniffiHandle,
                 FfiConverterLong.lower(`id`),
             )
         },
-        { future, callback, continuation -> UniffiLib.INSTANCE.ffi_xeton_core_rust_future_poll_void(future, callback, continuation) },
-        { future, continuation -> UniffiLib.INSTANCE.ffi_xeton_core_rust_future_complete_void(future, continuation) },
-        { future -> UniffiLib.INSTANCE.ffi_xeton_core_rust_future_free_void(future) },
+        { future, callback, continuation -> UniffiLib.ffi_xeton_core_rust_future_poll_void(future, callback, continuation) },
+        { future, continuation -> UniffiLib.ffi_xeton_core_rust_future_complete_void(future, continuation) },
+        { future -> UniffiLib.ffi_xeton_core_rust_future_free_void(future) },
         // lift function
         { Unit },
         
@@ -1598,15 +2370,15 @@ open class XetonEngine: Disposable, AutoCloseable, XetonEngineInterface {
     @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
     override suspend fun `reloadSettings`(`settings`: DownloadSettings) {
         return uniffiRustCallAsync(
-        callWithPointer { thisPtr ->
-            UniffiLib.INSTANCE.uniffi_xeton_core_fn_method_xetonengine_reload_settings(
-                thisPtr,
+        callWithHandle { uniffiHandle ->
+            UniffiLib.uniffi_xeton_core_fn_method_xetonengine_reload_settings(
+                uniffiHandle,
                 FfiConverterTypeDownloadSettings.lower(`settings`),
             )
         },
-        { future, callback, continuation -> UniffiLib.INSTANCE.ffi_xeton_core_rust_future_poll_void(future, callback, continuation) },
-        { future, continuation -> UniffiLib.INSTANCE.ffi_xeton_core_rust_future_complete_void(future, continuation) },
-        { future -> UniffiLib.INSTANCE.ffi_xeton_core_rust_future_free_void(future) },
+        { future, callback, continuation -> UniffiLib.ffi_xeton_core_rust_future_poll_void(future, callback, continuation) },
+        { future, continuation -> UniffiLib.ffi_xeton_core_rust_future_complete_void(future, continuation) },
+        { future -> UniffiLib.ffi_xeton_core_rust_future_free_void(future) },
         // lift function
         { Unit },
         
@@ -1619,15 +2391,15 @@ open class XetonEngine: Disposable, AutoCloseable, XetonEngineInterface {
     @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
     override suspend fun `reset`(`id`: kotlin.Long) {
         return uniffiRustCallAsync(
-        callWithPointer { thisPtr ->
-            UniffiLib.INSTANCE.uniffi_xeton_core_fn_method_xetonengine_reset(
-                thisPtr,
+        callWithHandle { uniffiHandle ->
+            UniffiLib.uniffi_xeton_core_fn_method_xetonengine_reset(
+                uniffiHandle,
                 FfiConverterLong.lower(`id`),
             )
         },
-        { future, callback, continuation -> UniffiLib.INSTANCE.ffi_xeton_core_rust_future_poll_void(future, callback, continuation) },
-        { future, continuation -> UniffiLib.INSTANCE.ffi_xeton_core_rust_future_complete_void(future, continuation) },
-        { future -> UniffiLib.INSTANCE.ffi_xeton_core_rust_future_free_void(future) },
+        { future, callback, continuation -> UniffiLib.ffi_xeton_core_rust_future_poll_void(future, callback, continuation) },
+        { future, continuation -> UniffiLib.ffi_xeton_core_rust_future_complete_void(future, continuation) },
+        { future -> UniffiLib.ffi_xeton_core_rust_future_free_void(future) },
         // lift function
         { Unit },
         
@@ -1640,15 +2412,15 @@ open class XetonEngine: Disposable, AutoCloseable, XetonEngineInterface {
     @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
     override suspend fun `resume`(`id`: kotlin.Long) {
         return uniffiRustCallAsync(
-        callWithPointer { thisPtr ->
-            UniffiLib.INSTANCE.uniffi_xeton_core_fn_method_xetonengine_resume(
-                thisPtr,
+        callWithHandle { uniffiHandle ->
+            UniffiLib.uniffi_xeton_core_fn_method_xetonengine_resume(
+                uniffiHandle,
                 FfiConverterLong.lower(`id`),
             )
         },
-        { future, callback, continuation -> UniffiLib.INSTANCE.ffi_xeton_core_rust_future_poll_void(future, callback, continuation) },
-        { future, continuation -> UniffiLib.INSTANCE.ffi_xeton_core_rust_future_complete_void(future, continuation) },
-        { future -> UniffiLib.INSTANCE.ffi_xeton_core_rust_future_free_void(future) },
+        { future, callback, continuation -> UniffiLib.ffi_xeton_core_rust_future_poll_void(future, callback, continuation) },
+        { future, continuation -> UniffiLib.ffi_xeton_core_rust_future_complete_void(future, continuation) },
+        { future -> UniffiLib.ffi_xeton_core_rust_future_free_void(future) },
         // lift function
         { Unit },
         
@@ -1661,15 +2433,15 @@ open class XetonEngine: Disposable, AutoCloseable, XetonEngineInterface {
     @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
     override suspend fun `setGlobalSpeedLimit`(`bytesPerSecond`: kotlin.Long) {
         return uniffiRustCallAsync(
-        callWithPointer { thisPtr ->
-            UniffiLib.INSTANCE.uniffi_xeton_core_fn_method_xetonengine_set_global_speed_limit(
-                thisPtr,
+        callWithHandle { uniffiHandle ->
+            UniffiLib.uniffi_xeton_core_fn_method_xetonengine_set_global_speed_limit(
+                uniffiHandle,
                 FfiConverterLong.lower(`bytesPerSecond`),
             )
         },
-        { future, callback, continuation -> UniffiLib.INSTANCE.ffi_xeton_core_rust_future_poll_void(future, callback, continuation) },
-        { future, continuation -> UniffiLib.INSTANCE.ffi_xeton_core_rust_future_complete_void(future, continuation) },
-        { future -> UniffiLib.INSTANCE.ffi_xeton_core_rust_future_free_void(future) },
+        { future, callback, continuation -> UniffiLib.ffi_xeton_core_rust_future_poll_void(future, callback, continuation) },
+        { future, continuation -> UniffiLib.ffi_xeton_core_rust_future_complete_void(future, continuation) },
+        { future -> UniffiLib.ffi_xeton_core_rust_future_free_void(future) },
         // lift function
         { Unit },
         
@@ -1682,15 +2454,36 @@ open class XetonEngine: Disposable, AutoCloseable, XetonEngineInterface {
     @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
     override suspend fun `setProxy`(`proxy`: ProxyConfig) {
         return uniffiRustCallAsync(
-        callWithPointer { thisPtr ->
-            UniffiLib.INSTANCE.uniffi_xeton_core_fn_method_xetonengine_set_proxy(
-                thisPtr,
+        callWithHandle { uniffiHandle ->
+            UniffiLib.uniffi_xeton_core_fn_method_xetonengine_set_proxy(
+                uniffiHandle,
                 FfiConverterTypeProxyConfig.lower(`proxy`),
             )
         },
-        { future, callback, continuation -> UniffiLib.INSTANCE.ffi_xeton_core_rust_future_poll_void(future, callback, continuation) },
-        { future, continuation -> UniffiLib.INSTANCE.ffi_xeton_core_rust_future_complete_void(future, continuation) },
-        { future -> UniffiLib.INSTANCE.ffi_xeton_core_rust_future_free_void(future) },
+        { future, callback, continuation -> UniffiLib.ffi_xeton_core_rust_future_poll_void(future, callback, continuation) },
+        { future, continuation -> UniffiLib.ffi_xeton_core_rust_future_complete_void(future, continuation) },
+        { future -> UniffiLib.ffi_xeton_core_rust_future_free_void(future) },
+        // lift function
+        { Unit },
+        
+        // Error FFI converter
+        UniffiNullRustCallStatusErrorHandler,
+    )
+    }
+
+    
+    @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
+    override suspend fun `setTorrentFileSelection`(`id`: kotlin.Long, `selectedIndices`: List<kotlin.UInt>) {
+        return uniffiRustCallAsync(
+        callWithHandle { uniffiHandle ->
+            UniffiLib.uniffi_xeton_core_fn_method_xetonengine_set_torrent_file_selection(
+                uniffiHandle,
+                FfiConverterLong.lower(`id`),FfiConverterSequenceUInt.lower(`selectedIndices`),
+            )
+        },
+        { future, callback, continuation -> UniffiLib.ffi_xeton_core_rust_future_poll_void(future, callback, continuation) },
+        { future, continuation -> UniffiLib.ffi_xeton_core_rust_future_complete_void(future, continuation) },
+        { future -> UniffiLib.ffi_xeton_core_rust_future_free_void(future) },
         // lift function
         { Unit },
         
@@ -1702,55 +2495,73 @@ open class XetonEngine: Disposable, AutoCloseable, XetonEngineInterface {
     
 
     
+
+
     
+    
+    /**
+     * @suppress
+     */
     companion object
     
 }
 
+
 /**
  * @suppress
  */
-public object FfiConverterTypeXetonEngine: FfiConverter<XetonEngine, Pointer> {
-
-    override fun lower(value: XetonEngine): Pointer {
-        return value.uniffiClonePointer()
+public object FfiConverterTypeXetonEngine: FfiConverter<XetonEngine, Long> {
+    override fun lower(value: XetonEngine): Long {
+        return value.uniffiCloneHandle()
     }
 
-    override fun lift(value: Pointer): XetonEngine {
-        return XetonEngine(value)
+    override fun lift(value: Long): XetonEngine {
+        return XetonEngine(UniffiWithHandle, value)
     }
 
     override fun read(buf: ByteBuffer): XetonEngine {
-        // The Rust code always writes pointers as 8 bytes, and will
-        // fail to compile if they don't fit.
-        return lift(Pointer(buf.getLong()))
+        return lift(buf.getLong())
     }
 
     override fun allocationSize(value: XetonEngine) = 8UL
 
     override fun write(value: XetonEngine, buf: ByteBuffer) {
-        // The Rust code always expects pointers written as 8 bytes,
-        // and will fail to compile if they don't fit.
-        buf.putLong(Pointer.nativeValue(lower(value)))
+        buf.putLong(lower(value))
     }
 }
 
 
 
 data class DownloadItem (
-    var `name`: kotlin.String, 
-    var `folder`: kotlin.String, 
-    var `link`: kotlin.String, 
-    var `contentLength`: kotlin.Long, 
-    var `status`: DownloadStatus, 
-    var `protocol`: DownloadProtocol, 
-    var `serverEtag`: kotlin.String?, 
-    var `dateAdded`: kotlin.Long, 
-    var `startTime`: kotlin.Long?, 
-    var `completeTime`: kotlin.Long?, 
-    var `preferredConnections`: kotlin.UInt?, 
+    var `name`: kotlin.String
+    , 
+    var `folder`: kotlin.String
+    , 
+    var `link`: kotlin.String
+    , 
+    var `contentLength`: kotlin.Long
+    , 
+    var `status`: DownloadStatus
+    , 
+    var `protocol`: DownloadProtocol
+    , 
+    var `serverEtag`: kotlin.String?
+    , 
+    var `dateAdded`: kotlin.Long
+    , 
+    var `startTime`: kotlin.Long?
+    , 
+    var `completeTime`: kotlin.Long?
+    , 
+    var `preferredConnections`: kotlin.UInt?
+    , 
     var `speedLimit`: kotlin.Long
-) {
+    
+){
+    
+
+    
+
     
     companion object
 }
@@ -1810,14 +2621,25 @@ public object FfiConverterTypeDownloadItem: FfiConverterRustBuffer<DownloadItem>
 
 
 data class DownloadSettings (
-    var `defaultThreadCount`: kotlin.UInt, 
-    var `dynamicPartCreation`: kotlin.Boolean, 
-    var `useServerLastModified`: kotlin.Boolean, 
-    var `globalSpeedLimit`: kotlin.Long, 
-    var `minPartSize`: kotlin.Long, 
-    var `maxRetryCount`: kotlin.UInt, 
+    var `defaultThreadCount`: kotlin.UInt
+    , 
+    var `dynamicPartCreation`: kotlin.Boolean
+    , 
+    var `useServerLastModified`: kotlin.Boolean
+    , 
+    var `globalSpeedLimit`: kotlin.Long
+    , 
+    var `minPartSize`: kotlin.Long
+    , 
+    var `maxRetryCount`: kotlin.UInt
+    , 
     var `appendExtensionToIncomplete`: kotlin.Boolean
-) {
+    
+){
+    
+
+    
+
     
     companion object
 }
@@ -1861,15 +2683,157 @@ public object FfiConverterTypeDownloadSettings: FfiConverterRustBuffer<DownloadS
 
 
 
+data class ExtractedMedia (
+    var `title`: kotlin.String
+    , 
+    var `streams`: List<MediaStream>
+    , 
+    var `thumbnail`: kotlin.String?
+    , 
+    var `durationSec`: kotlin.UInt?
+    , 
+    var `uploader`: kotlin.String?
+    , 
+    var `description`: kotlin.String?
+    
+){
+    
+
+    
+
+    
+    companion object
+}
+
+/**
+ * @suppress
+ */
+public object FfiConverterTypeExtractedMedia: FfiConverterRustBuffer<ExtractedMedia> {
+    override fun read(buf: ByteBuffer): ExtractedMedia {
+        return ExtractedMedia(
+            FfiConverterString.read(buf),
+            FfiConverterSequenceTypeMediaStream.read(buf),
+            FfiConverterOptionalString.read(buf),
+            FfiConverterOptionalUInt.read(buf),
+            FfiConverterOptionalString.read(buf),
+            FfiConverterOptionalString.read(buf),
+        )
+    }
+
+    override fun allocationSize(value: ExtractedMedia) = (
+            FfiConverterString.allocationSize(value.`title`) +
+            FfiConverterSequenceTypeMediaStream.allocationSize(value.`streams`) +
+            FfiConverterOptionalString.allocationSize(value.`thumbnail`) +
+            FfiConverterOptionalUInt.allocationSize(value.`durationSec`) +
+            FfiConverterOptionalString.allocationSize(value.`uploader`) +
+            FfiConverterOptionalString.allocationSize(value.`description`)
+    )
+
+    override fun write(value: ExtractedMedia, buf: ByteBuffer) {
+            FfiConverterString.write(value.`title`, buf)
+            FfiConverterSequenceTypeMediaStream.write(value.`streams`, buf)
+            FfiConverterOptionalString.write(value.`thumbnail`, buf)
+            FfiConverterOptionalUInt.write(value.`durationSec`, buf)
+            FfiConverterOptionalString.write(value.`uploader`, buf)
+            FfiConverterOptionalString.write(value.`description`, buf)
+    }
+}
+
+
+
+data class MediaStream (
+    var `url`: kotlin.String
+    , 
+    var `formatId`: kotlin.String
+    , 
+    var `streamType`: kotlin.String
+    , 
+    var `container`: kotlin.String?
+    , 
+    var `videoCodec`: kotlin.String?
+    , 
+    var `audioCodec`: kotlin.String?
+    , 
+    var `height`: kotlin.UInt?
+    , 
+    var `audioBitrate`: kotlin.UInt?
+    , 
+    var `filesize`: kotlin.Long?
+    
+){
+    
+
+    
+
+    
+    companion object
+}
+
+/**
+ * @suppress
+ */
+public object FfiConverterTypeMediaStream: FfiConverterRustBuffer<MediaStream> {
+    override fun read(buf: ByteBuffer): MediaStream {
+        return MediaStream(
+            FfiConverterString.read(buf),
+            FfiConverterString.read(buf),
+            FfiConverterString.read(buf),
+            FfiConverterOptionalString.read(buf),
+            FfiConverterOptionalString.read(buf),
+            FfiConverterOptionalString.read(buf),
+            FfiConverterOptionalUInt.read(buf),
+            FfiConverterOptionalUInt.read(buf),
+            FfiConverterOptionalLong.read(buf),
+        )
+    }
+
+    override fun allocationSize(value: MediaStream) = (
+            FfiConverterString.allocationSize(value.`url`) +
+            FfiConverterString.allocationSize(value.`formatId`) +
+            FfiConverterString.allocationSize(value.`streamType`) +
+            FfiConverterOptionalString.allocationSize(value.`container`) +
+            FfiConverterOptionalString.allocationSize(value.`videoCodec`) +
+            FfiConverterOptionalString.allocationSize(value.`audioCodec`) +
+            FfiConverterOptionalUInt.allocationSize(value.`height`) +
+            FfiConverterOptionalUInt.allocationSize(value.`audioBitrate`) +
+            FfiConverterOptionalLong.allocationSize(value.`filesize`)
+    )
+
+    override fun write(value: MediaStream, buf: ByteBuffer) {
+            FfiConverterString.write(value.`url`, buf)
+            FfiConverterString.write(value.`formatId`, buf)
+            FfiConverterString.write(value.`streamType`, buf)
+            FfiConverterOptionalString.write(value.`container`, buf)
+            FfiConverterOptionalString.write(value.`videoCodec`, buf)
+            FfiConverterOptionalString.write(value.`audioCodec`, buf)
+            FfiConverterOptionalUInt.write(value.`height`, buf)
+            FfiConverterOptionalUInt.write(value.`audioBitrate`, buf)
+            FfiConverterOptionalLong.write(value.`filesize`, buf)
+    }
+}
+
+
+
 data class NewDownloadProps (
-    var `name`: kotlin.String, 
-    var `folder`: kotlin.String, 
-    var `link`: kotlin.String, 
-    var `protocol`: DownloadProtocol, 
-    var `preferredConnections`: kotlin.UInt?, 
-    var `speedLimit`: kotlin.Long, 
+    var `name`: kotlin.String
+    , 
+    var `folder`: kotlin.String
+    , 
+    var `link`: kotlin.String
+    , 
+    var `protocol`: DownloadProtocol
+    , 
+    var `preferredConnections`: kotlin.UInt?
+    , 
+    var `speedLimit`: kotlin.Long
+    , 
     var `onDuplicate`: DuplicateStrategy
-) {
+    
+){
+    
+
+    
+
     
     companion object
 }
@@ -1913,6 +2877,97 @@ public object FfiConverterTypeNewDownloadProps: FfiConverterRustBuffer<NewDownlo
 
 
 
+data class PeerDevice (
+    var `id`: kotlin.String
+    , 
+    var `name`: kotlin.String
+    , 
+    var `ip`: kotlin.String
+    , 
+    var `port`: kotlin.UShort
+    
+){
+    
+
+    
+
+    
+    companion object
+}
+
+/**
+ * @suppress
+ */
+public object FfiConverterTypePeerDevice: FfiConverterRustBuffer<PeerDevice> {
+    override fun read(buf: ByteBuffer): PeerDevice {
+        return PeerDevice(
+            FfiConverterString.read(buf),
+            FfiConverterString.read(buf),
+            FfiConverterString.read(buf),
+            FfiConverterUShort.read(buf),
+        )
+    }
+
+    override fun allocationSize(value: PeerDevice) = (
+            FfiConverterString.allocationSize(value.`id`) +
+            FfiConverterString.allocationSize(value.`name`) +
+            FfiConverterString.allocationSize(value.`ip`) +
+            FfiConverterUShort.allocationSize(value.`port`)
+    )
+
+    override fun write(value: PeerDevice, buf: ByteBuffer) {
+            FfiConverterString.write(value.`id`, buf)
+            FfiConverterString.write(value.`name`, buf)
+            FfiConverterString.write(value.`ip`, buf)
+            FfiConverterUShort.write(value.`port`, buf)
+    }
+}
+
+
+
+data class TorrentMetadata (
+    var `name`: kotlin.String
+    , 
+    var `files`: List<kotlin.String>
+    , 
+    var `totalBytes`: kotlin.Long
+    
+){
+    
+
+    
+
+    
+    companion object
+}
+
+/**
+ * @suppress
+ */
+public object FfiConverterTypeTorrentMetadata: FfiConverterRustBuffer<TorrentMetadata> {
+    override fun read(buf: ByteBuffer): TorrentMetadata {
+        return TorrentMetadata(
+            FfiConverterString.read(buf),
+            FfiConverterSequenceString.read(buf),
+            FfiConverterLong.read(buf),
+        )
+    }
+
+    override fun allocationSize(value: TorrentMetadata) = (
+            FfiConverterString.allocationSize(value.`name`) +
+            FfiConverterSequenceString.allocationSize(value.`files`) +
+            FfiConverterLong.allocationSize(value.`totalBytes`)
+    )
+
+    override fun write(value: TorrentMetadata, buf: ByteBuffer) {
+            FfiConverterString.write(value.`name`, buf)
+            FfiConverterSequenceString.write(value.`files`, buf)
+            FfiConverterLong.write(value.`totalBytes`, buf)
+    }
+}
+
+
+
 
 enum class AudioFormat {
     
@@ -1920,6 +2975,10 @@ enum class AudioFormat {
     AAC,
     OPUS,
     FLAC;
+
+    
+
+
     companion object
 }
 
@@ -1952,6 +3011,10 @@ enum class DownloadProtocol {
     HLS,
     FTP,
     TORRENT;
+
+    
+
+
     companion object
 }
 
@@ -1985,6 +3048,10 @@ enum class DownloadStatus {
     PAUSED,
     COMPLETED,
     ERROR;
+
+    
+
+
     companion object
 }
 
@@ -2016,6 +3083,10 @@ enum class DuplicateStrategy {
     ADD_NUMBERED,
     OVERRIDE,
     ABORT;
+
+    
+
+
     companion object
 }
 
@@ -2051,6 +3122,10 @@ enum class JobStatus {
     RETRYING,
     CANCELED,
     FINISHED;
+
+    
+
+
     companion object
 }
 
@@ -2086,6 +3161,10 @@ enum class ManagerEvent {
     JOB_COMPLETED,
     JOB_CHANGED,
     JOB_REMOVED;
+
+    
+
+
     companion object
 }
 
@@ -2118,6 +3197,10 @@ enum class ProxyConfig {
     HTTP,
     SOCKS5,
     SYSTEM;
+
+    
+
+
     companion object
 }
 
@@ -2243,6 +3326,94 @@ public object FfiConverterOptionalString: FfiConverterRustBuffer<kotlin.String?>
 /**
  * @suppress
  */
+public object FfiConverterOptionalTypeTorrentMetadata: FfiConverterRustBuffer<TorrentMetadata?> {
+    override fun read(buf: ByteBuffer): TorrentMetadata? {
+        if (buf.get().toInt() == 0) {
+            return null
+        }
+        return FfiConverterTypeTorrentMetadata.read(buf)
+    }
+
+    override fun allocationSize(value: TorrentMetadata?): ULong {
+        if (value == null) {
+            return 1UL
+        } else {
+            return 1UL + FfiConverterTypeTorrentMetadata.allocationSize(value)
+        }
+    }
+
+    override fun write(value: TorrentMetadata?, buf: ByteBuffer) {
+        if (value == null) {
+            buf.put(0)
+        } else {
+            buf.put(1)
+            FfiConverterTypeTorrentMetadata.write(value, buf)
+        }
+    }
+}
+
+
+
+
+/**
+ * @suppress
+ */
+public object FfiConverterSequenceUInt: FfiConverterRustBuffer<List<kotlin.UInt>> {
+    override fun read(buf: ByteBuffer): List<kotlin.UInt> {
+        val len = buf.getInt()
+        return List<kotlin.UInt>(len) {
+            FfiConverterUInt.read(buf)
+        }
+    }
+
+    override fun allocationSize(value: List<kotlin.UInt>): ULong {
+        val sizeForLength = 4UL
+        val sizeForItems = value.map { FfiConverterUInt.allocationSize(it) }.sum()
+        return sizeForLength + sizeForItems
+    }
+
+    override fun write(value: List<kotlin.UInt>, buf: ByteBuffer) {
+        buf.putInt(value.size)
+        value.iterator().forEach {
+            FfiConverterUInt.write(it, buf)
+        }
+    }
+}
+
+
+
+
+/**
+ * @suppress
+ */
+public object FfiConverterSequenceString: FfiConverterRustBuffer<List<kotlin.String>> {
+    override fun read(buf: ByteBuffer): List<kotlin.String> {
+        val len = buf.getInt()
+        return List<kotlin.String>(len) {
+            FfiConverterString.read(buf)
+        }
+    }
+
+    override fun allocationSize(value: List<kotlin.String>): ULong {
+        val sizeForLength = 4UL
+        val sizeForItems = value.map { FfiConverterString.allocationSize(it) }.sum()
+        return sizeForLength + sizeForItems
+    }
+
+    override fun write(value: List<kotlin.String>, buf: ByteBuffer) {
+        buf.putInt(value.size)
+        value.iterator().forEach {
+            FfiConverterString.write(it, buf)
+        }
+    }
+}
+
+
+
+
+/**
+ * @suppress
+ */
 public object FfiConverterSequenceTypeDownloadItem: FfiConverterRustBuffer<List<DownloadItem>> {
     override fun read(buf: ByteBuffer): List<DownloadItem> {
         val len = buf.getInt()
@@ -2268,8 +3439,108 @@ public object FfiConverterSequenceTypeDownloadItem: FfiConverterRustBuffer<List<
 
 
 
+/**
+ * @suppress
+ */
+public object FfiConverterSequenceTypeMediaStream: FfiConverterRustBuffer<List<MediaStream>> {
+    override fun read(buf: ByteBuffer): List<MediaStream> {
+        val len = buf.getInt()
+        return List<MediaStream>(len) {
+            FfiConverterTypeMediaStream.read(buf)
+        }
+    }
+
+    override fun allocationSize(value: List<MediaStream>): ULong {
+        val sizeForLength = 4UL
+        val sizeForItems = value.map { FfiConverterTypeMediaStream.allocationSize(it) }.sum()
+        return sizeForLength + sizeForItems
+    }
+
+    override fun write(value: List<MediaStream>, buf: ByteBuffer) {
+        buf.putInt(value.size)
+        value.iterator().forEach {
+            FfiConverterTypeMediaStream.write(it, buf)
+        }
+    }
+}
 
 
 
+
+/**
+ * @suppress
+ */
+public object FfiConverterSequenceTypePeerDevice: FfiConverterRustBuffer<List<PeerDevice>> {
+    override fun read(buf: ByteBuffer): List<PeerDevice> {
+        val len = buf.getInt()
+        return List<PeerDevice>(len) {
+            FfiConverterTypePeerDevice.read(buf)
+        }
+    }
+
+    override fun allocationSize(value: List<PeerDevice>): ULong {
+        val sizeForLength = 4UL
+        val sizeForItems = value.map { FfiConverterTypePeerDevice.allocationSize(it) }.sum()
+        return sizeForLength + sizeForItems
+    }
+
+    override fun write(value: List<PeerDevice>, buf: ByteBuffer) {
+        buf.putInt(value.size)
+        value.iterator().forEach {
+            FfiConverterTypePeerDevice.write(it, buf)
+        }
+    }
+}
+
+
+
+
+
+
+
+
+    @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
+     suspend fun `extractAudio`(`inputPath`: kotlin.String, `outputPath`: kotlin.String, `format`: AudioFormat) {
+        return uniffiRustCallAsync(
+        UniffiLib.uniffi_xeton_core_fn_func_extract_audio(FfiConverterString.lower(`inputPath`),FfiConverterString.lower(`outputPath`),FfiConverterTypeAudioFormat.lower(`format`),),
+        { future, callback, continuation -> UniffiLib.ffi_xeton_core_rust_future_poll_void(future, callback, continuation) },
+        { future, continuation -> UniffiLib.ffi_xeton_core_rust_future_complete_void(future, continuation) },
+        { future -> UniffiLib.ffi_xeton_core_rust_future_free_void(future) },
+        // lift function
+        { Unit },
+        
+        // Error FFI converter
+        UniffiNullRustCallStatusErrorHandler,
+    )
+    }
+
+    @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
+     suspend fun `extractMediaInfo`(`url`: kotlin.String) : ExtractedMedia {
+        return uniffiRustCallAsync(
+        UniffiLib.uniffi_xeton_core_fn_func_extract_media_info(FfiConverterString.lower(`url`),),
+        { future, callback, continuation -> UniffiLib.ffi_xeton_core_rust_future_poll_rust_buffer(future, callback, continuation) },
+        { future, continuation -> UniffiLib.ffi_xeton_core_rust_future_complete_rust_buffer(future, continuation) },
+        { future -> UniffiLib.ffi_xeton_core_rust_future_free_rust_buffer(future) },
+        // lift function
+        { FfiConverterTypeExtractedMedia.lift(it) },
+        // Error FFI converter
+        UniffiNullRustCallStatusErrorHandler,
+    )
+    }
+
+    @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
+     suspend fun `mergeVideoAudio`(`videoPath`: kotlin.String, `audioPath`: kotlin.String, `outputPath`: kotlin.String) {
+        return uniffiRustCallAsync(
+        UniffiLib.uniffi_xeton_core_fn_func_merge_video_audio(FfiConverterString.lower(`videoPath`),FfiConverterString.lower(`audioPath`),FfiConverterString.lower(`outputPath`),),
+        { future, callback, continuation -> UniffiLib.ffi_xeton_core_rust_future_poll_void(future, callback, continuation) },
+        { future, continuation -> UniffiLib.ffi_xeton_core_rust_future_complete_void(future, continuation) },
+        { future -> UniffiLib.ffi_xeton_core_rust_future_free_void(future) },
+        // lift function
+        { Unit },
+        
+        // Error FFI converter
+        UniffiNullRustCallStatusErrorHandler,
+    )
+    }
 
 

@@ -192,4 +192,35 @@ class GeckoTabState(
         session.progressDelegate = progressDelegate
         session.contentDelegate = contentDelegate
     }
+
+    fun open(runtime: org.mozilla.geckoview.GeckoRuntime) {
+        if (!session.isOpen) {
+            session.open(runtime)
+            initialUrl?.let { session.loadUri(it) }
+        }
+    }
+
+    fun close() {
+        session.close()
+    }
+
+    fun goBack() {
+        session.goBack()
+    }
+
+    fun goForward() {
+        session.goForward()
+    }
+
+    fun loadUrl(url: String) {
+        session.loadUri(url)
+    }
+
+    fun stopLoading() {
+        session.stop()
+    }
+
+    fun reload() {
+        session.reload()
+    }
 }
