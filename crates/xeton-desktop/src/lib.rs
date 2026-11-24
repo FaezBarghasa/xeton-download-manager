@@ -10,6 +10,7 @@ pub fn run() {
         .expect("failed to initialize AppState");
     eprintln!("[XETON] AppState initialized successfully");
 
+    #[allow(unused_mut)]
     let mut builder = tauri::Builder::default()
         .setup(|app| {
             eprintln!("[XETON] Tauri setup hook reached");
