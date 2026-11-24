@@ -23,7 +23,7 @@ pub struct ServerState {
     pub device_name: String,
 }
 
-pub async fn start_server(device_name: String, port: u16) {
+pub async fn start_server(device_name: String, port: u16) -> anyhow::Result<()> {
     let state = ServerState {
         device_name,
     };
@@ -34,8 +34,9 @@ pub async fn start_server(device_name: String, port: u16) {
         .route("/api/pair", post(pair))
         .with_state(Arc::new(state));
 
-    let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{}", port)).await.unwrap();
-    axum::serve(listener, app).await.unwrap();
+    let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{}", port)).await?;
+    axum::serve(listener, app).await?;
+    Ok(())
 }
 
 async fn get_device_info(State(state): State<Arc<ServerState>>) -> Json<DeviceInfo> {

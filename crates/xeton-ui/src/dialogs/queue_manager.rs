@@ -1,4 +1,5 @@
 use dioxus::prelude::*;
+use crate::tauri_bindings::{invoke, invoke_no_args};
 use xeton_models::{QueueItem, PowerAction};
 
 #[component]
@@ -31,6 +32,14 @@ pub fn QueueManagerModal(
     let mut selected_queue_idx = use_signal(|| 0usize);
     let mut is_creating_new = use_signal(|| false);
     let mut new_queue_name = use_signal(|| "".to_string());
+
+    use_future(move || async move {
+        if let Ok(list) = invoke_no_args::<Vec<QueueItem>>("get_queues").await {
+            if !list.is_empty() {
+                queues.set(list);
+            }
+        }
+    });
 
     let current_queue = queues.read().get(selected_queue_idx()).cloned();
 
@@ -321,8 +330,13 @@ pub fn QueueManagerModal(
                                     onclick: move |_| {
                                         let idx = selected_queue_idx();
                                         if idx < queues.read().len() && idx > 0 {
-                                            queues.write().remove(idx);
+                                            let removed = queues.write().remove(idx);
                                             selected_queue_idx.set(idx - 1);
+                                            spawn(async move {
+                                                #[derive(serde::Serialize)]
+                                                struct DelReq { id: String }
+                                                let _ = invoke::<(), _>("delete_queue", &DelReq { id: removed.id }).await;
+                                            });
                                         }
                                     },
                                     "Delete Queue"

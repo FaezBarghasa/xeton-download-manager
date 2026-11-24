@@ -1,4 +1,4 @@
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::sync::Arc;
 use tokio::sync::Mutex;
 use tracing::error;
@@ -24,14 +24,16 @@ impl Downloader {
         let rt = tokio::runtime::Builder::new_current_thread()
             .enable_all()
             .build()
-            .unwrap();
+            .expect("failed to build tokio runtime for FFI Downloader");
 
         // Create a temporary data dir for the standalone downloader
         let data_dir = std::env::temp_dir().join("xeton_standalone");
         let mut settings = DownloadSettings::default();
         settings.default_thread_count = segments as u32;
 
-        let manager = rt.block_on(DownloadManager::new(data_dir, settings)).unwrap();
+        let manager = rt
+            .block_on(DownloadManager::new(data_dir, settings))
+            .expect("failed to initialize DownloadManager for FFI Downloader");
 
         Arc::new(Self {
             manager,
@@ -81,10 +83,12 @@ impl Downloader {
     }
 
     pub fn get_status(&self) -> DownloadStatus {
-        let rt = tokio::runtime::Builder::new_current_thread()
+        let Ok(rt) = tokio::runtime::Builder::new_current_thread()
             .enable_all()
             .build()
-            .unwrap();
+        else {
+            return DownloadStatus::Added;
+        };
 
         rt.block_on(async {
             let id_guard = self.item_id.lock().await;

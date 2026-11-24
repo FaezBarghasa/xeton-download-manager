@@ -1,5 +1,6 @@
 use dioxus::prelude::*;
-use xeton_models::ChecksumAlgorithm;
+use crate::tauri_bindings::invoke;
+use xeton_models::{ChecksumAlgorithm, ChecksumRequest, ChecksumResult};
 
 #[component]
 pub fn ChecksumModal(
@@ -130,13 +131,19 @@ pub fn ChecksumModal(
                                 onclick: move |_| {
                                     is_calculating.set(true);
                                     error_msg.set(None);
-                                    // Simulated async hash calculation (in real Tauri will call calculate_checksum IPC)
-                                    let _p = path();
-                                    let _algo = algorithm();
+                                    let p = path();
+                                    let algo = algorithm();
+                                    let exp = compare_hash();
                                     spawn(async move {
-                                        // In Tauri IPC:
-                                        // let res = tauri::invoke::<ChecksumResult>("calculate_checksum", ChecksumRequest { ... }).await;
-                                        calculated_hash.set("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855".to_string());
+                                        let req = ChecksumRequest {
+                                            file_path: p,
+                                            algorithm: algo,
+                                            expected_hash: if exp.trim().is_empty() { None } else { Some(exp) },
+                                        };
+                                        match invoke::<ChecksumResult, _>("calculate_checksum", &req).await {
+                                            Ok(res) => calculated_hash.set(res.hash),
+                                            Err(err) => error_msg.set(Some(err)),
+                                        }
                                         is_calculating.set(false);
                                     });
                                 },

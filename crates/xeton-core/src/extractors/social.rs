@@ -44,19 +44,22 @@ impl Extractor for TikTokExtractor {
 
         // Try to find the playAddr in the universal data
         // This is a brittle regex but serves as a fast-path
-        let re = Regex::new(r#""playAddr":"([^"]+)""#).unwrap();
-        if let Some(caps) = re.captures(&html) {
-            let encoded_url = caps.get(1).unwrap().as_str();
+        static PLAY_ADDR_RE: std::sync::OnceLock<Option<Regex>> = std::sync::OnceLock::new();
+        static TITLE_RE: std::sync::OnceLock<Option<Regex>> = std::sync::OnceLock::new();
+
+        let re = PLAY_ADDR_RE.get_or_init(|| Regex::new(r#""playAddr":"([^"]+)""#).ok()).as_ref();
+        if let Some(encoded_url) = re.and_then(|r| r.captures(&html)).and_then(|c| c.get(1)).map(|m| m.as_str()) {
             let decoded_url = encoded_url.replace("\\u002F", "/").replace("\\u0026", "&");
             
             if decoded_url.starts_with("http") {
                 debug!("TikTok fast-path succeeded");
                 
                 // Get title (rudimentary)
-                let title_re = Regex::new(r#"<title>([^<]+)</title>"#).unwrap();
+                let title_re = TITLE_RE.get_or_init(|| Regex::new(r#"<title>([^<]+)</title>"#).ok()).as_ref();
                 let title = title_re
-                    .captures(&html)
-                    .map(|c| c.get(1).unwrap().as_str().to_string())
+                    .and_then(|r| r.captures(&html))
+                    .and_then(|c| c.get(1))
+                    .map(|m| m.as_str().to_string())
                     .unwrap_or_else(|| "TikTok Video".to_string());
                 
                 return Ok(ExtractedMedia {
@@ -122,9 +125,9 @@ impl Extractor for InstagramExtractor {
         };
 
         // Instagram embedded JSON often contains "video_url"
-        let re = Regex::new(r#""video_url":"([^"]+)""#).unwrap();
-        if let Some(caps) = re.captures(&html) {
-            let encoded_url = caps.get(1).unwrap().as_str();
+        static VIDEO_URL_RE: std::sync::OnceLock<Option<Regex>> = std::sync::OnceLock::new();
+        let re = VIDEO_URL_RE.get_or_init(|| Regex::new(r#""video_url":"([^"]+)""#).ok()).as_ref();
+        if let Some(encoded_url) = re.and_then(|r| r.captures(&html)).and_then(|c| c.get(1)).map(|m| m.as_str()) {
             let decoded_url = encoded_url.replace("\\u002F", "/").replace("\\u0026", "&");
             
             if decoded_url.starts_with("http") {

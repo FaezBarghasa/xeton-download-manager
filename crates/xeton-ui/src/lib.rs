@@ -138,10 +138,23 @@ pub fn App() -> Element {
     let mut targeted_checksum_path = use_signal(|| Option::<String>::None);
 
     use_future(move || async move {
-        if let Ok(items) = invoke_no_args::<Vec<DownloadItem>>("get_downloads").await {
-            if !items.is_empty() {
-                *downloads.write() = items;
+        loop {
+            if let Ok(items) = invoke_no_args::<Vec<DownloadItem>>("get_downloads").await {
+                if !items.is_empty() {
+                    *downloads.write() = items;
+                }
             }
+            #[cfg(target_arch = "wasm32")]
+            {
+                let promise = js_sys::Promise::new(&mut |resolve, _| {
+                    if let Some(win) = web_sys::window() {
+                        let _ = win.set_timeout_with_callback_and_timeout_and_arguments_0(&resolve, 1000);
+                    }
+                });
+                let _ = wasm_bindgen_futures::JsFuture::from(promise).await;
+            }
+            #[cfg(not(target_arch = "wasm32"))]
+            break;
         }
     });
 
@@ -618,7 +631,15 @@ pub fn App() -> Element {
                 error_title: error_dialog_title.read().clone(),
                 error_message: error_dialog_message.read().clone(),
                 http_status: Some(404),
-                on_retry: move |_| {},
+                on_retry: move |_| {
+                    if let Some(item) = targeted_item.peek().clone() {
+                        spawn(async move {
+                            #[derive(serde::Serialize)]
+                            struct IdPayload { id: String }
+                            let _ = invoke::<(), _>("resume_download", &IdPayload { id: item.id }).await;
+                        });
+                    }
+                },
                 on_refresh_link: move |_| {
                     is_edit_modal_open.set(true);
                 },
