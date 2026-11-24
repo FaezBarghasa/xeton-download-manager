@@ -117,9 +117,9 @@ pub fn AddDownloadModal(
                     }
                 }
 
-                // Tab Body
+                // Tab Body (Fixed height to eliminate layout shift across tabs)
                 div {
-                    style: "padding: 20px; display: flex; flex-direction: column; gap: 14px; min-height: 220px;",
+                    style: "padding: 20px; display: flex; flex-direction: column; gap: 14px; height: 248px; overflow-y: auto;",
                     if *active_tab.read() == "general" {
                         div {
                             style: "display: flex; flex-direction: column; gap: 12px;",

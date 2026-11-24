@@ -1,4 +1,5 @@
 use dioxus::prelude::*;
+use crate::components::icons::{IconAlertTriangle, IconClose};
 use crate::theme::ThemePalette;
 
 #[component]
@@ -53,19 +54,16 @@ pub fn DownloadErrorModal(
                     ",
                     div {
                         style: "display: flex; align-items: center; gap: 10px;",
-                        span {
-                            style: "color: {theme.error}; font-size: 18px; font-weight: 700;",
-                            "⚠️"
-                        }
+                        IconAlertTriangle { size: 18, color: Some(theme.error.to_string()) }
                         span {
                             style: "font-weight: 600; font-size: 15px; color: {theme.error};",
                             "Download Failed"
                         }
                     }
                     button {
+                        class: "xeton-icon-btn",
                         onclick: move |_| is_open.set(false),
-                        style: "background: transparent; border: none; color: {theme.on_surface_muted}; cursor: pointer; font-size: 16px;",
-                        "✕"
+                        IconClose { size: 16 }
                     }
                 }
 

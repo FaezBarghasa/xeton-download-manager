@@ -12,7 +12,7 @@ mod theme;
 
 use components::footer::Footer;
 use components::icons::{
-    IconDelete, IconPause, IconPlus, IconResume, IconSettings,
+    IconDelete, IconPause, IconPlus, IconResume, IconSettings, IconZap,
 };
 use components::sidebar::Sidebar;
 use components::table::DownloadTable;
@@ -113,6 +113,7 @@ pub fn App() -> Element {
     let mut is_mobile_settings_open = use_signal(|| false);
     let mut is_mobile_browser_open = use_signal(|| false);
     let mut is_mobile_search_active = use_signal(|| false);
+    let mut table_density = use_signal(|| "normal".to_string());
 
     // Desktop Modal Visibility States
     let mut is_add_modal_open = use_signal(|| false);
@@ -176,15 +177,29 @@ pub fn App() -> Element {
     let theme = *current_theme.read();
 
     rsx! {
+        style { "{include_str!(\"theme/xeton.css\")}" }
         div {
             style: "
+                --bg: {theme.background};
+                --on-bg: {theme.on_background};
+                --surface: {theme.surface};
+                --on-surface: {theme.on_surface};
+                --on-surface-muted: {theme.on_surface_muted};
+                --border: {theme.border};
+                --primary: {theme.primary};
+                --primary-hover: {theme.primary_variant};
+                --on-primary: {theme.on_primary};
+                --success: {theme.success};
+                --warning: {theme.warning};
+                --error: {theme.error};
+                --info: {theme.info};
                 display: flex;
                 flex-direction: column;
                 height: 100vh;
                 width: 100vw;
                 background-color: {theme.background};
                 color: {theme.on_background};
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+                font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
                 overflow: hidden;
             ",
             // Conditional Render: Mobile Mode vs. Desktop Mode
@@ -321,26 +336,19 @@ pub fn App() -> Element {
                             background-color: {theme.surface}; border-bottom: 1px solid {theme.border};
                         ",
                         button {
+                            class: "xeton-btn xeton-btn-primary",
                             onclick: move |_| *is_add_modal_open.write() = true,
-                            style: "
-                                display: flex; align-items: center; gap: 6px; padding: 6px 12px;
-                                border-radius: 4px; background-color: {theme.primary}; border: none;
-                                color: {theme.on_primary}; font-weight: 600; font-size: 13px; cursor: pointer;
-                            ",
-                            IconPlus { size: 16 }
+                            IconPlus { size: 15 }
                             span { "New Download" }
                         }
                         button {
+                            class: "xeton-btn",
                             onclick: move |_| is_batch_modal_open.set(true),
-                            style: "
-                                display: flex; align-items: center; gap: 6px; padding: 6px 12px;
-                                border-radius: 4px; background-color: transparent; border: 1px solid {theme.border};
-                                color: {theme.on_surface}; font-size: 13px; cursor: pointer;
-                            ",
-                            span { "⚡" }
+                            IconZap { size: 14, color: Some(theme.primary.to_string()) }
                             span { "Batch Add" }
                         }
                         button {
+                            class: "xeton-btn",
                             onclick: move |_| {
                                 let ids: Vec<String> = downloads.peek().iter().map(|d| d.id.clone()).collect();
                                 spawn(async move {
@@ -351,15 +359,11 @@ pub fn App() -> Element {
                                     }
                                 });
                             },
-                            style: "
-                                display: flex; align-items: center; gap: 6px; padding: 6px 12px;
-                                border-radius: 4px; background-color: transparent; border: 1px solid {theme.border};
-                                color: {theme.on_surface}; font-size: 13px; cursor: pointer;
-                            ",
-                            IconResume { size: 14 }
+                            IconResume { size: 13 }
                             span { "Resume All" }
                         }
                         button {
+                            class: "xeton-btn",
                             onclick: move |_| {
                                 let ids: Vec<String> = downloads.peek().iter().map(|d| d.id.clone()).collect();
                                 spawn(async move {
@@ -370,27 +374,26 @@ pub fn App() -> Element {
                                     }
                                 });
                             },
-                            style: "
-                                display: flex; align-items: center; gap: 6px; padding: 6px 12px;
-                                border-radius: 4px; background-color: transparent; border: 1px solid {theme.border};
-                                color: {theme.on_surface}; font-size: 13px; cursor: pointer;
-                            ",
-                            IconPause { size: 14 }
+                            IconPause { size: 13 }
                             span { "Pause All" }
                         }
                         button {
+                            class: "xeton-btn xeton-btn-danger",
+                            disabled: selected_ids.read().is_empty(),
                             onclick: move |_| {
                                 if !selected_ids.peek().is_empty() {
                                     is_confirm_delete_open.set(true);
                                 }
                             },
-                            style: "
-                                display: flex; align-items: center; gap: 6px; padding: 6px 12px;
-                                border-radius: 4px; background-color: transparent; border: 1px solid {theme.border};
-                                color: {theme.on_surface}; font-size: 13px; cursor: pointer;
-                            ",
                             IconDelete { size: 14 }
                             span { "Delete" }
+                        }
+                        div { style: "flex: 1;" }
+                        button {
+                            class: "xeton-icon-btn",
+                            title: "Preferences & Settings",
+                            onclick: move |_| *is_settings_modal_open.write() = true,
+                            IconSettings { size: 16 }
                         }
                     }
                     // Main Content Area
@@ -405,6 +408,7 @@ pub fn App() -> Element {
                             theme: theme,
                             downloads: filtered_downloads,
                             selected_ids: selected_ids,
+                            density: table_density.read().clone(),
                         }
                     }
                     // Real-Time Footer Bar
@@ -412,6 +416,15 @@ pub fn App() -> Element {
                         theme: theme,
                         active_count: *active_count.read(),
                         total_speed: *total_speed.read(),
+                        density: table_density.read().clone(),
+                        on_cycle_density: move |_| {
+                            let next = match table_density.peek().as_str() {
+                                "compact" => "normal",
+                                "normal" => "comfortable",
+                                _ => "compact",
+                            };
+                            table_density.set(next.to_string());
+                        },
                     }
             }
 

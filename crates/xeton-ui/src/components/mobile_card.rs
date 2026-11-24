@@ -1,5 +1,6 @@
 use dioxus::prelude::*;
 use xeton_models::{DownloadItem, DownloadStatus};
+use crate::components::icons::{IconPause, IconResume};
 use crate::theme::ThemePalette;
 
 #[component]
@@ -19,11 +20,12 @@ pub fn MobileCard(
         0.0
     };
 
+    let is_downloading = item.status == DownloadStatus::Downloading;
     let status_color = match item.status {
         DownloadStatus::Downloading => theme.primary,
-        DownloadStatus::Completed => "#4CAF50",
-        DownloadStatus::Paused => "#FFA000",
-        DownloadStatus::Failed => "#E53935",
+        DownloadStatus::Completed => theme.success,
+        DownloadStatus::Paused => theme.warning,
+        DownloadStatus::Failed => theme.error,
         DownloadStatus::Pending => theme.on_surface_muted,
         DownloadStatus::Scheduled => theme.info,
         DownloadStatus::Canceled => theme.on_surface_muted,
@@ -35,46 +37,38 @@ pub fn MobileCard(
         "-".to_string()
     };
 
+    let bar_class = if is_downloading { "xeton-progress-active" } else { "" };
+    let bar_bg = if is_downloading { String::new() } else { format!("background-color: {};", status_color) };
+
     rsx! {
         div {
+            class: "xeton-mobile-card",
             onclick: move |_| on_click.call(()),
-            style: "
-                background-color: {theme.surface};
-                border: 1px solid {theme.border};
-                border-radius: 12px;
-                padding: 14px 16px;
-                margin-bottom: 10px;
-                cursor: pointer;
-                box-sizing: border-box;
-            ",
-            // Title & Pause/Resume Action
+            // Title & Pause/Resume Action (48dp touch target)
             div {
-                style: "display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 8px;",
-                div {
-                    style: "flex: 1; font-size: 14px; font-weight: 600; color: {theme.on_surface}; word-break: break-all; line-height: 1.3;",
+                style: "display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 10px;",
+                span {
+                    style: "
+                        font-size: 14px; font-weight: 600; color: {theme.on_surface};
+                        overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1;
+                    ",
                     "{item.name}"
                 }
                 button {
+                    class: "xeton-touch-target",
                     onclick: move |e| {
                         e.stop_propagation();
                         on_toggle_pause.call(());
                     },
                     style: "
-                        width: 32px; height: 32px; border-radius: 50%; border: none;
+                        border-radius: 50%; border: 1px solid {theme.border};
                         background-color: {theme.background}; color: {theme.on_surface};
-                        display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0;
+                        flex-shrink: 0;
                     ",
-                    if item.status == DownloadStatus::Downloading {
-                        svg {
-                            view_box: "0 0 24 24", width: "16", height: "16", stroke: "currentColor", fill: "none", stroke_width: "2.5",
-                            line { x1: "10", y1: "4", x2: "10", y2: "20" }
-                            line { x1: "14", y1: "4", x2: "14", y2: "20" }
-                        }
+                    if is_downloading {
+                        IconPause { size: 16 }
                     } else {
-                        svg {
-                            view_box: "0 0 24 24", width: "16", height: "16", stroke: "currentColor", fill: "none", stroke_width: "2.5",
-                            polygon { points: "5 3 19 12 5 21 5 3" }
-                        }
+                        IconResume { size: 16 }
                     }
                 }
             }
@@ -85,9 +79,10 @@ pub fn MobileCard(
                     border-radius: 3px; overflow: hidden; margin-bottom: 8px;
                 ",
                 div {
+                    class: "{bar_class}",
                     style: "
-                        height: 100%; width: {progress_pct}%; background-color: {status_color};
-                        border-radius: 3px; transition: width 0.3s ease;
+                        height: 100%; width: {progress_pct:.1}%; {bar_bg}
+                        border-radius: 3px; transition: width 0.25s var(--ease-expo);
                     "
                 }
             }
@@ -95,9 +90,11 @@ pub fn MobileCard(
             div {
                 style: "display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: {theme.on_surface_muted};",
                 span {
+                    class: "tabular-nums",
                     "{progress_pct:.1}%"
                 }
                 span {
+                    class: "tabular-nums",
                     "{speed_text}"
                 }
                 span {

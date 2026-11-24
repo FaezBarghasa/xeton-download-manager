@@ -20,19 +20,10 @@ pub fn MobileMenuSheet(
 
     rsx! {
         div {
-            style: "
-                position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-                background-color: rgba(0, 0, 0, 0.6); display: flex; align-items: flex-end;
-                justify-content: center; z-index: 2000; animation: fadeIn 0.2s ease-out;
-            ",
+            class: "xeton-sheet-backdrop",
             onclick: move |_| on_close.call(()),
             div {
-                style: "
-                    width: 100%; max-width: 480px; background-color: {theme.surface};
-                    border-top-left-radius: 20px; border-top-right-radius: 20px;
-                    border: 1px solid {theme.border}; border-bottom: none;
-                    padding: 16px 20px 28px 20px; box-sizing: border-box; max-height: 80vh; overflow-y: auto;
-                ",
+                class: "xeton-sheet-panel",
                 onclick: move |e| e.stop_propagation(),
                 div {
                     style: "

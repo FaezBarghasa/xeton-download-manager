@@ -231,3 +231,141 @@ pub fn IconXetonLogo(size: Option<u32>, class: Option<String>) -> Element {
         }
     }
 }
+
+#[component]
+pub fn IconZap(size: Option<u32>, color: Option<String>) -> Element {
+    let s = size.unwrap_or(16);
+    let c = color.unwrap_or_else(|| "currentColor".into());
+    rsx! {
+        svg {
+            width: "{s}",
+            height: "{s}",
+            view_box: "0 0 24 24",
+            fill: "none",
+            stroke: "{c}",
+            stroke_width: "2",
+            stroke_linecap: "round",
+            stroke_linejoin: "round",
+            polygon { points: "13 2 3 14 12 14 11 22 21 10 12 10 13 2" }
+        }
+    }
+}
+
+#[component]
+pub fn IconAlertTriangle(size: Option<u32>, color: Option<String>) -> Element {
+    let s = size.unwrap_or(18);
+    let c = color.unwrap_or_else(|| "currentColor".into());
+    rsx! {
+        svg {
+            width: "{s}",
+            height: "{s}",
+            view_box: "0 0 24 24",
+            fill: "none",
+            stroke: "{c}",
+            stroke_width: "2",
+            stroke_linecap: "round",
+            stroke_linejoin: "round",
+            path { d: "M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" }
+            line { x1: "12", y1: "9", x2: "12", y2: "13" }
+            line { x1: "12", y1: "17", x2: "12.01", y2: "17" }
+        }
+    }
+}
+
+#[component]
+pub fn IconSearch(size: Option<u32>, color: Option<String>) -> Element {
+    let s = size.unwrap_or(18);
+    let c = color.unwrap_or_else(|| "currentColor".into());
+    rsx! {
+        svg {
+            width: "{s}",
+            height: "{s}",
+            view_box: "0 0 24 24",
+            fill: "none",
+            stroke: "{c}",
+            stroke_width: "2",
+            stroke_linecap: "round",
+            stroke_linejoin: "round",
+            circle { cx: "11", cy: "11", r: "8" }
+            line { x1: "21", y1: "21", x2: "16.65", y2: "16.65" }
+        }
+    }
+}
+
+#[component]
+pub fn IconMenu(size: Option<u32>, color: Option<String>) -> Element {
+    let s = size.unwrap_or(20);
+    let c = color.unwrap_or_else(|| "currentColor".into());
+    rsx! {
+        svg {
+            width: "{s}",
+            height: "{s}",
+            view_box: "0 0 24 24",
+            fill: "none",
+            stroke: "{c}",
+            stroke_width: "2",
+            stroke_linecap: "round",
+            stroke_linejoin: "round",
+            line { x1: "3", y1: "12", x2: "21", y2: "12" }
+            line { x1: "3", y1: "6", x2: "21", y2: "6" }
+            line { x1: "3", y1: "18", x2: "21", y2: "18" }
+        }
+    }
+}
+
+#[component]
+pub fn IconCheck(size: Option<u32>, color: Option<String>) -> Element {
+    let s = size.unwrap_or(14);
+    let c = color.unwrap_or_else(|| "currentColor".into());
+    rsx! {
+        svg {
+            width: "{s}",
+            height: "{s}",
+            view_box: "0 0 24 24",
+            fill: "none",
+            stroke: "{c}",
+            stroke_width: "2.5",
+            stroke_linecap: "round",
+            stroke_linejoin: "round",
+            polyline { points: "20 6 9 17 4 12" }
+        }
+    }
+}
+
+#[component]
+pub fn IconChevronDown(size: Option<u32>, color: Option<String>) -> Element {
+    let s = size.unwrap_or(14);
+    let c = color.unwrap_or_else(|| "currentColor".into());
+    rsx! {
+        svg {
+            width: "{s}",
+            height: "{s}",
+            view_box: "0 0 24 24",
+            fill: "none",
+            stroke: "{c}",
+            stroke_width: "2",
+            stroke_linecap: "round",
+            stroke_linejoin: "round",
+            polyline { points: "6 9 12 15 18 9" }
+        }
+    }
+}
+
+#[component]
+pub fn IconChevronUp(size: Option<u32>, color: Option<String>) -> Element {
+    let s = size.unwrap_or(14);
+    let c = color.unwrap_or_else(|| "currentColor".into());
+    rsx! {
+        svg {
+            width: "{s}",
+            height: "{s}",
+            view_box: "0 0 24 24",
+            fill: "none",
+            stroke: "{c}",
+            stroke_width: "2",
+            stroke_linecap: "round",
+            stroke_linejoin: "round",
+            polyline { points: "18 15 12 9 6 15" }
+        }
+    }
+}
