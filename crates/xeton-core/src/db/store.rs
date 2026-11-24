@@ -55,10 +55,61 @@ pub fn discover_data_dir() -> PathBuf {
 
 #[derive(Debug, Serialize, Deserialize, SurrealValue)]
 #[surreal(crate = "surrealdb::types")]
-struct DownloadRecord {
+struct TaskInsert {
+    numeric_id: i64,
+    url: String,
+    dest_path: String,
+    protocol: crate::models::DownloadProtocol,
+    total_size: i64,
+    status: crate::models::DownloadStatus,
+}
+
+#[derive(Debug, Serialize, Deserialize, SurrealValue)]
+#[surreal(crate = "surrealdb::types")]
+struct TaskRow {
     id: Option<RecordId>,
-    #[serde(flatten)]
-    inner: DownloadTask,
+    numeric_id: i64,
+    url: String,
+    dest_path: String,
+    protocol: crate::models::DownloadProtocol,
+    total_size: i64,
+    status: crate::models::DownloadStatus,
+}
+
+impl From<&DownloadItem> for TaskInsert {
+    fn from(item: &DownloadItem) -> Self {
+        Self {
+            numeric_id: item.numeric_id,
+            url: item.link.clone(),
+            dest_path: format!("{}/{}", item.folder, item.name),
+            protocol: item.protocol.clone(),
+            total_size: item.content_length,
+            status: item.status.clone(),
+        }
+    }
+}
+
+impl From<TaskRow> for DownloadItem {
+    fn from(row: TaskRow) -> Self {
+        let path = std::path::Path::new(&row.dest_path);
+        let folder = path.parent().map(|p| p.to_string_lossy().into_owned()).unwrap_or_default();
+        let name = path.file_name().map(|n| n.to_string_lossy().into_owned()).unwrap_or_default();
+        Self {
+            numeric_id: row.numeric_id,
+            name,
+            folder,
+            link: row.url,
+            content_length: row.total_size,
+            status: row.status,
+            protocol: row.protocol,
+            server_etag: None,
+            date_added: 0,
+            start_time: None,
+            complete_time: None,
+            preferred_connections: None,
+            speed_limit: 0,
+        }
+    }
 }
 
 /// The actual persisted fields (no `numeric_id` — that's the SurrealDB key).
@@ -226,8 +277,8 @@ impl SurrealStore {
 #[async_trait]
 impl DownloadDb for SurrealStore {
     async fn get_all(&self) -> anyhow::Result<Vec<DownloadItem>> {
-        let records: Vec<DownloadRecord> = self.db.select("task").await?;
-        Ok(records.into_iter().map(|r| r.inner.into()).collect())
+        let records: Vec<TaskRow> = self.db.select("task").await?;
+        Ok(records.into_iter().map(Into::into).collect())
     }
 
     async fn get_by_id(&self, id: i64) -> anyhow::Result<Option<DownloadItem>> {
@@ -236,8 +287,8 @@ impl DownloadDb for SurrealStore {
             .query("SELECT * FROM task WHERE numeric_id = $id LIMIT 1")
             .bind(("id", id))
             .await?;
-        let records: Vec<DownloadRecord> = result.take(0)?;
-        Ok(records.into_iter().next().map(|r| r.inner.into()))
+        let records: Vec<TaskRow> = result.take(0)?;
+        Ok(records.into_iter().next().map(Into::into))
     }
 
     async fn get_last_id(&self) -> anyhow::Result<i64> {
@@ -257,8 +308,8 @@ impl DownloadDb for SurrealStore {
     }
 
     async fn add(&self, item: &DownloadItem) -> anyhow::Result<()> {
-        let data = DownloadTask::from(item);
-        let _: Option<DownloadRecord> = self
+        let data = TaskInsert::from(item);
+        let _: Option<TaskRow> = self
             .db
             .create(("task", item.numeric_id))
             .content(data)
@@ -268,8 +319,8 @@ impl DownloadDb for SurrealStore {
     }
 
     async fn update(&self, item: &DownloadItem) -> anyhow::Result<()> {
-        let data = DownloadTask::from(item);
-        let _: Option<DownloadRecord> = self
+        let data = TaskInsert::from(item);
+        let _: Option<TaskRow> = self
             .db
             .update(("task", item.numeric_id))
             .content(data)
@@ -277,7 +328,7 @@ impl DownloadDb for SurrealStore {
         Ok(())
     }
     async fn remove(&self, id: i64) -> anyhow::Result<()> {
-        let _: Option<DownloadRecord> = self.db.delete(("task", id)).await?;
+        let _: Option<TaskRow> = self.db.delete(("task", id)).await?;
         debug!("Removed download task #{}", id);
         Ok(())
     }
