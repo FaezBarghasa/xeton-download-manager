@@ -17,10 +17,16 @@ use components::icons::{
 use components::sidebar::Sidebar;
 use components::table::DownloadTable;
 use components::titlebar::Titlebar;
+use components::mobile_header::MobileHeader;
+use components::mobile_bottom_bar::MobileBottomBar;
+use components::mobile_card::MobileCard;
+
 use dialogs::{
     AddDownloadModal, BatchDownloadModal, DownloadDetailsModal, QueueManagerModal,
     CategoryModal, ChecksumModal, EditDownloadModal, PerHostModal, AboutModal,
     ConfirmModal, ConfirmKind, SettingsModal,
+    MobileAddSheet, MobileMenuSheet, MobileSetupWizard, MobileSettingsPage,
+    MobileBrowserPage, MobileAddModal,
 };
 use tauri_bindings::{invoke, invoke_no_args};
 use theme::{ThemePalette, THEME_DARK};
@@ -84,7 +90,31 @@ pub fn App() -> Element {
     });
     let mut selected_ids = use_signal(|| HashSet::<String>::new());
 
-    // Modal Visibility States
+    // Mobile / Desktop Mode Detection
+    let is_mobile = use_signal(|| {
+        #[cfg(target_arch = "wasm32")]
+        {
+            if let Some(win) = web_sys::window() {
+                if let Ok(width) = win.inner_width() {
+                    if let Some(w) = width.as_f64() {
+                        return w < 768.0;
+                    }
+                }
+            }
+        }
+        false
+    });
+
+    // Mobile Wizard & Screen States
+    let mut is_setup_wizard_open = use_signal(|| false);
+    let mut is_mobile_add_sheet_open = use_signal(|| false);
+    let mut is_mobile_add_modal_open = use_signal(|| false);
+    let mut is_mobile_menu_open = use_signal(|| false);
+    let mut is_mobile_settings_open = use_signal(|| false);
+    let mut is_mobile_browser_open = use_signal(|| false);
+    let mut is_mobile_search_active = use_signal(|| false);
+
+    // Desktop Modal Visibility States
     let mut is_add_modal_open = use_signal(|| false);
     let mut is_batch_modal_open = use_signal(|| false);
     let mut is_details_modal_open = use_signal(|| false);
@@ -97,7 +127,6 @@ pub fn App() -> Element {
     let mut is_confirm_delete_open = use_signal(|| false);
     let mut is_settings_modal_open = use_signal(|| false);
 
-    // Context for detailed/edited items
     let mut targeted_item = use_signal(|| Option::<DownloadItem>::None);
     let parts_info = use_signal(|| Option::<xeton_models::DownloadPartsInfo>::None);
     let mut targeted_checksum_path = use_signal(|| Option::<String>::None);
@@ -153,230 +182,384 @@ pub fn App() -> Element {
                 font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
                 overflow: hidden;
             ",
-            // Custom Titlebar with Top Menu and Search Box
-            Titlebar {
-                theme: theme,
-                title: "Xeton Download Manager".to_string(),
-                search_query: search_query,
-                on_menu_action: move |action: String| {
-                    match action.as_str() {
-                        "new_download" => *is_add_modal_open.write() = true,
-                        "batch_download" => is_batch_modal_open.set(true),
-                        "queue_manager" => is_queue_modal_open.set(true),
-                        "categories" => is_category_modal_open.set(true),
-                        "checksum" => {
-                            targeted_checksum_path.set(None);
-                            is_checksum_modal_open.set(true);
-                        },
-                        "per_host" => is_per_host_modal_open.set(true),
-                        "preferences" => *is_settings_modal_open.write() = true,
-                        "about" => is_about_modal_open.set(true),
-                        "delete" => {
-                            if !selected_ids.peek().is_empty() {
-                                is_confirm_delete_open.set(true);
+            // Conditional Render: Mobile Mode vs. Desktop Mode
+            if *is_mobile.read() {
+                // MOBILE MODE
+                div {
+                    style: "display: flex; flex-direction: column; height: 100vh; width: 100vw; position: relative;",
+                    // Mobile Header
+                    MobileHeader {
+                        theme: theme,
+                        title: "Xeton Download Manager".to_string(),
+                        on_search_click: move |_| {
+                            let curr = *is_mobile_search_active.read();
+                            is_mobile_search_active.set(!curr);
+                        }
+                    }
+
+                    // Optional Inline Search Bar in Mobile
+                    if *is_mobile_search_active.read() {
+                        div {
+                            style: "padding: 8px 16px; background-color: {theme.surface}; border-bottom: 1px solid {theme.border};",
+                            input {
+                                r#type: "text",
+                                placeholder: "Search downloads...",
+                                value: "{search_query}",
+                                oninput: move |e| search_query.set(e.value()),
+                                style: "
+                                    width: 100%; height: 36px; border-radius: 8px; border: 1px solid {theme.border};
+                                    background-color: {theme.background}; color: {theme.on_surface}; padding: 0 12px;
+                                    box-sizing: border-box; outline: none; font-size: 14px;
+                                "
                             }
+                        }
+                    }
+
+                    // Mobile Downloads List / Empty State
+                    div {
+                        style: "flex: 1; overflow-y: auto; padding: 14px 16px 80px 16px; box-sizing: border-box;",
+                        if filtered_downloads.read().is_empty() {
+                            div {
+                                style: "height: 60vh; display: flex; flex-direction: column; align-items: center; justify-content: center;",
+                                span {
+                                    style: "font-size: 16px; font-weight: 500; color: {theme.on_surface_muted};",
+                                    "List is empty!"
+                                }
+                            }
+                        } else {
+                            for item in filtered_downloads.read().iter() {
+                                {
+                                    let current_item = item.clone();
+                                    let item_id = item.id.clone();
+                                    rsx! {
+                                        MobileCard {
+                                            theme: theme,
+                                            item: current_item.clone(),
+                                            on_click: move |_| {
+                                                targeted_item.set(Some(current_item.clone()));
+                                                is_details_modal_open.set(true);
+                                            },
+                                            on_toggle_pause: move |_| {
+                                                let id = item_id.clone();
+                                                let is_downloading = current_item.status == DownloadStatus::Downloading;
+                                                spawn(async move {
+                                                    #[derive(serde::Serialize)]
+                                                    struct IdPayload { id: String }
+                                                    if is_downloading {
+                                                        let _ = invoke::<(), _>("pause_download", &IdPayload { id }).await;
+                                                    } else {
+                                                        let _ = invoke::<(), _>("resume_download", &IdPayload { id }).await;
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // Mobile Floating Bottom Navigation Pill
+                    MobileBottomBar {
+                        theme: theme,
+                        selected_category: *selected_category.read(),
+                        on_select_category: move |cat| selected_category.set(cat),
+                        on_menu_click: move |_| is_mobile_menu_open.set(true),
+                        on_search_click: move |_| {
+                            let curr = *is_mobile_search_active.read();
+                            is_mobile_search_active.set(!curr);
                         },
-                        "select_all" => {
-                            let all_ids: HashSet<String> = downloads.peek().iter().map(|d| d.id.clone()).collect();
-                            *selected_ids.write() = all_ids;
-                        },
-                        "exit" => {
-                            #[cfg(target_arch = "wasm32")]
-                            crate::tauri_bindings::close_window();
-                        },
-                        _ => {}
+                        on_add_click: move |_| is_mobile_add_sheet_open.set(true),
+                    }
+                }
+            } else {
+                // DESKTOP MODE
+                Titlebar {
+                        theme: theme,
+                        title: "Xeton Download Manager".to_string(),
+                        search_query: search_query,
+                        on_menu_action: move |action: String| {
+                            match action.as_str() {
+                                "new_download" => *is_add_modal_open.write() = true,
+                                "batch_download" => is_batch_modal_open.set(true),
+                                "queue_manager" => is_queue_modal_open.set(true),
+                                "categories" => is_category_modal_open.set(true),
+                                "checksum" => {
+                                    targeted_checksum_path.set(None);
+                                    is_checksum_modal_open.set(true);
+                                },
+                                "per_host" => is_per_host_modal_open.set(true),
+                                "preferences" => *is_settings_modal_open.write() = true,
+                                "about" => is_about_modal_open.set(true),
+                                "delete" => {
+                                    if !selected_ids.peek().is_empty() {
+                                        is_confirm_delete_open.set(true);
+                                    }
+                                },
+                                "select_all" => {
+                                    let all_ids: HashSet<String> = downloads.peek().iter().map(|d| d.id.clone()).collect();
+                                    *selected_ids.write() = all_ids;
+                                },
+                                "exit" => {
+                                    #[cfg(target_arch = "wasm32")]
+                                    crate::tauri_bindings::close_window();
+                                },
+                                _ => {}
+                            }
+                        }
+                    }
+                    div {
+                        class: "toolbar",
+                        style: "
+                            display: flex; align-items: center; gap: 8px; padding: 8px 16px;
+                            background-color: {theme.surface}; border-bottom: 1px solid {theme.border};
+                        ",
+                        button {
+                            onclick: move |_| *is_add_modal_open.write() = true,
+                            style: "
+                                display: flex; align-items: center; gap: 6px; padding: 6px 12px;
+                                border-radius: 4px; background-color: {theme.primary}; border: none;
+                                color: {theme.on_primary}; font-weight: 600; font-size: 13px; cursor: pointer;
+                            ",
+                            IconPlus { size: 16 }
+                            span { "New Download" }
+                        }
+                        button {
+                            onclick: move |_| is_batch_modal_open.set(true),
+                            style: "
+                                display: flex; align-items: center; gap: 6px; padding: 6px 12px;
+                                border-radius: 4px; background-color: transparent; border: 1px solid {theme.border};
+                                color: {theme.on_surface}; font-size: 13px; cursor: pointer;
+                            ",
+                            span { "⚡" }
+                            span { "Batch Add" }
+                        }
+                        button {
+                            onclick: move |_| {
+                                let ids: Vec<String> = downloads.peek().iter().map(|d| d.id.clone()).collect();
+                                spawn(async move {
+                                    for id in ids {
+                                        #[derive(serde::Serialize)]
+                                        struct IdPayload { id: String }
+                                        let _ = invoke::<(), _>("resume_download", &IdPayload { id }).await;
+                                    }
+                                });
+                            },
+                            style: "
+                                display: flex; align-items: center; gap: 6px; padding: 6px 12px;
+                                border-radius: 4px; background-color: transparent; border: 1px solid {theme.border};
+                                color: {theme.on_surface}; font-size: 13px; cursor: pointer;
+                            ",
+                            IconResume { size: 14 }
+                            span { "Resume All" }
+                        }
+                        button {
+                            onclick: move |_| {
+                                let ids: Vec<String> = downloads.peek().iter().map(|d| d.id.clone()).collect();
+                                spawn(async move {
+                                    for id in ids {
+                                        #[derive(serde::Serialize)]
+                                        struct IdPayload { id: String }
+                                        let _ = invoke::<(), _>("pause_download", &IdPayload { id }).await;
+                                    }
+                                });
+                            },
+                            style: "
+                                display: flex; align-items: center; gap: 6px; padding: 6px 12px;
+                                border-radius: 4px; background-color: transparent; border: 1px solid {theme.border};
+                                color: {theme.on_surface}; font-size: 13px; cursor: pointer;
+                            ",
+                            IconPause { size: 14 }
+                            span { "Pause All" }
+                        }
+                        button {
+                            onclick: move |_| {
+                                if !selected_ids.peek().is_empty() {
+                                    is_confirm_delete_open.set(true);
+                                }
+                            },
+                            style: "
+                                display: flex; align-items: center; gap: 6px; padding: 6px 12px;
+                                border-radius: 4px; background-color: transparent; border: 1px solid {theme.border};
+                                color: {theme.on_surface}; font-size: 13px; cursor: pointer;
+                            ",
+                            IconDelete { size: 14 }
+                            span { "Delete" }
+                        }
+                    }
+                    div {
+                        class: "main-content",
+                        style: "display: flex; flex: 1; overflow: hidden;",
+                        Sidebar {
+                            theme: theme,
+                            selected_category: selected_category,
+                            download_counts: download_counts,
+                        }
+                        div {
+                            style: "flex: 1; display: flex; flex-direction: column; overflow: hidden;",
+                            DownloadTable {
+                                theme: theme,
+                                downloads: filtered_downloads,
+                                selected_ids: selected_ids,
+                                on_item_click: move |item: DownloadItem| {
+                                    targeted_item.set(Some(item));
+                                    is_details_modal_open.set(true);
+                                },
+                                on_resume: move |id: String| {
+                                    spawn(async move {
+                                        #[derive(serde::Serialize)]
+                                        struct IdPayload { id: String }
+                                        let _ = invoke::<(), _>("resume_download", &IdPayload { id }).await;
+                                    });
+                                },
+                                on_pause: move |id: String| {
+                                    spawn(async move {
+                                        #[derive(serde::Serialize)]
+                                        struct IdPayload { id: String }
+                                        let _ = invoke::<(), _>("pause_download", &IdPayload { id }).await;
+                                    });
+                                },
+                                on_delete: move |id: String| {
+                                    selected_ids.write().insert(id);
+                                    is_confirm_delete_open.set(true);
+                                },
+                            }
+                        }
+                    }
+                    Footer {
+                        theme: theme,
+                        active_downloads: active_count,
+                        total_speed: total_speed,
+                        on_settings_click: move |_| *is_settings_modal_open.write() = true,
                     }
                 }
             }
-            // Action Toolbar (Buttons matching Xeton Download Manager)
-            div {
-                class: "toolbar",
-                style: "
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                    padding: 8px 16px;
-                    background-color: {theme.surface};
-                    border-bottom: 1px solid {theme.border};
-                ",
-                button {
-                    onclick: move |_| *is_add_modal_open.write() = true,
-                    style: "
-                        display: flex; align-items: center; gap: 6px;
-                        padding: 6px 12px; border-radius: 4px;
-                        background-color: {theme.primary}; border: none;
-                        color: {theme.on_primary}; font-weight: 600; font-size: 13px;
-                        cursor: pointer;
-                    ",
-                    IconPlus { size: 16 }
-                    span { "New Download" }
+
+            // --- MOBILE SHEETS & DIALOGS ---
+            if *is_setup_wizard_open.read() {
+                MobileSetupWizard {
+                    theme: theme,
+                    on_finish: move |_| is_setup_wizard_open.set(false),
                 }
-                button {
-                    onclick: move |_| is_batch_modal_open.set(true),
-                    style: "
-                        display: flex; align-items: center; gap: 6px;
-                        padding: 6px 12px; border-radius: 4px;
-                        background-color: transparent; border: 1px solid {theme.border};
-                        color: {theme.on_surface}; font-size: 13px; cursor: pointer;
-                    ",
-                    span { "⚡" }
-                    span { "Batch Add" }
-                }
-                button {
-                    onclick: move |_| {
-                        let ids: Vec<String> = downloads.peek().iter().map(|d| d.id.clone()).collect();
-                        spawn(async move {
-                            for id in ids {
-                                #[derive(serde::Serialize)]
-                                struct IdPayload { id: String }
-                                let _ = invoke::<(), _>("resume_download", &IdPayload { id }).await;
-                            }
-                        });
-                    },
-                    style: "
-                        display: flex; align-items: center; gap: 6px;
-                        padding: 6px 12px; border-radius: 4px;
-                        background-color: transparent; border: 1px solid {theme.border};
-                        color: {theme.on_surface}; font-size: 13px; cursor: pointer;
-                    ",
-                    IconResume { size: 14 }
-                    span { "Resume All" }
-                }
-                button {
-                    onclick: move |_| {
-                        let ids: Vec<String> = downloads.peek().iter().map(|d| d.id.clone()).collect();
-                        spawn(async move {
-                            for id in ids {
-                                #[derive(serde::Serialize)]
-                                struct IdPayload { id: String }
-                                let _ = invoke::<(), _>("pause_download", &IdPayload { id }).await;
-                            }
-                        });
-                    },
-                    style: "
-                        display: flex; align-items: center; gap: 6px;
-                        padding: 6px 12px; border-radius: 4px;
-                        background-color: transparent; border: 1px solid {theme.border};
-                        color: {theme.on_surface}; font-size: 13px; cursor: pointer;
-                    ",
-                    IconPause { size: 14 }
-                    span { "Pause All" }
-                }
-                button {
-                    onclick: move |_| {
-                        if !selected_ids.peek().is_empty() {
-                            is_confirm_delete_open.set(true);
+            }
+
+            if *is_mobile_add_sheet_open.read() {
+                MobileAddSheet {
+                    theme: theme,
+                    on_close: move |_| is_mobile_add_sheet_open.set(false),
+                    on_select_option: move |opt: String| {
+                        is_mobile_add_sheet_open.set(false);
+                        match opt.as_str() {
+                            "clipboard" => is_mobile_add_modal_open.set(true),
+                            "new" => is_mobile_add_modal_open.set(true),
+                            "batch" => is_batch_modal_open.set(true),
+                            _ => {}
                         }
-                    },
-                    style: "
-                        display: flex; align-items: center; gap: 6px;
-                        padding: 6px 12px; border-radius: 4px;
-                        background-color: transparent; border: 1px solid {theme.border};
-                        color: {theme.error}; font-size: 13px; cursor: pointer;
-                    ",
-                    IconDelete { size: 14 }
-                    span { "Delete" }
+                    }
                 }
-                div { style: "flex: 1;" }
-                button {
-                    onclick: move |_| *is_settings_modal_open.write() = true,
-                    style: "
-                        display: flex; align-items: center; justify-content: center;
-                        width: 32px; height: 32px; border-radius: 4px;
-                        background-color: transparent; border: 1px solid {theme.border};
-                        color: {theme.on_surface}; cursor: pointer;
-                    ",
-                    IconSettings { size: 16 }
-                }
-            }
-            // Main Content Area
-            div {
-                style: "flex: 1; display: flex; overflow: hidden;",
-                Sidebar {
-                    theme: theme,
-                    selected_category: selected_category,
-                    download_counts: download_counts,
-                }
-                DownloadTable {
-                    theme: theme,
-                    downloads: filtered_downloads,
-                    selected_ids: selected_ids,
-                }
-            }
-            // Real-Time Footer Bar
-            Footer {
-                theme: theme,
-                active_count: *active_count.read(),
-                total_speed: *total_speed.read(),
             }
 
-            // --- Modals & Dialogs ---
+            if *is_mobile_add_modal_open.read() {
+                MobileAddModal {
+                    theme: theme,
+                    on_close: move |_| is_mobile_add_modal_open.set(false),
+                    on_start: move |(url, name)| {
+                        is_mobile_add_modal_open.set(false);
+                        spawn(async move {
+                            let _ = invoke::<DownloadItem, _>("add_download", &AddDownloadRequest {
+                                url,
+                                file_name: if name.is_empty() { None } else { Some(name) },
+                                output_dir: None,
+                                connections: Some(8),
+                                category: None,
+                                start_now: true,
+                            }).await;
+                        });
+                    }
+                }
+            }
 
-            // P-01 / P-02: Add Download Modal Dialog
+            if *is_mobile_menu_open.read() {
+                MobileMenuSheet {
+                    theme: theme,
+                    on_close: move |_| is_mobile_menu_open.set(false),
+                    on_select_item: move |item: String| {
+                        is_mobile_menu_open.set(false);
+                        match item.as_str() {
+                            "browser" => is_mobile_browser_open.set(true),
+                            "settings" => is_mobile_settings_open.set(true),
+                            "per_host" => is_per_host_modal_open.set(true),
+                            "about" => is_about_modal_open.set(true),
+                            "delete" => {
+                                if !selected_ids.peek().is_empty() {
+                                    is_confirm_delete_open.set(true);
+                                }
+                            },
+                            "resume_all" => {
+                                let ids: Vec<String> = downloads.peek().iter().map(|d| d.id.clone()).collect();
+                                spawn(async move {
+                                    for id in ids {
+                                        #[derive(serde::Serialize)]
+                                        struct IdPayload { id: String }
+                                        let _ = invoke::<(), _>("resume_download", &IdPayload { id }).await;
+                                    }
+                                });
+                            },
+                            "stop_all" => {
+                                let ids: Vec<String> = downloads.peek().iter().map(|d| d.id.clone()).collect();
+                                spawn(async move {
+                                    for id in ids {
+                                        #[derive(serde::Serialize)]
+                                        struct IdPayload { id: String }
+                                        let _ = invoke::<(), _>("pause_download", &IdPayload { id }).await;
+                                    }
+                                });
+                            },
+                            _ => {}
+                        }
+                    }
+                }
+            }
+
+            if *is_mobile_settings_open.read() {
+                MobileSettingsPage {
+                    theme: theme,
+                    on_back: move |_| is_mobile_settings_open.set(false),
+                }
+            }
+
+            if *is_mobile_browser_open.read() {
+                MobileBrowserPage {
+                    theme: theme,
+                    on_back: move |_| is_mobile_browser_open.set(false),
+                }
+            }
+
+            // --- SHARED MODALS (Desktop & Mobile) ---
             AddDownloadModal {
                 theme: theme,
                 is_open: is_add_modal_open,
-                on_submit: move |req: AddDownloadRequest| {
-                    let req_clone = req.clone();
+                on_add: move |req: AddDownloadRequest| {
                     spawn(async move {
-                        #[derive(serde::Serialize)]
-                        struct AddPayload {
-                            request: AddDownloadRequest,
-                        }
-                        if let Ok(new_item) = invoke::<DownloadItem, _>("add_download", &AddPayload { request: req_clone.clone() }).await {
-                            downloads.write().push(new_item);
-                        } else {
-                            let next_id = format!("{}", downloads.peek().len() + 1);
-                            downloads.write().push(DownloadItem {
-                                id: next_id,
-                                name: req_clone.file_name.unwrap_or_else(|| "downloaded_file".into()),
-                                url: req_clone.url,
-                                category: req_clone.category.unwrap_or(CategoryType::Other),
-                                status: DownloadStatus::Downloading,
-                                total_size: None,
-                                downloaded_size: 0,
-                                speed: 0,
-                                eta_seconds: None,
-                                connections: req_clone.connections.unwrap_or(8),
-                                date_added: chrono::Utc::now().timestamp(),
-                                date_finished: None,
-                                file_path: "".into(),
-                                error_message: None,
-                            });
+                        if let Ok(item) = invoke::<DownloadItem, _>("add_download", &req).await {
+                            downloads.write().push(item);
                         }
                     });
                 }
             }
 
-            // P-03: Batch Download Modal
             BatchDownloadModal {
                 theme: theme,
                 is_open: is_batch_modal_open,
-                on_submit: move |req: xeton_models::BatchDownloadRequest| {
-                    let dir = req.output_dir.clone().unwrap_or_else(|| "~/Downloads".to_string());
-                    for it in req.items {
-                        let next_id = format!("{}", downloads.peek().len() + 1);
-                        downloads.write().push(DownloadItem {
-                            id: next_id,
-                            name: it.file_name,
-                            url: it.url,
-                            category: CategoryType::Other,
-                            status: DownloadStatus::Downloading,
-                            total_size: it.size,
-                            downloaded_size: 0,
-                            speed: 0,
-                            eta_seconds: None,
-                            connections: 8,
-                            date_added: chrono::Utc::now().timestamp(),
-                            date_finished: None,
-                            file_path: format!("{}/{}", dir, "file"),
-                            error_message: None,
-                        });
-                    }
+                on_add_batch: move |urls: Vec<String>| {
+                    spawn(async move {
+                        #[derive(serde::Serialize)]
+                        struct BatchReq { urls: Vec<String>, output_dir: Option<String> }
+                        let _ = invoke::<Vec<DownloadItem>, _>("add_batch_downloads", &BatchReq { urls, output_dir: None }).await;
+                    });
                 }
             }
 
-            // P-04 / P-05: Single Download Details Modal
             DownloadDetailsModal {
                 theme: theme,
                 is_open: is_details_modal_open,
@@ -384,32 +567,26 @@ pub fn App() -> Element {
                 parts_info: parts_info,
             }
 
-            // P-06: Preferences & Settings Modal Dialog
             SettingsModal {
                 theme: theme,
                 is_open: is_settings_modal_open,
                 current_theme: current_theme,
             }
 
-            // P-07: Queue Manager Modal
             if is_queue_modal_open() {
                 QueueManagerModal {
                     on_close: move |_| is_queue_modal_open.set(false),
                 }
             }
 
-            // P-08: Category Modal
             if is_category_modal_open() {
                 CategoryModal {
                     category: None,
                     on_close: move |_| is_category_modal_open.set(false),
-                    on_save: move |_cat: CustomCategory| {
-                        // Persist custom category
-                    }
+                    on_save: move |_cat: CustomCategory| {}
                 }
             }
 
-            // P-09: Checksum Integrity Modal
             if is_checksum_modal_open() {
                 ChecksumModal {
                     file_path: targeted_checksum_path(),
@@ -417,7 +594,6 @@ pub fn App() -> Element {
                 }
             }
 
-            // P-10 / P-11: Edit Download / Refresh Link Modal
             if is_edit_modal_open() {
                 if let Some(item) = targeted_item() {
                     EditDownloadModal {
@@ -433,21 +609,18 @@ pub fn App() -> Element {
                 }
             }
 
-            // P-12: Per-Host Rules Modal
             if is_per_host_modal_open() {
                 PerHostModal {
                     on_close: move |_| is_per_host_modal_open.set(false),
                 }
             }
 
-            // P-13: About Xeton Modal
             if is_about_modal_open() {
                 AboutModal {
                     on_close: move |_| is_about_modal_open.set(false),
                 }
             }
 
-            // P-14: Delete Confirmation Modal
             if is_confirm_delete_open() {
                 ConfirmModal {
                     kind: ConfirmKind::DeleteDownload,
