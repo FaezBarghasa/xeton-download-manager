@@ -11631,6 +11631,7 @@ name = "xeton-desktop"
 version = "0.9.0"
 dependencies = [
  "anyhow",
+ "chrono",
  "serde",
  "serde_json",
  "tauri",
@@ -11644,6 +11645,7 @@ dependencies = [
  "tokio",
  "tracing",
  "tracing-subscriber",
+ "uuid",
  "xeton-core",
  "xeton-models",
 ]

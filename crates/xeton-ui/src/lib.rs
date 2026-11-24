@@ -7,16 +7,17 @@ pub mod tauri_bindings;
 pub mod theme;
 
 use components::{DownloadTable, IconDelete, IconPause, IconPlus, IconResume, IconSettings, Sidebar, Titlebar};
-use dialogs::AddDownloadModal;
+use dialogs::{AddDownloadModal, SettingsModal};
 use theme::THEME_DARK;
 use xeton_models::{AddDownloadRequest, CategoryType, DownloadItem, DownloadStatus};
 
 #[component]
 pub fn App() -> Element {
-    let current_theme = use_signal(|| THEME_DARK);
+    let mut current_theme = use_signal(|| THEME_DARK);
     let selected_category = use_signal(|| CategoryType::All);
     let selected_ids = use_signal(|| HashSet::new());
     let mut is_add_modal_open = use_signal(|| false);
+    let mut is_settings_modal_open = use_signal(|| false);
 
     let mut downloads = use_signal(|| vec![
         DownloadItem {
@@ -147,6 +148,7 @@ pub fn App() -> Element {
                 }
                 div { style: "flex: 1;" }
                 button {
+                    onclick: move |_| *is_settings_modal_open.write() = true,
                     style: "
                         display: flex; align-items: center; justify-content: center;
                         width: 32px; height: 32px; border-radius: 4px;
@@ -193,6 +195,12 @@ pub fn App() -> Element {
                         error_message: None,
                     });
                 }
+            }
+            // Settings Modal Dialog
+            SettingsModal {
+                theme: theme,
+                is_open: is_settings_modal_open,
+                current_theme: current_theme,
             }
         }
     }
