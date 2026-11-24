@@ -1,0 +1,11 @@
+{
+  "mcp_servers": {
+    "okf-generator": {
+      "command": "okf",
+      "args": [
+        "mcp",
+        "/home/jrad/RustroverProjects/xeton-download-manager/okf_bundle"
+      ]
+    }
+  }
+}
