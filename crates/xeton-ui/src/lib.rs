@@ -149,7 +149,7 @@ pub fn App() -> Element {
         map
     });
 
-    let filtered_downloads = use_memo(move || {
+    let filtered_downloads = use_memo(move || -> Vec<DownloadItem> {
         let cat = *selected_category.read();
         let query = search_query.read().to_lowercase();
         let list = downloads.read();
@@ -230,18 +230,19 @@ pub fn App() -> Element {
                             for item in filtered_downloads.read().iter() {
                                 {
                                     let current_item = item.clone();
+                                    let item_for_click = item.clone();
                                     let item_id = item.id.clone();
+                                    let is_downloading = item.status == DownloadStatus::Downloading;
                                     rsx! {
                                         MobileCard {
                                             theme: theme,
-                                            item: current_item.clone(),
+                                            item: current_item,
                                             on_click: move |_| {
-                                                targeted_item.set(Some(current_item.clone()));
+                                                targeted_item.set(Some(item_for_click.clone()));
                                                 is_details_modal_open.set(true);
                                             },
                                             on_toggle_pause: move |_| {
                                                 let id = item_id.clone();
-                                                let is_downloading = current_item.status == DownloadStatus::Downloading;
                                                 spawn(async move {
                                                     #[derive(serde::Serialize)]
                                                     struct IdPayload { id: String }
@@ -387,52 +388,26 @@ pub fn App() -> Element {
                             span { "Delete" }
                         }
                     }
+                    // Main Content Area
                     div {
-                        class: "main-content",
-                        style: "display: flex; flex: 1; overflow: hidden;",
+                        style: "flex: 1; display: flex; overflow: hidden;",
                         Sidebar {
                             theme: theme,
                             selected_category: selected_category,
                             download_counts: download_counts,
                         }
-                        div {
-                            style: "flex: 1; display: flex; flex-direction: column; overflow: hidden;",
-                            DownloadTable {
-                                theme: theme,
-                                downloads: filtered_downloads,
-                                selected_ids: selected_ids,
-                                on_item_click: move |item: DownloadItem| {
-                                    targeted_item.set(Some(item));
-                                    is_details_modal_open.set(true);
-                                },
-                                on_resume: move |id: String| {
-                                    spawn(async move {
-                                        #[derive(serde::Serialize)]
-                                        struct IdPayload { id: String }
-                                        let _ = invoke::<(), _>("resume_download", &IdPayload { id }).await;
-                                    });
-                                },
-                                on_pause: move |id: String| {
-                                    spawn(async move {
-                                        #[derive(serde::Serialize)]
-                                        struct IdPayload { id: String }
-                                        let _ = invoke::<(), _>("pause_download", &IdPayload { id }).await;
-                                    });
-                                },
-                                on_delete: move |id: String| {
-                                    selected_ids.write().insert(id);
-                                    is_confirm_delete_open.set(true);
-                                },
-                            }
+                        DownloadTable {
+                            theme: theme,
+                            downloads: filtered_downloads,
+                            selected_ids: selected_ids,
                         }
                     }
+                    // Real-Time Footer Bar
                     Footer {
                         theme: theme,
-                        active_downloads: active_count,
-                        total_speed: total_speed,
-                        on_settings_click: move |_| *is_settings_modal_open.write() = true,
+                        active_count: *active_count.read(),
+                        total_speed: *total_speed.read(),
                     }
-                }
             }
 
             // --- MOBILE SHEETS & DIALOGS ---
@@ -463,7 +438,7 @@ pub fn App() -> Element {
                 MobileAddModal {
                     theme: theme,
                     on_close: move |_| is_mobile_add_modal_open.set(false),
-                    on_start: move |(url, name)| {
+                    on_start: move |(url, name): (String, String)| {
                         is_mobile_add_modal_open.set(false);
                         spawn(async move {
                             let _ = invoke::<DownloadItem, _>("add_download", &AddDownloadRequest {
@@ -539,7 +514,7 @@ pub fn App() -> Element {
             AddDownloadModal {
                 theme: theme,
                 is_open: is_add_modal_open,
-                on_add: move |req: AddDownloadRequest| {
+                on_submit: move |req: AddDownloadRequest| {
                     spawn(async move {
                         if let Ok(item) = invoke::<DownloadItem, _>("add_download", &req).await {
                             downloads.write().push(item);
@@ -551,11 +526,9 @@ pub fn App() -> Element {
             BatchDownloadModal {
                 theme: theme,
                 is_open: is_batch_modal_open,
-                on_add_batch: move |urls: Vec<String>| {
+                on_submit: move |req: xeton_models::BatchDownloadRequest| {
                     spawn(async move {
-                        #[derive(serde::Serialize)]
-                        struct BatchReq { urls: Vec<String>, output_dir: Option<String> }
-                        let _ = invoke::<Vec<DownloadItem>, _>("add_batch_downloads", &BatchReq { urls, output_dir: None }).await;
+                        let _ = invoke::<Vec<DownloadItem>, _>("add_batch_downloads", &req).await;
                     });
                 }
             }

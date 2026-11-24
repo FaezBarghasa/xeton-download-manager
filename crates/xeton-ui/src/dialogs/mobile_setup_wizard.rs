@@ -159,7 +159,10 @@ pub fn MobileSetupWizard(
                 style: "display: flex; flex-direction: column; gap: 10px; width: 100%;",
                 if *step.read() == 1 || *step.read() == 2 {
                     button {
-                        onclick: move |_| step.set(*step.peek() + 1),
+                        onclick: move |_| {
+                            let curr = *step.peek();
+                            step.set(curr + 1);
+                        },
                         style: "
                             width: 100%; height: 50px; border-radius: 12px; border: none;
                             background-color: {theme.primary}; color: {theme.on_primary};

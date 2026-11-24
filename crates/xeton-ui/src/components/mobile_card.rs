@@ -25,6 +25,8 @@ pub fn MobileCard(
         DownloadStatus::Paused => "#FFA000",
         DownloadStatus::Failed => "#E53935",
         DownloadStatus::Pending => theme.on_surface_muted,
+        DownloadStatus::Scheduled => theme.info,
+        DownloadStatus::Canceled => theme.on_surface_muted,
     };
 
     let speed_text = if item.speed > 0 {
@@ -100,7 +102,7 @@ pub fn MobileCard(
                 }
                 span {
                     style: "color: {status_color}; font-weight: 600;",
-                    format!("{:?}", item.status)
+                    "{item.status:?}"
                 }
             }
         }
