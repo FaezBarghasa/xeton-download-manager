@@ -38,12 +38,22 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_fs::init())
         .manage(state)
+        .manage(QueueState::new())
+        .manage(SettingsState::new())
         .invoke_handler(tauri::generate_handler![
             get_downloads,
             add_download,
             pause_download,
             resume_download,
-            delete_download
+            delete_download,
+            get_queues,
+            create_queue,
+            delete_queue,
+            get_app_settings,
+            save_app_settings,
+            calculate_checksum,
+            add_batch_downloads,
+            get_download_parts
         ])
         .run(tauri::generate_context!())
         .expect("error while running Xeton Download Manager");

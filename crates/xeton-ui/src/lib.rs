@@ -1,62 +1,107 @@
 use dioxus::prelude::*;
 use std::collections::{HashMap, HashSet};
 
-pub mod components;
-pub mod dialogs;
-pub mod tauri_bindings;
-pub mod theme;
+use xeton_models::{
+    AddDownloadRequest, CategoryType, DownloadItem, DownloadStatus, CustomCategory,
+};
 
-use components::{DownloadTable, Footer, IconDelete, IconPause, IconPlus, IconResume, IconSettings, Sidebar, Titlebar};
-use dialogs::{AddDownloadModal, SettingsModal};
+mod components;
+mod dialogs;
+mod tauri_bindings;
+mod theme;
+
+use components::footer::Footer;
+use components::icons::{
+    IconDelete, IconPause, IconPlus, IconResume, IconSettings,
+};
+use components::sidebar::Sidebar;
+use components::table::DownloadTable;
+use components::titlebar::Titlebar;
+use dialogs::{
+    AddDownloadModal, BatchDownloadModal, DownloadDetailsModal, QueueManagerModal,
+    CategoryModal, ChecksumModal, EditDownloadModal, PerHostModal, AboutModal,
+    ConfirmModal, ConfirmKind, SettingsModal,
+};
 use tauri_bindings::{invoke, invoke_no_args};
-use theme::THEME_DARK;
-use xeton_models::{AddDownloadRequest, CategoryType, DownloadItem, DownloadStatus};
+use theme::{ThemePalette, THEME_DARK};
 
 #[component]
 pub fn App() -> Element {
-    let current_theme = use_signal(|| THEME_DARK);
-    let selected_category = use_signal(|| CategoryType::All);
-    let mut selected_ids = use_signal(|| HashSet::new());
-    let search_query = use_signal(|| "".to_string());
+    let mut current_theme = use_signal(|| THEME_DARK);
+    let mut selected_category = use_signal(|| CategoryType::All);
+    let mut search_query = use_signal(|| String::new());
+    let mut downloads = use_signal(|| {
+        vec![
+            DownloadItem {
+                id: "1".into(),
+                name: "ubuntu-24.04-desktop-amd64.iso".into(),
+                url: "https://releases.ubuntu.com/24.04/ubuntu-24.04-desktop-amd64.iso".into(),
+                category: CategoryType::Other,
+                status: DownloadStatus::Downloading,
+                total_size: Some(6_111_000_000),
+                downloaded_size: 2_450_000_000,
+                speed: 14_500_000,
+                eta_seconds: Some(252),
+                connections: 16,
+                date_added: 1713900000,
+                date_finished: None,
+                file_path: "/home/user/Downloads/ubuntu-24.04-desktop-amd64.iso".into(),
+                error_message: None,
+            },
+            DownloadItem {
+                id: "2".into(),
+                name: "Blender-4.1.0-linux-x64.tar.xz".into(),
+                url: "https://download.blender.org/release/Blender4.1/blender-4.1.0-linux-x64.tar.xz".into(),
+                category: CategoryType::Programs,
+                status: DownloadStatus::Paused,
+                total_size: Some(340_000_000),
+                downloaded_size: 170_000_000,
+                speed: 0,
+                eta_seconds: None,
+                connections: 8,
+                date_added: 1713800000,
+                date_finished: None,
+                file_path: "/home/user/Downloads/Blender-4.1.0-linux-x64.tar.xz".into(),
+                error_message: None,
+            },
+            DownloadItem {
+                id: "3".into(),
+                name: "Rust-2024-Edition-Guide.pdf".into(),
+                url: "https://doc.rust-lang.org/guide.pdf".into(),
+                category: CategoryType::Documents,
+                status: DownloadStatus::Completed,
+                total_size: Some(15_400_000),
+                downloaded_size: 15_400_000,
+                speed: 0,
+                eta_seconds: Some(0),
+                connections: 4,
+                date_added: 1713700000,
+                date_finished: Some(1713700500),
+                file_path: "/home/user/Downloads/Rust-2024-Edition-Guide.pdf".into(),
+                error_message: None,
+            },
+        ]
+    });
+    let mut selected_ids = use_signal(|| HashSet::<String>::new());
+
+    // Modal Visibility States
     let mut is_add_modal_open = use_signal(|| false);
+    let mut is_batch_modal_open = use_signal(|| false);
+    let mut is_details_modal_open = use_signal(|| false);
+    let mut is_queue_modal_open = use_signal(|| false);
+    let mut is_category_modal_open = use_signal(|| false);
+    let mut is_checksum_modal_open = use_signal(|| false);
+    let mut is_edit_modal_open = use_signal(|| false);
+    let mut is_per_host_modal_open = use_signal(|| false);
+    let mut is_about_modal_open = use_signal(|| false);
+    let mut is_confirm_delete_open = use_signal(|| false);
     let mut is_settings_modal_open = use_signal(|| false);
 
-    let mut downloads = use_signal(|| vec![
-        DownloadItem {
-            id: "1".into(),
-            name: "ubuntu-24.04-desktop-amd64.iso".into(),
-            url: "https://releases.ubuntu.com/24.04/ubuntu-24.04-desktop-amd64.iso".into(),
-            category: CategoryType::Compressed,
-            status: DownloadStatus::Downloading,
-            total_size: Some(6_111_000_000),
-            downloaded_size: 2_450_000_000,
-            speed: 12_500_000,
-            eta_seconds: Some(292),
-            connections: 16,
-            date_added: 1732431000,
-            date_finished: None,
-            file_path: "/home/jrad/Downloads/ubuntu-24.04-desktop-amd64.iso".into(),
-            error_message: None,
-        },
-        DownloadItem {
-            id: "2".into(),
-            name: "Rust-Book-2024.pdf".into(),
-            url: "https://doc.rust-lang.org/book/book.pdf".into(),
-            category: CategoryType::Documents,
-            status: DownloadStatus::Completed,
-            total_size: Some(15_400_000),
-            downloaded_size: 15_400_000,
-            speed: 0,
-            eta_seconds: None,
-            connections: 8,
-            date_added: 1732420000,
-            date_finished: Some(1732420015),
-            file_path: "/home/jrad/Downloads/Rust-Book-2024.pdf".into(),
-            error_message: None,
-        },
-    ]);
+    // Context for detailed/edited items
+    let mut targeted_item = use_signal(|| Option::<DownloadItem>::None);
+    let parts_info = use_signal(|| Option::<xeton_models::DownloadPartsInfo>::None);
+    let mut targeted_checksum_path = use_signal(|| Option::<String>::None);
 
-    // Initial fetch on mount
     use_future(move || async move {
         if let Ok(items) = invoke_no_args::<Vec<DownloadItem>>("get_downloads").await {
             if !items.is_empty() {
@@ -113,6 +158,35 @@ pub fn App() -> Element {
                 theme: theme,
                 title: "Xeton Download Manager".to_string(),
                 search_query: search_query,
+                on_menu_action: move |action: String| {
+                    match action.as_str() {
+                        "new_download" => *is_add_modal_open.write() = true,
+                        "batch_download" => is_batch_modal_open.set(true),
+                        "queue_manager" => is_queue_modal_open.set(true),
+                        "categories" => is_category_modal_open.set(true),
+                        "checksum" => {
+                            targeted_checksum_path.set(None);
+                            is_checksum_modal_open.set(true);
+                        },
+                        "per_host" => is_per_host_modal_open.set(true),
+                        "preferences" => *is_settings_modal_open.write() = true,
+                        "about" => is_about_modal_open.set(true),
+                        "delete" => {
+                            if !selected_ids.peek().is_empty() {
+                                is_confirm_delete_open.set(true);
+                            }
+                        },
+                        "select_all" => {
+                            let all_ids: HashSet<String> = downloads.peek().iter().map(|d| d.id.clone()).collect();
+                            *selected_ids.write() = all_ids;
+                        },
+                        "exit" => {
+                            #[cfg(target_arch = "wasm32")]
+                            crate::tauri_bindings::close_window();
+                        },
+                        _ => {}
+                    }
+                }
             }
             // Action Toolbar (Buttons matching Xeton Download Manager)
             div {
@@ -136,6 +210,17 @@ pub fn App() -> Element {
                     ",
                     IconPlus { size: 16 }
                     span { "New Download" }
+                }
+                button {
+                    onclick: move |_| is_batch_modal_open.set(true),
+                    style: "
+                        display: flex; align-items: center; gap: 6px;
+                        padding: 6px 12px; border-radius: 4px;
+                        background-color: transparent; border: 1px solid {theme.border};
+                        color: {theme.on_surface}; font-size: 13px; cursor: pointer;
+                    ",
+                    span { "⚡" }
+                    span { "Batch Add" }
                 }
                 button {
                     onclick: move |_| {
@@ -179,16 +264,9 @@ pub fn App() -> Element {
                 }
                 button {
                     onclick: move |_| {
-                        let selected = selected_ids.peek().clone();
-                        spawn(async move {
-                            for id in selected {
-                                #[derive(serde::Serialize)]
-                                struct IdPayload { id: String }
-                                let _ = invoke::<(), _>("delete_download", &IdPayload { id }).await;
-                            }
-                        });
-                        downloads.write().retain(|d| !selected_ids.peek().contains(&d.id));
-                        selected_ids.write().clear();
+                        if !selected_ids.peek().is_empty() {
+                            is_confirm_delete_open.set(true);
+                        }
                     },
                     style: "
                         display: flex; align-items: center; gap: 6px;
@@ -231,7 +309,10 @@ pub fn App() -> Element {
                 active_count: *active_count.read(),
                 total_speed: *total_speed.read(),
             }
-            // Add Download Modal Dialog
+
+            // --- Modals & Dialogs ---
+
+            // P-01 / P-02: Add Download Modal Dialog
             AddDownloadModal {
                 theme: theme,
                 is_open: is_add_modal_open,
@@ -245,7 +326,6 @@ pub fn App() -> Element {
                         if let Ok(new_item) = invoke::<DownloadItem, _>("add_download", &AddPayload { request: req_clone.clone() }).await {
                             downloads.write().push(new_item);
                         } else {
-                            // Fallback if running outside Tauri
                             let next_id = format!("{}", downloads.peek().len() + 1);
                             downloads.write().push(DownloadItem {
                                 id: next_id,
@@ -267,11 +347,127 @@ pub fn App() -> Element {
                     });
                 }
             }
-            // Settings Modal Dialog
+
+            // P-03: Batch Download Modal
+            BatchDownloadModal {
+                theme: theme,
+                is_open: is_batch_modal_open,
+                on_submit: move |req: xeton_models::BatchDownloadRequest| {
+                    let dir = req.output_dir.clone().unwrap_or_else(|| "~/Downloads".to_string());
+                    for it in req.items {
+                        let next_id = format!("{}", downloads.peek().len() + 1);
+                        downloads.write().push(DownloadItem {
+                            id: next_id,
+                            name: it.file_name,
+                            url: it.url,
+                            category: CategoryType::Other,
+                            status: DownloadStatus::Downloading,
+                            total_size: it.size,
+                            downloaded_size: 0,
+                            speed: 0,
+                            eta_seconds: None,
+                            connections: 8,
+                            date_added: chrono::Utc::now().timestamp(),
+                            date_finished: None,
+                            file_path: format!("{}/{}", dir, "file"),
+                            error_message: None,
+                        });
+                    }
+                }
+            }
+
+            // P-04 / P-05: Single Download Details Modal
+            DownloadDetailsModal {
+                theme: theme,
+                is_open: is_details_modal_open,
+                item: targeted_item,
+                parts_info: parts_info,
+            }
+
+            // P-06: Preferences & Settings Modal Dialog
             SettingsModal {
                 theme: theme,
                 is_open: is_settings_modal_open,
                 current_theme: current_theme,
+            }
+
+            // P-07: Queue Manager Modal
+            if is_queue_modal_open() {
+                QueueManagerModal {
+                    on_close: move |_| is_queue_modal_open.set(false),
+                }
+            }
+
+            // P-08: Category Modal
+            if is_category_modal_open() {
+                CategoryModal {
+                    category: None,
+                    on_close: move |_| is_category_modal_open.set(false),
+                    on_save: move |_cat: CustomCategory| {
+                        // Persist custom category
+                    }
+                }
+            }
+
+            // P-09: Checksum Integrity Modal
+            if is_checksum_modal_open() {
+                ChecksumModal {
+                    file_path: targeted_checksum_path(),
+                    on_close: move |_| is_checksum_modal_open.set(false),
+                }
+            }
+
+            // P-10 / P-11: Edit Download / Refresh Link Modal
+            if is_edit_modal_open() {
+                if let Some(item) = targeted_item() {
+                    EditDownloadModal {
+                        item: item,
+                        on_close: move |_| is_edit_modal_open.set(false),
+                        on_save: move |(id, new_url, new_name)| {
+                            if let Some(it) = downloads.write().iter_mut().find(|d| d.id == id) {
+                                it.url = new_url;
+                                it.name = new_name;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // P-12: Per-Host Rules Modal
+            if is_per_host_modal_open() {
+                PerHostModal {
+                    on_close: move |_| is_per_host_modal_open.set(false),
+                }
+            }
+
+            // P-13: About Xeton Modal
+            if is_about_modal_open() {
+                AboutModal {
+                    on_close: move |_| is_about_modal_open.set(false),
+                }
+            }
+
+            // P-14: Delete Confirmation Modal
+            if is_confirm_delete_open() {
+                ConfirmModal {
+                    kind: ConfirmKind::DeleteDownload,
+                    title: "Delete Downloads".to_string(),
+                    message: format!("Are you sure you want to remove {} selected download(s) from the list?", selected_ids.peek().len()),
+                    on_close: move |_| is_confirm_delete_open.set(false),
+                    on_confirm: move |_delete_file_from_disk: bool| {
+                        let selected = selected_ids.peek().clone();
+                        spawn(async move {
+                            for id in selected {
+                                #[derive(serde::Serialize)]
+                                struct IdPayload { id: String }
+                                let _ = invoke::<(), _>("delete_download", &IdPayload { id }).await;
+                            }
+                        });
+                        downloads.write().retain(|d| !selected_ids.peek().contains(&d.id));
+                        selected_ids.write().clear();
+                        is_confirm_delete_open.set(false);
+                    }
+                }
             }
         }
     }

@@ -150,10 +150,12 @@ pub fn IconSettings(size: Option<u32>, color: Option<String>) -> Element {
 }
 
 #[component]
-pub fn IconXetonLogo(size: Option<u32>) -> Element {
+pub fn IconXetonLogo(size: Option<u32>, class: Option<String>) -> Element {
     let s = size.unwrap_or(22);
+    let cls = class.unwrap_or_default();
     rsx! {
         svg {
+            class: "{cls}",
             width: "{s}",
             height: "{s}",
             view_box: "0 0 512 512",

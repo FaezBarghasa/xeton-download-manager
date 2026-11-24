@@ -1,5 +1,23 @@
 pub mod add_download;
+pub mod batch_download;
+pub mod download_details;
+pub mod queue_manager;
+pub mod category_dialog;
+pub mod checksum_dialog;
+pub mod edit_download;
+pub mod per_host_dialog;
+pub mod about_dialog;
+pub mod confirm_dialog;
 pub mod settings;
 
 pub use add_download::*;
+pub use batch_download::*;
+pub use download_details::*;
+pub use queue_manager::*;
+pub use category_dialog::*;
+pub use checksum_dialog::*;
+pub use edit_download::*;
+pub use per_host_dialog::*;
+pub use about_dialog::*;
+pub use confirm_dialog::*;
 pub use settings::*;
