@@ -3,7 +3,10 @@ use std::sync::Arc;
 use tokio::sync::RwLock;
 use xeton_core::manager::DownloadManager;
 use xeton_core::models::{DownloadProtocol, DownloadSettings, DuplicateStrategy, NewDownloadProps};
-use xeton_models::{AddDownloadRequest, CategoryType, DownloadItem as UiDownloadItem, DownloadStatus as UiDownloadStatus, SpeedLimitConfig};
+use xeton_models::{
+    AddDownloadRequest, CategoryType, DownloadItem as UiDownloadItem,
+    DownloadStatus as UiDownloadStatus, SpeedLimitConfig,
+};
 
 pub struct AppState {
     pub manager: Arc<DownloadManager>,
@@ -27,7 +30,10 @@ impl AppState {
         };
         tokio::fs::create_dir_all(&data_dir).await?;
 
-        eprintln!("[XETON] AppState::new: initializing DownloadManager at {:?}", data_dir);
+        eprintln!(
+            "[XETON] AppState::new: initializing DownloadManager at {:?}",
+            data_dir
+        );
         let settings = DownloadSettings::default();
         let manager = DownloadManager::new(data_dir, settings).await?;
         eprintln!("[XETON] AppState::new: booting DownloadManager");
@@ -48,8 +54,12 @@ impl AppState {
 pub async fn get_downloads(
     state: tauri::State<'_, AppState>,
 ) -> Result<Vec<UiDownloadItem>, String> {
-    let list = state.manager.get_download_list().await.map_err(|e| e.to_string())?;
-    
+    let list = state
+        .manager
+        .get_download_list()
+        .await
+        .map_err(|e| e.to_string())?;
+
     let ui_items = list
         .into_iter()
         .map(|item| {
@@ -61,7 +71,10 @@ pub async fn get_downloads(
                 _ => UiDownloadStatus::Pending,
             };
 
-            let category = if item.name.ends_with(".zip") || item.name.ends_with(".tar.gz") || item.name.ends_with(".iso") {
+            let category = if item.name.ends_with(".zip")
+                || item.name.ends_with(".tar.gz")
+                || item.name.ends_with(".iso")
+            {
                 CategoryType::Compressed
             } else if item.name.ends_with(".mp4") || item.name.ends_with(".mkv") {
                 CategoryType::Videos
@@ -69,7 +82,10 @@ pub async fn get_downloads(
                 CategoryType::Music
             } else if item.name.ends_with(".pdf") || item.name.ends_with(".doc") {
                 CategoryType::Documents
-            } else if item.name.ends_with(".deb") || item.name.ends_with(".exe") || item.name.ends_with(".AppImage") {
+            } else if item.name.ends_with(".deb")
+                || item.name.ends_with(".exe")
+                || item.name.ends_with(".AppImage")
+            {
                 CategoryType::Programs
             } else {
                 CategoryType::Other
@@ -81,7 +97,11 @@ pub async fn get_downloads(
                 url: item.link,
                 category,
                 status,
-                total_size: if item.content_length > 0 { Some(item.content_length as u64) } else { None },
+                total_size: if item.content_length > 0 {
+                    Some(item.content_length as u64)
+                } else {
+                    None
+                },
                 downloaded_size: 0,
                 speed: 0,
                 eta_seconds: None,
@@ -103,9 +123,16 @@ pub async fn add_download(
     request: AddDownloadRequest,
 ) -> Result<UiDownloadItem, String> {
     let home = std::env::var("HOME").unwrap_or_else(|_| ".".into());
-    let folder = request.output_dir.unwrap_or_else(|| format!("{}/Downloads", home));
+    let folder = request
+        .output_dir
+        .unwrap_or_else(|| format!("{}/Downloads", home));
     let name = request.file_name.unwrap_or_else(|| {
-        request.url.split('/').last().unwrap_or("download").to_string()
+        request
+            .url
+            .split('/')
+            .last()
+            .unwrap_or("download")
+            .to_string()
     });
 
     let props = NewDownloadProps {
@@ -118,7 +145,11 @@ pub async fn add_download(
         on_duplicate: DuplicateStrategy::AddNumbered,
     };
 
-    let id = state.manager.add_download(props).await.map_err(|e| e.to_string())?;
+    let id = state
+        .manager
+        .add_download(props)
+        .await
+        .map_err(|e| e.to_string())?;
 
     if request.start_now {
         let _ = state.manager.resume(id).await;
@@ -143,34 +174,37 @@ pub async fn add_download(
 }
 
 #[tauri::command]
-pub async fn pause_download(
-    state: tauri::State<'_, AppState>,
-    id: String,
-) -> Result<(), String> {
+pub async fn pause_download(state: tauri::State<'_, AppState>, id: String) -> Result<(), String> {
     if let Ok(numeric_id) = id.parse::<i64>() {
-        state.manager.pause(numeric_id).await.map_err(|e| e.to_string())?;
+        state
+            .manager
+            .pause(numeric_id)
+            .await
+            .map_err(|e| e.to_string())?;
     }
     Ok(())
 }
 
 #[tauri::command]
-pub async fn resume_download(
-    state: tauri::State<'_, AppState>,
-    id: String,
-) -> Result<(), String> {
+pub async fn resume_download(state: tauri::State<'_, AppState>, id: String) -> Result<(), String> {
     if let Ok(numeric_id) = id.parse::<i64>() {
-        state.manager.resume(numeric_id).await.map_err(|e| e.to_string())?;
+        state
+            .manager
+            .resume(numeric_id)
+            .await
+            .map_err(|e| e.to_string())?;
     }
     Ok(())
 }
 
 #[tauri::command]
-pub async fn delete_download(
-    state: tauri::State<'_, AppState>,
-    id: String,
-) -> Result<(), String> {
+pub async fn delete_download(state: tauri::State<'_, AppState>, id: String) -> Result<(), String> {
     if let Ok(numeric_id) = id.parse::<i64>() {
-        state.manager.delete_download(numeric_id, false).await.map_err(|e| e.to_string())?;
+        state
+            .manager
+            .delete_download(numeric_id, false)
+            .await
+            .map_err(|e| e.to_string())?;
     }
     Ok(())
 }
