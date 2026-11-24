@@ -111,10 +111,10 @@ pub fn App() -> Element {
             // Custom Titlebar with Top Menu and Search Box
             Titlebar {
                 theme: theme,
-                title: "AB Download Manager".to_string(),
+                title: "Xeton Download Manager".to_string(),
                 search_query: search_query,
             }
-            // Action Toolbar (Buttons matching AB Download Manager)
+            // Action Toolbar (Buttons matching Xeton Download Manager)
             div {
                 class: "toolbar",
                 style: "

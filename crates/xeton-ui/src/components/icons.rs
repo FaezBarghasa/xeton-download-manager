@@ -148,3 +148,84 @@ pub fn IconSettings(size: Option<u32>, color: Option<String>) -> Element {
         }
     }
 }
+
+#[component]
+pub fn IconXetonLogo(size: Option<u32>) -> Element {
+    let s = size.unwrap_or(22);
+    rsx! {
+        svg {
+            width: "{s}",
+            height: "{s}",
+            view_box: "0 0 512 512",
+            fill: "none",
+            rect {
+                x: "20", y: "20", width: "472", height: "472", rx: "112",
+                fill: "#0B0F19",
+                stroke: "url(#xeton_rim)",
+                stroke_width: "8"
+            }
+            defs {
+                linearGradient {
+                    id: "xeton_rim",
+                    x1: "32", y1: "32", x2: "480", y2: "480",
+                    gradient_units: "userSpaceOnUse",
+                    stop { offset: "0%", stop_color: "#00F2FE" }
+                    stop { offset: "50%", stop_color: "#8B5CF6" }
+                    stop { offset: "100%", stop_color: "#EC4899" }
+                }
+                linearGradient {
+                    id: "xeton_cyan",
+                    x1: "120", y1: "100", x2: "280", y2: "340",
+                    gradient_units: "userSpaceOnUse",
+                    stop { offset: "0%", stop_color: "#38BDF8" }
+                    stop { offset: "100%", stop_color: "#0284C7" }
+                }
+                linearGradient {
+                    id: "xeton_magenta",
+                    x1: "392", y1: "100", x2: "232", y2: "340",
+                    gradient_units: "userSpaceOnUse",
+                    stop { offset: "0%", stop_color: "#F472B6" }
+                    stop { offset: "100%", stop_color: "#9333EA" }
+                }
+                linearGradient {
+                    id: "xeton_core",
+                    x1: "256", y1: "180", x2: "256", y2: "400",
+                    gradient_units: "userSpaceOnUse",
+                    stop { offset: "0%", stop_color: "#FFFFFF" }
+                    stop { offset: "40%", stop_color: "#38BDF8" }
+                    stop { offset: "100%", stop_color: "#0369A1" }
+                }
+            }
+            path {
+                d: "M124 120 C124 114, 130 110, 136 112 L206 136 C214 139, 219 146, 222 154 L256 244 L212 284 L142 168 C138 162, 134 152, 128 142 Z",
+                fill: "url(#xeton_cyan)"
+            }
+            path {
+                d: "M388 120 C388 114, 382 110, 376 112 L306 136 C298 139, 293 146, 290 154 L256 244 L300 284 L370 168 C374 162, 378 152, 384 142 Z",
+                fill: "url(#xeton_magenta)"
+            }
+            path {
+                d: "M136 324 L204 364 C212 369, 218 377, 220 386 L226 410 C228 418, 220 424, 212 420 L148 376 C138 369, 132 358, 132 346 L134 330 C134 324, 140 320, 146 324 Z",
+                fill: "#0284C7",
+                opacity: "0.6"
+            }
+            path {
+                d: "M376 324 L308 364 C300 369, 294 377, 292 386 L286 410 C284 418, 292 424, 300 420 L364 376 C374 369, 380 358, 380 346 L378 330 C378 324, 372 320, 366 324 Z",
+                fill: "#9333EA",
+                opacity: "0.6"
+            }
+            path {
+                d: "M256 188 L302 248 L272 248 L272 312 L240 312 L240 248 L210 248 Z",
+                fill: "url(#xeton_core)"
+            }
+            path {
+                d: "M256 296 L272 312 L256 392 L240 312 Z",
+                fill: "url(#xeton_core)"
+            }
+            polygon {
+                points: "256,210 270,234 256,252 242,234",
+                fill: "#FFFFFF"
+            }
+        }
+    }
+}

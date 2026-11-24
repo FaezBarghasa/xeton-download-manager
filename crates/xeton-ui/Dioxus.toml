@@ -6,7 +6,7 @@ asset_dir = "assets"
 base_path = ""
 
 [web.app]
-title = "AB Download Manager"
+title = "Xeton Download Manager"
 
 [web.watcher]
 reload_html = true

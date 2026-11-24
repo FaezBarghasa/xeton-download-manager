@@ -96,12 +96,12 @@ delete_app() {
     logger "removing $APP_NAME autostart at boot file ..."
     remove_if_exists "$HOME/.config/autostart/com.xetondownloadmanager.desktop"
 
-    if [ -e "$HOME/.abdm" ]; then
-        logger "removing $APP_NAME settings and download lists $HOME/.abdm"
+    if [ -e "$HOME/.xeton" ]; then
+        logger "removing $APP_NAME settings and download lists $HOME/.xeton"
         delete_app_config_dir
     fi
 
-    logger "AB Download Manager completely removed"
+    logger "Xeton Download Manager completely removed"
 }
 
 main() {

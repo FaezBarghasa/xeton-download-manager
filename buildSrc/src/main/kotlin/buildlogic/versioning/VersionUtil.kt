@@ -27,10 +27,10 @@ fun Project.getAppName(): String {
 }
 
 fun Project.getPrettifiedAppName(): String {
-    return "AB Download Manager"
+    return "Xeton Download Manager"
 }
 fun Project.getAppDataDirName(): String {
-    return ".abdm"
+    return ".xeton"
 }
 
 fun Project.getApplicationPackageName(): String {

@@ -1,5 +1,5 @@
 use dioxus::prelude::*;
-use crate::components::icons::{IconClose, IconMaximize, IconMinimize};
+use crate::components::icons::{IconClose, IconMaximize, IconMinimize, IconXetonLogo};
 use crate::theme::ThemePalette;
 
 #[component]
@@ -24,10 +24,11 @@ pub fn Titlebar(
             ",
             // Menu Items (File, Edit, View, Tools, Help)
             div {
-                style: "display: flex; align-items: center; gap: 4px; margin-right: 12px;",
+                style: "display: flex; align-items: center; gap: 6px; margin-right: 14px;",
+                IconXetonLogo { size: Some(22) }
                 span {
-                    style: "font-weight: 700; color: {theme.primary}; margin-right: 8px; font-size: 14px;",
-                    "ABDM"
+                    style: "font-weight: 800; letter-spacing: 0.5px; color: {theme.primary}; margin-right: 10px; font-size: 13px;",
+                    "XETON"
                 }
                 for item in ["File", "Edit", "View", "Tools", "Help"].iter() {
                     button {

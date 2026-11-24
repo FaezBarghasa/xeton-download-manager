@@ -179,7 +179,7 @@ installerPlugin {
             "app_version_with_build" to "${getAppVersionStringForPackaging(Exe)}.0",
             "source_code_url" to "https://github.com/amir1376/xeton-download-manager",
             "project_website" to "www.xetondownloadmanager.com",
-            "copyright" to "© 2024-present AB Download Manager App",
+            "copyright" to "© 2024-present Xeton Download Manager",
             "header_image_file" to project.file("resources/installer/abdm-header-image.bmp"),
             "sidebar_image_file" to project.file("resources/installer/abdm-sidebar-image.bmp")
         )
