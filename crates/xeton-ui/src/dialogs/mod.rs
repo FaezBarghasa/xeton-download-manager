@@ -9,6 +9,8 @@ pub mod edit_download;
 pub mod per_host_dialog;
 pub mod queue_manager;
 pub mod settings;
+pub mod download_error_dialog;
+pub mod qr_code_dialog;
 
 pub mod mobile_add_sheet;
 pub mod mobile_menu_sheet;
@@ -28,6 +30,8 @@ pub use edit_download::*;
 pub use per_host_dialog::*;
 pub use queue_manager::*;
 pub use settings::*;
+pub use download_error_dialog::*;
+pub use qr_code_dialog::*;
 
 pub use mobile_add_sheet::*;
 pub use mobile_menu_sheet::*;

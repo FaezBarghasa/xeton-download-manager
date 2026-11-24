@@ -23,8 +23,7 @@ pub fn Footer(
             style: "
                 display: flex;
                 align-items: center;
-                justify-content: flex-end;
-                gap: 16px;
+                justify-content: space-between;
                 padding: 6px 16px;
                 background-color: {theme.surface};
                 border-top: 1px solid {theme.border};
@@ -33,17 +32,25 @@ pub fn Footer(
                 height: 32px;
                 user-select: none;
             ",
-            // Active count indicator
+            // Left: Speed Limiter toggle preset
             div {
-                style: "display: flex; align-items: center; gap: 6px;",
-                span { style: "opacity: 0.5;", "Active:" }
-                span { style: "font-weight: 600;", "{active_count}" }
+                style: "display: flex; align-items: center; gap: 8px; cursor: pointer;",
+                span { style: "color: {theme.primary}; font-weight: 600;", "⚡ Speed Limiter:" }
+                span { style: "padding: 2px 6px; border-radius: 4px; background: {theme.background}; border: 1px solid {theme.border}; font-size: 11px;", "Unlimited" }
             }
-            // Speed indicator
+            // Right: Active & Speed indicators
             div {
-                style: "display: flex; align-items: center; gap: 6px;",
-                span { style: "opacity: 0.5;", "Speed:" }
-                span { style: "font-weight: 600; color: {theme.primary};", "{speed_formatted}" }
+                style: "display: flex; align-items: center; gap: 16px;",
+                div {
+                    style: "display: flex; align-items: center; gap: 6px;",
+                    span { style: "opacity: 0.5;", "Active:" }
+                    span { style: "font-weight: 600;", "{active_count}" }
+                }
+                div {
+                    style: "display: flex; align-items: center; gap: 6px;",
+                    span { style: "opacity: 0.5;", "Speed:" }
+                    span { style: "font-weight: 600; color: {theme.primary};", "{speed_formatted}" }
+                }
             }
         }
     }

@@ -74,6 +74,44 @@ pub fn Sidebar(
                     }
                 }
             }
+
+            // Queues Section (Matching Desktop AB Download Manager)
+            div {
+                style: "margin-top: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; color: {theme.primary}; padding: 4px 8px; display: flex; justify-content: space-between; align-items: center;",
+                span { "Queues" }
+                span { style: "cursor: pointer; font-size: 14px;", "+" }
+            }
+            div {
+                style: "display: flex; flex-direction: column; gap: 2px;",
+                button {
+                    style: "
+                        display: flex; align-items: center; justify-content: space-between;
+                        padding: 8px 12px; border-radius: 6px; border: none;
+                        background-color: transparent; color: {theme.on_surface};
+                        font-size: 13px; font-weight: 500; cursor: pointer; text-align: left;
+                    ",
+                    div {
+                        style: "display: flex; align-items: center; gap: 8px;",
+                        span { style: "color: {theme.primary}; font-size: 12px;", "▶" }
+                        span { "Default Queue" }
+                    }
+                    span { style: "font-size: 11px; opacity: 0.8;", "3" }
+                }
+                button {
+                    style: "
+                        display: flex; align-items: center; justify-content: space-between;
+                        padding: 8px 12px; border-radius: 6px; border: none;
+                        background-color: transparent; color: {theme.on_surface_muted};
+                        font-size: 13px; font-weight: 500; cursor: pointer; text-align: left;
+                    ",
+                    div {
+                        style: "display: flex; align-items: center; gap: 8px;",
+                        span { style: "font-size: 12px;", "⏸" }
+                        span { "Night Queue" }
+                    }
+                    span { style: "font-size: 11px; opacity: 0.8;", "0" }
+                }
+            }
         }
     }
 }
