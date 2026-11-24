@@ -20,7 +20,7 @@ use surrealdb::Surreal;
 use tracing::{debug, info, warn};
 
 use crate::db::{DownloadDb, PartDb, QueueDb, BlockDb};
-use crate::models::{DownloadItem, QueueModel, RangedPart, Block, DownloadTask, PartSegment, BlockChecksum};
+use crate::models::{DownloadItem, QueueModel, RangedPart, Block, PartSegment, BlockChecksum};
 
 /// Discover default data directory based on OS.
 pub fn discover_data_dir() -> PathBuf {
@@ -437,7 +437,7 @@ impl BlockDb for SurrealStore {
 
 impl SurrealStore {
     pub async fn migrate_from_json_if_needed(&self, data_dir: &Path) -> anyhow::Result<()> {
-        let existing: Vec<DownloadRecord> = self.db.select("task").await?;
+        let existing: Vec<TaskRow> = self.db.select("task").await?;
         if !existing.is_empty() {
             debug!("SurrealDB already has {} downloads, skipping JSON migration", existing.len());
             return Ok(());
