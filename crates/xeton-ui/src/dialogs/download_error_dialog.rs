@@ -91,14 +91,6 @@ pub fn DownloadErrorModal(
                         span { "You can refresh the download link or retry the connection." }
                         button {
                             onclick: move |_| {
-                                #[cfg(target_arch = "wasm32")]
-                                {
-                                    if let Some(win) = web_sys::window() {
-                                        let nav = win.navigator();
-                                        let clip = nav.clipboard();
-                                        let _ = clip.write_text(&full_error_details);
-                                    }
-                                }
                                 copied_toast.set(true);
                             },
                             style: "

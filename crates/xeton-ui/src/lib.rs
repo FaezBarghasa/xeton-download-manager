@@ -24,7 +24,7 @@ use components::mobile_card::MobileCard;
 use dialogs::{
     AddDownloadModal, BatchDownloadModal, DownloadDetailsModal, QueueManagerModal,
     CategoryModal, ChecksumModal, EditDownloadModal, PerHostModal, AboutModal,
-    ConfirmModal, ConfirmKind, SettingsModal,
+    ConfirmModal, ConfirmKind, SettingsModal, DownloadErrorModal, QRCodeModal,
     MobileAddSheet, MobileMenuSheet, MobileSetupWizard, MobileSettingsPage,
     MobileBrowserPage, MobileAddModal,
 };
@@ -126,6 +126,11 @@ pub fn App() -> Element {
     let mut is_about_modal_open = use_signal(|| false);
     let mut is_confirm_delete_open = use_signal(|| false);
     let mut is_settings_modal_open = use_signal(|| false);
+    let mut is_error_modal_open = use_signal(|| false);
+    let mut is_qr_modal_open = use_signal(|| false);
+    let mut error_dialog_title = use_signal(|| "Download Error".to_string());
+    let mut error_dialog_message = use_signal(|| "Failed to connect to remote server".to_string());
+    let mut qr_dialog_url = use_signal(|| "https://github.com/FaezBarghasa/xeton-download-manager".to_string());
 
     let mut targeted_item = use_signal(|| Option::<DownloadItem>::None);
     let parts_info = use_signal(|| Option::<xeton_models::DownloadPartsInfo>::None);
@@ -592,6 +597,25 @@ pub fn App() -> Element {
                 AboutModal {
                     on_close: move |_| is_about_modal_open.set(false),
                 }
+            }
+
+            DownloadErrorModal {
+                theme: theme,
+                is_open: is_error_modal_open,
+                error_title: error_dialog_title.read().clone(),
+                error_message: error_dialog_message.read().clone(),
+                http_status: Some(404),
+                on_retry: move |_| {},
+                on_refresh_link: move |_| {
+                    is_edit_modal_open.set(true);
+                },
+            }
+
+            QRCodeModal {
+                theme: theme,
+                is_open: is_qr_modal_open,
+                title: "Share Download / Mobile Sync".to_string(),
+                data: qr_dialog_url.read().clone(),
             }
 
             if is_confirm_delete_open() {

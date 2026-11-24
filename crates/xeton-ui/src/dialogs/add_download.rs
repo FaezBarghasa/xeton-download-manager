@@ -64,35 +64,56 @@ pub fn AddDownloadModal(
                         display: flex; gap: 4px; padding: 0 16px;
                         background-color: {theme.background}; border-bottom: 1px solid {theme.border};
                     ",
-                    button {
-                        onclick: move |_| active_tab.set("general"),
-                        style: "
-                            padding: 10px 14px; background: transparent; border: none;
-                            border-bottom: 2px solid {if *active_tab.read() == \"general\" { theme.primary } else { \"transparent\" }};
-                            color: {if *active_tab.read() == \"general\" { theme.primary } else { theme.on_surface_muted }};
-                            font-size: 13px; font-weight: 600; cursor: pointer;
-                        ",
-                        "General"
+                    {
+                        let is_gen = *active_tab.read() == "general";
+                        let border_color = if is_gen { theme.primary } else { "transparent" };
+                        let text_color = if is_gen { theme.primary } else { theme.on_surface_muted };
+                        rsx! {
+                            button {
+                                onclick: move |_| active_tab.set("general"),
+                                style: "
+                                    padding: 10px 14px; background: transparent; border: none;
+                                    border-bottom: 2px solid {border_color};
+                                    color: {text_color};
+                                    font-size: 13px; font-weight: 600; cursor: pointer;
+                                ",
+                                "General"
+                            }
+                        }
                     }
-                    button {
-                        onclick: move |_| active_tab.set("auth"),
-                        style: "
-                            padding: 10px 14px; background: transparent; border: none;
-                            border-bottom: 2px solid {if *active_tab.read() == \"auth\" { theme.primary } else { \"transparent\" }};
-                            color: {if *active_tab.read() == \"auth\" { theme.primary } else { theme.on_surface_muted }};
-                            font-size: 13px; font-weight: 600; cursor: pointer;
-                        ",
-                        "Authentication"
+                    {
+                        let is_auth = *active_tab.read() == "auth";
+                        let border_color = if is_auth { theme.primary } else { "transparent" };
+                        let text_color = if is_auth { theme.primary } else { theme.on_surface_muted };
+                        rsx! {
+                            button {
+                                onclick: move |_| active_tab.set("auth"),
+                                style: "
+                                    padding: 10px 14px; background: transparent; border: none;
+                                    border-bottom: 2px solid {border_color};
+                                    color: {text_color};
+                                    font-size: 13px; font-weight: 600; cursor: pointer;
+                                ",
+                                "Authentication"
+                            }
+                        }
                     }
-                    button {
-                        onclick: move |_| active_tab.set("connection"),
-                        style: "
-                            padding: 10px 14px; background: transparent; border: none;
-                            border-bottom: 2px solid {if *active_tab.read() == \"connection\" { theme.primary } else { \"transparent\" }};
-                            color: {if *active_tab.read() == \"connection\" { theme.primary } else { theme.on_surface_muted }};
-                            font-size: 13px; font-weight: 600; cursor: pointer;
-                        ",
-                        "Connections & Speed"
+                    {
+                        let is_conn = *active_tab.read() == "connection";
+                        let border_color = if is_conn { theme.primary } else { "transparent" };
+                        let text_color = if is_conn { theme.primary } else { theme.on_surface_muted };
+                        rsx! {
+                            button {
+                                onclick: move |_| active_tab.set("connection"),
+                                style: "
+                                    padding: 10px 14px; background: transparent; border: none;
+                                    border-bottom: 2px solid {border_color};
+                                    color: {text_color};
+                                    font-size: 13px; font-weight: 600; cursor: pointer;
+                                ",
+                                "Connections & Speed"
+                            }
+                        }
                     }
                 }
 
