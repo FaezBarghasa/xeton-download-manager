@@ -166,7 +166,7 @@ pub fn Titlebar(
                 button {
                     onclick: move |_| {
                         #[cfg(target_arch = "wasm32")]
-                        crate::tauri_bindings::toggle_maximize();
+                        crate::tauri_bindings::toggle_maximize_window();
                     },
                     style: "
                         display: flex; align-items: center; justify-content: center;

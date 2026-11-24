@@ -14,7 +14,7 @@ tauri-build = { workspace = true }
 [dependencies]
 xeton-core = { workspace = true }
 xeton-models = { workspace = true }
-tauri = { workspace = true }
+tauri = { workspace = true, features = ["custom-protocol"] }
 tauri-plugin-single-instance = { workspace = true }
 tauri-plugin-autostart = { workspace = true }
 tauri-plugin-notification = { workspace = true }
@@ -32,4 +32,5 @@ anyhow = { workspace = true }
 openssl = { workspace = true }
 
 [features]
-default = []
+default = ["custom-protocol"]
+custom-protocol = ["tauri/custom-protocol"]
