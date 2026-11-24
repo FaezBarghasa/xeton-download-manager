@@ -11584,7 +11584,7 @@ dependencies = [
 
 [[package]]
 name = "xeton-core"
-version = "0.1.0"
+version = "0.9.0"
 dependencies = [
  "aes",
  "anyhow",
@@ -11628,7 +11628,7 @@ dependencies = [
 
 [[package]]
 name = "xeton-desktop"
-version = "1.12.0"
+version = "0.9.0"
 dependencies = [
  "anyhow",
  "serde",
@@ -11650,7 +11650,7 @@ dependencies = [
 
 [[package]]
 name = "xeton-models"
-version = "1.12.0"
+version = "0.9.0"
 dependencies = [
  "chrono",
  "serde",
@@ -11660,7 +11660,7 @@ dependencies = [
 
 [[package]]
 name = "xeton-native-host"
-version = "1.12.0"
+version = "0.9.0"
 dependencies = [
  "anyhow",
  "byteorder",
@@ -11674,7 +11674,7 @@ dependencies = [
 
 [[package]]
 name = "xeton-ui"
-version = "1.12.0"
+version = "0.9.0"
 dependencies = [
  "chrono",
  "dioxus",

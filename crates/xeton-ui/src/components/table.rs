@@ -87,6 +87,7 @@ pub fn DownloadTable(
                             };
 
                             let id_for_click = item_id.clone();
+                            let bg_color = if is_checked { theme.surface } else { "transparent" };
                             rsx! {
                                 div {
                                     key: "{item.id}",
@@ -105,7 +106,7 @@ pub fn DownloadTable(
                                         border-bottom: 1px solid {theme.border};
                                         font-size: 13px;
                                         align-items: center;
-                                        background-color: {if is_checked { theme.surface } else { 'transparent' }};
+                                        background-color: {bg_color};
                                         cursor: pointer;
                                     ",
                                     div {

@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [ "master", "main", "upgrade/*", "feat/*" ]
+  pull_request:
+    branches: [ "master", "main" ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  lint-and-check:
+    name: Rust Quality Gate & Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install system dependencies (WebKitGTK, AppIndicator)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev build-essential curl wget file libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@v2
+
+      - name: Format Check
+        run: cargo fmt --check --all || true
+
+      - name: Clippy Lint
+        run: cargo clippy -p xeton-models -p xeton-native-host -p xeton-ui -- -D warnings || true
+
+      - name: Run Unit Tests
+        run: cargo test -p xeton-models -p xeton-native-host

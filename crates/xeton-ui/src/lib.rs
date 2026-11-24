@@ -90,7 +90,7 @@ pub fn App() -> Element {
             // Custom Titlebar
             Titlebar {
                 theme: theme,
-                title: "Xeton Download Manager".into(),
+                title: "Xeton Download Manager".to_string(),
             }
             // Action Toolbar (Buttons matching AB Download Manager)
             div {
@@ -175,8 +175,9 @@ pub fn App() -> Element {
                 theme: theme,
                 is_open: is_add_modal_open,
                 on_submit: move |req: AddDownloadRequest| {
+                    let next_id = format!("{}", downloads.peek().len() + 1);
                     downloads.write().push(DownloadItem {
-                        id: format!("{}", downloads.read().len() + 1),
+                        id: next_id,
                         name: req.file_name.unwrap_or_else(|| "downloaded_file".into()),
                         url: req.url,
                         category: req.category.unwrap_or(CategoryType::Other),

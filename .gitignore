@@ -12,3 +12,13 @@ local.properties
 
 
 /rust/xeton_core/target/
+
+# Rust & Cargo targets
+target/
+**/target/
+Cargo.lock
+
+# Evolver & IDE caches
+.evolver/
+**/bin/
+**/*.class

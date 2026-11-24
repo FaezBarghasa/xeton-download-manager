@@ -73,3 +73,34 @@ pub struct SpeedLimitConfig {
     pub enabled: bool,
     pub max_bytes_per_sec: u64,
 }
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_download_item_serialization() {
+        let item = DownloadItem {
+            id: "dl-101".into(),
+            name: "test-file.zip".into(),
+            url: "https://example.com/test-file.zip".into(),
+            category: CategoryType::Compressed,
+            status: DownloadStatus::Downloading,
+            total_size: Some(10485760),
+            downloaded_size: 5242880,
+            speed: 1048576,
+            eta_seconds: Some(5),
+            connections: 8,
+            date_added: 1732431000,
+            date_finished: None,
+            file_path: "/tmp/test-file.zip".into(),
+            error_message: None,
+        };
+
+        let json = serde_json::to_string(&item).expect("Failed to serialize");
+        let deserialized: DownloadItem = serde_json::from_str(&json).expect("Failed to deserialize");
+
+        assert_eq!(item, deserialized);
+        assert_eq!(deserialized.category, CategoryType::Compressed);
+        assert_eq!(deserialized.status, DownloadStatus::Downloading);
+    }
+}
