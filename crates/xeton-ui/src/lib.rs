@@ -8,15 +8,16 @@ pub mod theme;
 
 use components::{DownloadTable, Footer, IconDelete, IconPause, IconPlus, IconResume, IconSettings, Sidebar, Titlebar};
 use dialogs::{AddDownloadModal, SettingsModal};
+use tauri_bindings::{invoke, invoke_no_args};
 use theme::THEME_DARK;
 use xeton_models::{AddDownloadRequest, CategoryType, DownloadItem, DownloadStatus};
 
 #[component]
 pub fn App() -> Element {
-    let mut current_theme = use_signal(|| THEME_DARK);
+    let current_theme = use_signal(|| THEME_DARK);
     let selected_category = use_signal(|| CategoryType::All);
-    let selected_ids = use_signal(|| HashSet::new());
-    let mut search_query = use_signal(|| "".to_string());
+    let mut selected_ids = use_signal(|| HashSet::new());
+    let search_query = use_signal(|| "".to_string());
     let mut is_add_modal_open = use_signal(|| false);
     let mut is_settings_modal_open = use_signal(|| false);
 
@@ -54,6 +55,15 @@ pub fn App() -> Element {
             error_message: None,
         },
     ]);
+
+    // Initial fetch on mount
+    use_future(move || async move {
+        if let Ok(items) = invoke_no_args::<Vec<DownloadItem>>("get_downloads").await {
+            if !items.is_empty() {
+                *downloads.write() = items;
+            }
+        }
+    });
 
     let download_counts = use_memo(move || {
         let mut map = HashMap::new();
@@ -128,6 +138,16 @@ pub fn App() -> Element {
                     span { "New Download" }
                 }
                 button {
+                    onclick: move |_| {
+                        let ids: Vec<String> = downloads.peek().iter().map(|d| d.id.clone()).collect();
+                        spawn(async move {
+                            for id in ids {
+                                #[derive(serde::Serialize)]
+                                struct IdPayload { id: String }
+                                let _ = invoke::<(), _>("resume_download", &IdPayload { id }).await;
+                            }
+                        });
+                    },
                     style: "
                         display: flex; align-items: center; gap: 6px;
                         padding: 6px 12px; border-radius: 4px;
@@ -138,6 +158,16 @@ pub fn App() -> Element {
                     span { "Resume All" }
                 }
                 button {
+                    onclick: move |_| {
+                        let ids: Vec<String> = downloads.peek().iter().map(|d| d.id.clone()).collect();
+                        spawn(async move {
+                            for id in ids {
+                                #[derive(serde::Serialize)]
+                                struct IdPayload { id: String }
+                                let _ = invoke::<(), _>("pause_download", &IdPayload { id }).await;
+                            }
+                        });
+                    },
                     style: "
                         display: flex; align-items: center; gap: 6px;
                         padding: 6px 12px; border-radius: 4px;
@@ -148,6 +178,18 @@ pub fn App() -> Element {
                     span { "Pause All" }
                 }
                 button {
+                    onclick: move |_| {
+                        let selected = selected_ids.peek().clone();
+                        spawn(async move {
+                            for id in selected {
+                                #[derive(serde::Serialize)]
+                                struct IdPayload { id: String }
+                                let _ = invoke::<(), _>("delete_download", &IdPayload { id }).await;
+                            }
+                        });
+                        downloads.write().retain(|d| !selected_ids.peek().contains(&d.id));
+                        selected_ids.write().clear();
+                    },
                     style: "
                         display: flex; align-items: center; gap: 6px;
                         padding: 6px 12px; border-radius: 4px;
@@ -194,22 +236,34 @@ pub fn App() -> Element {
                 theme: theme,
                 is_open: is_add_modal_open,
                 on_submit: move |req: AddDownloadRequest| {
-                    let next_id = format!("{}", downloads.peek().len() + 1);
-                    downloads.write().push(DownloadItem {
-                        id: next_id,
-                        name: req.file_name.unwrap_or_else(|| "downloaded_file".into()),
-                        url: req.url,
-                        category: req.category.unwrap_or(CategoryType::Other),
-                        status: DownloadStatus::Downloading,
-                        total_size: None,
-                        downloaded_size: 0,
-                        speed: 0,
-                        eta_seconds: None,
-                        connections: req.connections.unwrap_or(8),
-                        date_added: chrono::Utc::now().timestamp(),
-                        date_finished: None,
-                        file_path: "".into(),
-                        error_message: None,
+                    let req_clone = req.clone();
+                    spawn(async move {
+                        #[derive(serde::Serialize)]
+                        struct AddPayload {
+                            request: AddDownloadRequest,
+                        }
+                        if let Ok(new_item) = invoke::<DownloadItem, _>("add_download", &AddPayload { request: req_clone.clone() }).await {
+                            downloads.write().push(new_item);
+                        } else {
+                            // Fallback if running outside Tauri
+                            let next_id = format!("{}", downloads.peek().len() + 1);
+                            downloads.write().push(DownloadItem {
+                                id: next_id,
+                                name: req_clone.file_name.unwrap_or_else(|| "downloaded_file".into()),
+                                url: req_clone.url,
+                                category: req_clone.category.unwrap_or(CategoryType::Other),
+                                status: DownloadStatus::Downloading,
+                                total_size: None,
+                                downloaded_size: 0,
+                                speed: 0,
+                                eta_seconds: None,
+                                connections: req_clone.connections.unwrap_or(8),
+                                date_added: chrono::Utc::now().timestamp(),
+                                date_finished: None,
+                                file_path: "".into(),
+                                error_message: None,
+                            });
+                        }
                     });
                 }
             }

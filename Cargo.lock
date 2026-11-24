@@ -11680,7 +11680,9 @@ version = "0.9.0"
 dependencies = [
  "chrono",
  "dioxus",
+ "js-sys",
  "serde",
+ "serde-wasm-bindgen",
  "serde_json",
  "tracing",
  "wasm-bindgen",

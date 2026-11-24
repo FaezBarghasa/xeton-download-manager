@@ -321,7 +321,7 @@ impl HttpJob {
                 }
             }
             // ETag validation
-            if let (Some(ref old_etag), Some(ref new_etag)) = (&item.server_etag, &info.etag) {
+            if let (Some(old_etag), Some(new_etag)) = (&item.server_etag, &info.etag) {
                 if old_etag != new_etag {
                     anyhow::bail!("ETag changed: {} → {}", old_etag, new_etag);
                 }

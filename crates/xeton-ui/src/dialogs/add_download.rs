@@ -14,7 +14,7 @@ pub fn AddDownloadModal(
 
     let mut url = use_signal(|| "".to_string());
     let mut file_name = use_signal(|| "".to_string());
-    let mut category = use_signal(|| CategoryType::All);
+    let category = use_signal(|| CategoryType::All);
 
     rsx! {
         div {

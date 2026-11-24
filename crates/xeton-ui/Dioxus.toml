@@ -3,9 +3,10 @@ name = "xeton-ui"
 default_platform = "web"
 out_dir = "dist"
 asset_dir = "assets"
+base_path = ""
 
 [web.app]
-title = "Xeton Download Manager"
+title = "AB Download Manager"
 
 [web.watcher]
 reload_html = true

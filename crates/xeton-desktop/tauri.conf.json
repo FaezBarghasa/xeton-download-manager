@@ -4,25 +4,27 @@
   "version": "0.9.0",
   "identifier": "com.xeton.downloadmanager",
   "build": {
-    "frontendDist": "../xeton-ui/dist",
-    "devUrl": "http://localhost:8080"
+    "frontendDist": "../xeton-ui/dist"
   },
   "app": {
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "Xeton Download Manager",
+        "label": "main",
+        "title": "AB Download Manager",
         "width": 1050,
         "height": 680,
         "minWidth": 600,
         "minHeight": 400,
         "decorations": false,
         "transparent": false,
+        "visible": true,
+        "devtools": true,
         "center": true
       }
     ],
     "security": {
-      "csp": "default-src 'self' 'unsafe-inline' 'unsafe-eval'; connect-src 'self' ipc: http://ipc.localhost",
+      "csp": null,
       "capabilities": ["main-capability"]
     }
   },
