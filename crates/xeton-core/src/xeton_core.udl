@@ -1,0 +1,173 @@
+namespace xeton_core {
+    [Async] void extract_audio(string input_path, string output_path, AudioFormat format);
+    [Async] void merge_video_audio(string video_path, string audio_path, string output_path);
+    [Async] ExtractedMedia extract_media_info(string url);
+};
+
+// ─── Enums ──────────────────────────────────────────────────────────────────
+
+enum DownloadStatus {
+    "Added",
+    "Downloading",
+    "Paused",
+    "Completed",
+    "Error"
+};
+
+enum JobStatus {
+    "Idle",
+    "Resuming",
+    "Downloading",
+    "PreparingFile",
+    "Retrying",
+    "Canceled",
+    "Finished"
+};
+
+enum DownloadProtocol {
+    "Http",
+    "Hls",
+    "Ftp",
+    "Torrent"
+};
+
+enum DuplicateStrategy {
+    "AddNumbered",
+    "Override",
+    "Abort"
+};
+
+enum ProxyConfig {
+    "None",
+    "Http",
+    "Socks5",
+    "System"
+};
+
+enum ManagerEvent {
+    "JobAdded",
+    "JobStarting",
+    "JobStarted",
+    "JobCanceled",
+    "JobCompleted",
+    "JobChanged",
+    "JobRemoved"
+};
+
+enum AudioFormat {
+    "Mp3",
+    "Aac",
+    "Opus",
+    "Flac"
+};
+
+// ─── Records ────────────────────────────────────────────────────────────────
+
+dictionary MediaStream {
+    string url;
+    string format_id;
+    string stream_type;
+    string? container;
+    string? video_codec;
+    string? audio_codec;
+    u32? height;
+    u32? audio_bitrate;
+    i64? filesize;
+};
+
+dictionary ExtractedMedia {
+    string title;
+    sequence<MediaStream> streams;
+    string? thumbnail;
+    u32? duration_sec;
+    string? uploader;
+    string? description;
+};
+
+dictionary DownloadSettings {
+    u32 default_thread_count;
+    boolean dynamic_part_creation;
+    boolean use_server_last_modified;
+    i64 global_speed_limit;
+    i64 min_part_size;
+    u32 max_retry_count;
+    boolean append_extension_to_incomplete;
+};
+
+dictionary DownloadItem {
+    string name;
+    string folder;
+    string link;
+    i64 content_length;
+    DownloadStatus status;
+    DownloadProtocol protocol;
+    string? server_etag;
+    i64 date_added;
+    i64? start_time;
+    i64? complete_time;
+    u32? preferred_connections;
+    i64 speed_limit;
+};
+
+dictionary NewDownloadProps {
+    string name;
+    string folder;
+    string link;
+    DownloadProtocol protocol;
+    u32? preferred_connections;
+    i64 speed_limit;
+    DuplicateStrategy on_duplicate;
+};
+
+// ─── Engine Interface ───────────────────────────────────────────────────────
+
+dictionary TorrentMetadata {
+    string name;
+    sequence<string> files;
+    i64 total_bytes;
+};
+
+interface XetonEngine {
+    constructor(string data_dir, DownloadSettings settings);
+
+    [Async] void boot();
+    [Async] i64 add_download(NewDownloadProps props);
+    [Async] void resume(i64 id);
+    [Async] void pause(i64 id);
+    [Async] void reset(i64 id);
+    [Async] void delete_download(i64 id, boolean remove_file);
+    
+    [Async] sequence<DownloadItem> get_download_list();
+    
+    [Async] void set_global_speed_limit(i64 bytes_per_second);
+    [Async] void reload_settings(DownloadSettings settings);
+    [Async] void set_proxy(ProxyConfig proxy);
+
+    [Async] TorrentMetadata? get_torrent_metadata(i64 id);
+    [Async] void set_torrent_file_selection(i64 id, sequence<u32> selected_indices);
+
+    [Async] ManagerEvent next_event();
+};
+
+interface Downloader {
+    constructor(string url, string output_path, u16 segments);
+    [Async] void start();
+    [Async] void pause();
+    DownloadStatus get_status();
+};
+
+dictionary PeerDevice {
+    string id;
+    string name;
+    string ip;
+    u16 port;
+};
+
+interface SyncService {
+    constructor(string device_name);
+    [Async] void start_discovery();
+    [Async] void stop_discovery();
+    [Async] sequence<PeerDevice> discovered_devices();
+    [Async] void push_link(string peer_id, string url);
+    [Async] void pair(string peer_id, string pin);
+};

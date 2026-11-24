@@ -1,0 +1,56 @@
+[workspace]
+resolver = "3"
+members = [
+    "crates/xeton-core",
+    "crates/xeton-models",
+    "crates/xeton-ui",
+    "crates/xeton-desktop",
+    "crates/xeton-native-host",
+]
+
+[workspace.package]
+version = "1.12.0"
+edition = "2024"
+authors = ["Faez Barghasa <faez.barghasa.org@gmail.com>"]
+license = "Apache-2.0"
+
+[workspace.dependencies]
+# Internal workspace crates
+xeton-core = { path = "crates/xeton-core" }
+xeton-models = { path = "crates/xeton-models" }
+xeton-ui = { path = "crates/xeton-ui" }
+
+# Serialization & binary packing
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+postcard = { version = "1.1", features = ["alloc"] }
+
+# Async runtime & networking
+tokio = { version = "1.43", features = ["full"] }
+tokio-stream = "0.1"
+tokio-util = { version = "0.7", features = ["compat"] }
+bytes = "1.10"
+futures-util = "0.3"
+
+# Logging & error ergonomics
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+thiserror = "2.0"
+anyhow = "1.0"
+
+# UI & Desktop Frameworks
+dioxus = { version = "0.7", default-features = false }
+tauri = { version = "2.3" }
+tauri-build = { version = "2.3" }
+tauri-plugin-single-instance = "2.2"
+tauri-plugin-autostart = "2.2"
+tauri-plugin-notification = "2.2"
+tauri-plugin-dialog = "2.2"
+tauri-plugin-fs = "2.2"
+
+[profile.release]
+lto = true
+codegen-units = 1
+opt-level = 3
+panic = "abort"
+strip = true

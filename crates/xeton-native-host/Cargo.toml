@@ -1,0 +1,18 @@
+[package]
+name = "xeton-native-host"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+xeton-models = { workspace = true }
+tokio = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+byteorder = "1.5"
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+
+[[bin]]
+name = "xeton-native-host"
+path = "src/main.rs"

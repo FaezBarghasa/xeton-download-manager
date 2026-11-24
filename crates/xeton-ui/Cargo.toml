@@ -1,0 +1,18 @@
+[package]
+name = "xeton-ui"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+xeton-models = { workspace = true }
+dioxus = { workspace = true, features = ["web"] }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tracing = { workspace = true }
+wasm-bindgen = "0.2"
+wasm-bindgen-futures = "0.4"
+web-sys = { version = "0.3", features = ["Window", "Document", "Element", "HtmlElement"] }
+
+[features]
+default = []
