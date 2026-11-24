@@ -6,7 +6,7 @@ pub mod dialogs;
 pub mod tauri_bindings;
 pub mod theme;
 
-use components::{DownloadTable, IconDelete, IconPause, IconPlus, IconResume, IconSettings, Sidebar, Titlebar};
+use components::{DownloadTable, Footer, IconDelete, IconPause, IconPlus, IconResume, IconSettings, Sidebar, Titlebar};
 use dialogs::{AddDownloadModal, SettingsModal};
 use theme::THEME_DARK;
 use xeton_models::{AddDownloadRequest, CategoryType, DownloadItem, DownloadStatus};
@@ -16,6 +16,7 @@ pub fn App() -> Element {
     let mut current_theme = use_signal(|| THEME_DARK);
     let selected_category = use_signal(|| CategoryType::All);
     let selected_ids = use_signal(|| HashSet::new());
+    let mut search_query = use_signal(|| "".to_string());
     let mut is_add_modal_open = use_signal(|| false);
     let mut is_settings_modal_open = use_signal(|| false);
 
@@ -66,12 +67,21 @@ pub fn App() -> Element {
 
     let filtered_downloads = use_memo(move || {
         let cat = *selected_category.read();
+        let query = search_query.read().to_lowercase();
         let list = downloads.read();
-        if cat == CategoryType::All {
-            list.clone()
-        } else {
-            list.iter().filter(|d| d.category == cat).cloned().collect()
-        }
+        list.iter().filter(|d| {
+            let matches_cat = cat == CategoryType::All || d.category == cat;
+            let matches_search = query.is_empty() || d.name.to_lowercase().contains(&query);
+            matches_cat && matches_search
+        }).cloned().collect()
+    });
+
+    let active_count = use_memo(move || {
+        downloads.read().iter().filter(|d| d.status == DownloadStatus::Downloading).count()
+    });
+
+    let total_speed = use_memo(move || {
+        downloads.read().iter().filter(|d| d.status == DownloadStatus::Downloading).map(|d| d.speed).sum::<u64>()
     });
 
     let theme = *current_theme.read();
@@ -88,10 +98,11 @@ pub fn App() -> Element {
                 font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
                 overflow: hidden;
             ",
-            // Custom Titlebar
+            // Custom Titlebar with Top Menu and Search Box
             Titlebar {
                 theme: theme,
-                title: "Xeton Download Manager".to_string(),
+                title: "AB Download Manager".to_string(),
+                search_query: search_query,
             }
             // Action Toolbar (Buttons matching AB Download Manager)
             div {
@@ -171,6 +182,12 @@ pub fn App() -> Element {
                     downloads: filtered_downloads,
                     selected_ids: selected_ids,
                 }
+            }
+            // Real-Time Footer Bar
+            Footer {
+                theme: theme,
+                active_count: *active_count.read(),
+                total_speed: *total_speed.read(),
             }
             // Add Download Modal Dialog
             AddDownloadModal {
