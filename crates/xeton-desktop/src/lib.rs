@@ -10,7 +10,7 @@ pub fn run() {
         .expect("failed to initialize AppState");
     eprintln!("[XETON] AppState initialized successfully");
 
-    tauri::Builder::default()
+    let mut builder = tauri::Builder::default()
         .setup(|app| {
             eprintln!("[XETON] Tauri setup hook reached");
             for (label, win) in app.webview_windows() {
@@ -21,13 +21,19 @@ pub fn run() {
         })
         .on_page_load(|_window, payload| {
             eprintln!("[XETON] Page load: {:?} url: {}", payload.event(), payload.url());
-        })
-        .plugin(tauri_plugin_single_instance::init(|app, _argv, _cwd| {
+        });
+
+    #[cfg(desktop)]
+    {
+        builder = builder.plugin(tauri_plugin_single_instance::init(|app, _argv, _cwd| {
             if let Some(window) = app.get_webview_window("main") {
                 let _ = window.show();
                 let _ = window.set_focus();
             }
-        }))
+        }));
+    }
+
+    builder
         .plugin(tauri_plugin_notification::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_fs::init())

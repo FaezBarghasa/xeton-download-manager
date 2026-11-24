@@ -14,8 +14,17 @@ pub struct AppState {
 impl AppState {
     pub async fn new() -> anyhow::Result<Self> {
         eprintln!("[XETON] AppState::new: creating data_dir");
-        let home = std::env::var("HOME").unwrap_or_else(|_| ".".into());
-        let data_dir = PathBuf::from(home).join(".local/share/xeton-download-manager/data");
+        #[cfg(target_os = "android")]
+        let data_dir = {
+            let files_dir = PathBuf::from("/data/data/com.xeton.downloadmanager/files");
+            let _ = tokio::fs::create_dir_all(&files_dir).await;
+            files_dir.join("data")
+        };
+        #[cfg(not(target_os = "android"))]
+        let data_dir = {
+            let home = std::env::var("HOME").unwrap_or_else(|_| ".".into());
+            PathBuf::from(home).join(".local/share/xeton-download-manager/data")
+        };
         tokio::fs::create_dir_all(&data_dir).await?;
 
         eprintln!("[XETON] AppState::new: initializing DownloadManager at {:?}", data_dir);
