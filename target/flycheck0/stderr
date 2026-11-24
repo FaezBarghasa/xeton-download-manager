@@ -1,0 +1,8 @@
+warning: profiles for the non root package will be ignored, specify profiles at the workspace root:
+package:   /home/jrad/RustroverProjects/xeton-download-manager/crates/xeton-core/Cargo.toml
+workspace: /home/jrad/RustroverProjects/xeton-download-manager/Cargo.toml
+error: can't find bin `uniffi-bindgen` at path `/home/jrad/RustroverProjects/xeton-download-manager/crates/xeton-core/uniffi_bindgen.rs`
+ --> /home/jrad/RustroverProjects/xeton-download-manager/crates/xeton-core/Cargo.toml
+error: can't find bin `uniffi-bindgen` at path `/home/jrad/RustroverProjects/xeton-download-manager/crates/xeton-core/uniffi_bindgen.rs`
+ --> /home/jrad/RustroverProjects/xeton-download-manager/crates/xeton-core/Cargo.toml
+error: could not compile due to 2 previous target resolution errors

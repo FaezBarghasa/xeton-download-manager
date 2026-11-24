@@ -6,7 +6,7 @@ use xeton_models::CategoryType;
 pub fn Sidebar(
     theme: ThemePalette,
     selected_category: Signal<CategoryType>,
-    download_counts: Signal<std::collections::HashMap<CategoryType, usize>>,
+    download_counts: ReadOnlySignal<std::collections::HashMap<CategoryType, usize>>,
 ) -> Element {
     let categories = [
         (CategoryType::All, "All Downloads"),

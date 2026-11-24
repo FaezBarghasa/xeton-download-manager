@@ -24,7 +24,7 @@ fn format_speed(speed: u64) -> String {
 #[component]
 pub fn DownloadTable(
     theme: ThemePalette,
-    downloads: Signal<Vec<DownloadItem>>,
+    downloads: ReadOnlySignal<Vec<DownloadItem>>,
     selected_ids: Signal<std::collections::HashSet<String>>,
 ) -> Element {
     let items = downloads.read();

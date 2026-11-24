@@ -24,7 +24,7 @@ pub enum CategoryType {
     Other,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct DownloadItem {
     pub id: String,
     pub name: String,

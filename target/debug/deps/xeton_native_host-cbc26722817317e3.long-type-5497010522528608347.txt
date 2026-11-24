@@ -1,0 +1,2 @@
+&{async block@crates/xeton-native-host/src/main.rs:5:1: 5:15}
+&dyn Future<Output = Result<(), Box<dyn std::error::Error + Send + Sync>>>
