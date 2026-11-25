@@ -31,6 +31,7 @@ pub fn Titlebar(
             vec![
                 ("queue_manager", "Queue Manager..."),
                 ("categories", "Manage Categories..."),
+                ("browser_extension", "Browser Extension (Auto-Load)..."),
                 ("checksum", "Verify File Integrity (Checksum)..."),
                 ("per_host", "Per-Host Connection Rules..."),
                 ("separator", ""),

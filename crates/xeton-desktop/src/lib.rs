@@ -184,7 +184,10 @@ pub fn run() {
             calculate_checksum,
             add_batch_downloads,
             get_download_parts,
-            set_speed_limit
+            set_speed_limit,
+            get_extension_info,
+            install_browser_extension,
+            open_extension_in_browser
         ])
         .run(tauri::generate_context!())
         .expect("error while running Xeton Download Manager");

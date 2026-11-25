@@ -20,10 +20,11 @@ use components::table::DownloadTable;
 use components::titlebar::Titlebar;
 
 use dialogs::{
-    AboutModal, AddDownloadModal, BatchDownloadModal, CategoryModal, ChecksumModal, ConfirmKind,
-    ConfirmModal, DownloadDetailsModal, DownloadErrorModal, EditDownloadModal, MobileAddModal,
-    MobileAddSheet, MobileBrowserPage, MobileMenuSheet, MobileSettingsPage, MobileSetupWizard,
-    PerHostModal, QRCodeModal, QueueManagerModal, SettingsModal,
+    AboutModal, AddDownloadModal, BatchDownloadModal, BrowserExtensionDialog, CategoryModal,
+    ChecksumModal, ConfirmKind, ConfirmModal, DownloadDetailsModal, DownloadErrorModal,
+    EditDownloadModal, MobileAddModal, MobileAddSheet, MobileBrowserPage, MobileMenuSheet,
+    MobileSettingsPage, MobileSetupWizard, PerHostModal, QRCodeModal, QueueManagerModal,
+    SettingsModal,
 };
 use tauri_bindings::{invoke, invoke_no_args};
 use theme::{THEME_DARK, ThemePalette};
@@ -117,6 +118,7 @@ pub fn App() -> Element {
     // Desktop Modal Visibility States
     let mut is_add_modal_open = use_signal(|| false);
     let mut is_batch_modal_open = use_signal(|| false);
+    let mut is_extension_modal_open = use_signal(|| false);
     let mut is_details_modal_open = use_signal(|| false);
     let mut is_queue_modal_open = use_signal(|| false);
     let mut is_category_modal_open = use_signal(|| false);
@@ -331,6 +333,7 @@ pub fn App() -> Element {
                                 "batch_download" => is_batch_modal_open.set(true),
                                 "queue_manager" => is_queue_modal_open.set(true),
                                 "categories" => is_category_modal_open.set(true),
+                                "browser_extension" => is_extension_modal_open.set(true),
                                 "checksum" => {
                                     targeted_checksum_path.set(None);
                                     is_checksum_modal_open.set(true);
@@ -608,6 +611,13 @@ pub fn App() -> Element {
                 ChecksumModal {
                     file_path: targeted_checksum_path(),
                     on_close: move |_| is_checksum_modal_open.set(false),
+                }
+            }
+
+            if is_extension_modal_open() {
+                BrowserExtensionDialog {
+                    theme: theme,
+                    on_close: move |_| is_extension_modal_open.set(false),
                 }
             }
 

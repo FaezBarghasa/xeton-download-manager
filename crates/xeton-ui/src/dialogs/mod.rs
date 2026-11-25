@@ -1,6 +1,7 @@
 pub mod about_dialog;
 pub mod add_download;
 pub mod batch_download;
+pub mod browser_extension_dialog;
 pub mod category_dialog;
 pub mod checksum_dialog;
 pub mod confirm_dialog;
@@ -22,6 +23,7 @@ pub mod mobile_setup_wizard;
 pub use about_dialog::*;
 pub use add_download::*;
 pub use batch_download::*;
+pub use browser_extension_dialog::*;
 pub use category_dialog::*;
 pub use checksum_dialog::*;
 pub use confirm_dialog::*;
