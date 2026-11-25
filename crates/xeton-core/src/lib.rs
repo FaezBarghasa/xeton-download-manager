@@ -8,6 +8,8 @@
 pub mod connection;
 pub mod db;
 pub mod destination;
+pub mod privacy;
+pub mod vault;
 pub mod downloader;
 pub mod extractors;
 pub mod hls;

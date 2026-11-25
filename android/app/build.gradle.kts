@@ -57,6 +57,14 @@ android {
         buildConfig = true
         resValues = true
     }
+    splits {
+        abi {
+            isEnable = true
+            reset()
+            include("arm64-v8a", "x86_64")
+            isUniversalApk = true
+        }
+    }
 }
 
 dependencies {

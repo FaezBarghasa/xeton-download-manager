@@ -157,6 +157,15 @@ fun BrowserPage(
                         .navigationBarsPadding()
                         .imePadding()
                 ) {
+                    DownloadSuggestionPill(
+                        onDownloadRequested = { sniffed ->
+                            browserComponent.onLinkSelected(
+                                url = sniffed.url,
+                                userAgent = sniffed.headers["user-agent"],
+                                page = sniffed.pageUrl,
+                            )
+                        }
+                    )
                     Spacer(
                         Modifier
                             .height(1.dp)

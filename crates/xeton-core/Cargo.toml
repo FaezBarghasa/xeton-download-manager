@@ -61,6 +61,7 @@ uniffi_bindgen = { version = "0.31.2" }
 # AES-128-CBC for HLS segment decryption (pure Rust)
 aes = "0.9.1"
 cbc = "0.2.1"
+chacha20poly1305 = "0.10.1"
 urlencoding = "2"
 libc = "0.2"
 cipher = "0.5.2"

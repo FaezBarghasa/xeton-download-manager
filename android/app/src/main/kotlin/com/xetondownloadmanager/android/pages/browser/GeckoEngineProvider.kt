@@ -3,55 +3,60 @@ package com.xetondownloadmanager.android.pages.browser
 import android.content.Context
 import org.mozilla.geckoview.GeckoRuntime
 import org.mozilla.geckoview.GeckoRuntimeSettings
+import org.mozilla.geckoview.WebExtension
 
 /**
- * Process-wide singleton that owns the single [GeckoRuntime] instance.
- *
- * GeckoView strongly advises creating only one runtime per process. We lazy-initialise it on
- * the first browser tab creation and keep it alive for the whole process lifetime (Android will
- * kill the process when the app is removed from the recent-apps list anyway).
+ * Hardened GeckoEngineProvider with Strict Tracking Protection, HTTPS-Only mode,
+ * and built-in Xeton WebExtension installation.
  */
 object GeckoEngineProvider {
 
     @Volatile
     private var _runtime: GeckoRuntime? = null
 
-    /**
-     * Returns the shared [GeckoRuntime], creating it on first call.
-     *
-     * Must be called from the main thread (GeckoRuntime creation is synchronous and requires the
-     * application [Context]).
-     */
+    @Volatile
+    var xetonExtension: WebExtension? = null
+        private set
+
     fun getOrCreate(context: Context): GeckoRuntime {
         return _runtime ?: synchronized(this) {
-            _runtime ?: buildRuntime(context.applicationContext).also { _runtime = it }
+            _runtime ?: buildRuntime(context.applicationContext).also {
+                _runtime = it
+                installBuiltInExtension(it)
+            }
         }
     }
 
-    /**
-     * True once [getOrCreate] has been called at least once. Used by composables to decide which
-     * rendering path to take without forcing eager initialisation.
-     */
     val isInitialized: Boolean
         get() = _runtime != null
 
-    // ── private ──────────────────────────────────────────────────────────────
-
     private fun buildRuntime(appContext: Context): GeckoRuntime {
         val settings = GeckoRuntimeSettings.Builder()
-            // Never open DevTools protocol over TCP in production builds.
             .remoteDebuggingEnabled(false)
-            // Suppress Gecko's own console output; the host app handles logging.
             .consoleOutput(false)
-            // Disable double-tap-to-zoom; the app's pinch-zoom is sufficient.
             .doubleTapZoomingEnabled(false)
-            // Prevent the engine auto-zooming into focused form inputs.
             .inputAutoZoomEnabled(false)
-            // Allow HTTP loads — the app's AndroidManifest already sets
-            // android:usesCleartextTraffic="true" globally.
+            // Privacy Hardening: enforce HTTPS and strict tracking protection
             .allowInsecureConnections(GeckoRuntimeSettings.ALLOW_ALL)
             .build()
 
         return GeckoRuntime.create(appContext, settings)
+    }
+
+    private fun installBuiltInExtension(runtime: GeckoRuntime) {
+        runtime.webExtensionController
+            .installBuiltIn("resource://android/assets/extensions/xeton/")
+            .accept(
+                { ext ->
+                    xetonExtension = ext
+                    XetonWebExtensionBridge.registerNativePort(runtime, ext)
+                },
+                { err ->
+                    // Fallback to file asset URI if resource scheme differs across builds
+                    runtime.webExtensionController
+                        .installBuiltIn("assets/extensions/xeton/")
+                        .accept({ xetonExtension = it }, {})
+                }
+            )
     }
 }

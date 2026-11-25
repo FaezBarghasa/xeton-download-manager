@@ -1,0 +1,22 @@
+{
+  "manifest_version": 2,
+  "name": "Xeton Browser Media Suggester & Privacy Bridge",
+  "version": "1.0.0",
+  "description": "Captures media streams, authenticated download headers, and provides download suggestion overlay",
+  "permissions": [
+    "webRequest",
+    "webRequestBlocking",
+    "<all_urls>",
+    "nativeMessaging"
+  ],
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content_sniffer.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

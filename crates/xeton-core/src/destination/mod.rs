@@ -79,7 +79,53 @@ pub struct DiskActor {
     path: PathBuf,
 }
 
+#[cfg(unix)]
+use std::os::unix::io::FromRawFd;
+
 impl DiskActor {
+    /// Spawn a DiskActor from an Android Scoped Storage Raw File Descriptor (ParcelFileDescriptor).
+    /// This enables direct, zero-copy kernel writes through `pwrite64` without needing `MANAGE_EXTERNAL_STORAGE`.
+    #[cfg(unix)]
+    pub fn spawn_from_raw_fd(
+        raw_fd: std::os::unix::io::RawFd,
+        label: String,
+    ) -> Result<Self, DestinationError> {
+        let std_file = unsafe { std::fs::File::from_raw_fd(raw_fd) };
+        let (tx, mut rx) = mpsc::channel::<WriteCmd>(2048);
+
+        std::thread::Builder::new()
+            .name(format!("xeton-fd-io-{}", label))
+            .spawn(move || {
+                use std::io::Write;
+                debug!("DiskActor dedicated RawFd I/O thread started for {}", label);
+
+                while let Some(cmd) = rx.blocking_recv() {
+                    match cmd {
+                        WriteCmd::Write { offset, data } => {
+                            if let Err(e) = std_file.write_all_at(&data, offset) {
+                                error!("RawFd write error at offset {}: {}", offset, e);
+                            }
+                        }
+                        WriteCmd::Flush { reply } => {
+                            let result = (&std_file).flush().map_err(DestinationError::Io);
+                            let _ = reply.send(result);
+                        }
+                        WriteCmd::Shutdown => {
+                            let _ = (&std_file).flush();
+                            debug!("DiskActor RawFd shutting down for {}", label);
+                            break;
+                        }
+                    }
+                }
+            })
+            .map_err(|e| DestinationError::Io(e))?;
+
+        Ok(Self {
+            tx,
+            path: PathBuf::from(format!("fd://{}", raw_fd)),
+        })
+    }
+
     /// Spawn a new DiskActor for the given file path.
     ///
     /// - If `expected_size` is `Some(n)`, the file is pre-allocated to `n` bytes

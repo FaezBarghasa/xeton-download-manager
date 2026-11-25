@@ -179,6 +179,12 @@ val downloaderModule = module {
         )
     }
     single {
+        RustEngineProvider(androidContext())
+    }
+    single {
+        RustEngineProvider(androidContext())
+    }
+    single {
         ProxyManager(
             get()
         )

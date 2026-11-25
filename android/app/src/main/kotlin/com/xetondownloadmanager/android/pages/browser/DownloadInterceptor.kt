@@ -112,19 +112,24 @@ class DownloadInterceptor(
 
     private fun ABDMWebRequest.withCookieManagerCookies(): ABDMWebRequest {
         val request = this
+        val geckoHeaders = XetonWebExtensionBridge.getHeadersFor(url)
+        val cookieFromBridge = geckoHeaders["cookie"]
         val cookieFromCookieManager =
-            CookieManager.getInstance().getCookie(url)?.takeIf { it.isNotBlank() } ?: return request
+            cookieFromBridge ?: CookieManager.getInstance().getCookie(url)?.takeIf { it.isNotBlank() } ?: return request
         val cookieKey = "Cookie"
         val currentCookie = request.headers[cookieKey]?.takeIf { it.isNotBlank() }
-        return request.copy(
-            headers = request.headers.plus(
-                cookieKey to if (currentCookie != null) {
-                    "$currentCookie; $cookieFromCookieManager"
-                } else {
-                    cookieFromCookieManager
-                }
-            )
-        )
+        val mergedHeaders = request.headers.toMutableMap()
+        for ((k, v) in geckoHeaders) {
+            if (!mergedHeaders.containsKey(k)) {
+                mergedHeaders[k] = v
+            }
+        }
+        mergedHeaders[cookieKey] = if (currentCookie != null) {
+            "$currentCookie; $cookieFromCookieManager"
+        } else {
+            cookieFromCookieManager
+        }
+        return request.copy(headers = mergedHeaders)
     }
 
     private fun getPageUrl(state: WebViewState): String? {

@@ -84,13 +84,13 @@ val createReleaseFolderForCi by tasks.registering {
 // ======= Rust core integration
 
 tasks.register<Exec>("buildRustCore") {
-    workingDir = file("rust/xeton_core")
+    workingDir = file("crates/xeton-core")
     commandLine("cargo", "build", "--release")
 }
 
 tasks.register<Exec>("generateUniFFIBindings") {
     dependsOn("buildRustCore")
-    workingDir = file("rust/xeton_core")
+    workingDir = file("crates/xeton-core")
     commandLine(
         "cargo", "run", "--bin", "uniffi-bindgen",
         "generate", "src/xeton_core.udl",
