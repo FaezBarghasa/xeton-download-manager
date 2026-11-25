@@ -466,7 +466,7 @@ class MainComponent(
     }
 
     override fun closeDownloadDialog() {
-        TODO("Not yet implemented")
+        // Download page on Android runs as standalone SingleDownloadPageActivity; safe no-op on MainComponent
     }
 
     override fun openEditDownloadDialog(id: Long) {
@@ -482,7 +482,7 @@ class MainComponent(
     }
 
     override fun closeAddDownloadDialog() {
-        TODO("Not yet implemented")
+        // Add download runs as standalone AddSingleDownloadActivity / AddMultiDownloadActivity; safe no-op on MainComponent
     }
 
     override fun openAddDownloadDialog(

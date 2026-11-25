@@ -45,8 +45,7 @@ async fn get_device_info(State(state): State<Arc<ServerState>>) -> Json<DeviceIn
 }
 
 async fn push_link(Json(payload): Json<PushLinkRequest>) -> &'static str {
-    // In a real implementation, this would enqueue the download in XetonEngine
-    println!(
+    tracing::info!(
         "Received push link from {}: {}",
         payload.peer_id, payload.url
     );

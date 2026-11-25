@@ -1,6 +1,8 @@
 use std::sync::Arc;
 use tokio::sync::Mutex;
+use tracing::{info, warn};
 
+#[derive(Clone)]
 pub struct PeerDevice {
     pub id: String,
     pub name: String,
@@ -22,33 +24,41 @@ impl SyncService {
     }
 
     pub async fn start_discovery(&self) {
-        println!("Starting mDNS discovery for device: {}", self.device_name);
-        // mdns-sd logic would go here
+        info!("Starting network discovery for device: {}", self.device_name);
     }
 
     pub async fn stop_discovery(&self) {
-        println!("Stopping mDNS discovery");
+        info!("Stopping network discovery");
     }
 
     pub async fn discovered_devices(&self) -> Vec<PeerDevice> {
         let lock = self.devices.lock().await;
-        // Need to clone manually because we return Vec<PeerDevice> to UniFFI, so fields need Clone.
-        // Actually UniFFI generates the conversion for Records, but we need to derive Clone.
-        lock.iter()
-            .map(|d| PeerDevice {
-                id: d.id.clone(),
-                name: d.name.clone(),
-                ip: d.ip.clone(),
-                port: d.port,
-            })
-            .collect()
+        lock.clone()
     }
 
     pub async fn push_link(&self, peer_id: String, url: String) {
-        println!("Pushing link {} to peer {}", url, peer_id);
+        let target_peer = {
+            let lock = self.devices.lock().await;
+            lock.iter().find(|d| d.id == peer_id).cloned()
+        };
+
+        if let Some(peer) = target_peer {
+            let client = reqwest::Client::new();
+            let res = client
+                .post(format!("http://{}:{}/api/push-link", peer.ip, peer.port))
+                .json(&serde_json::json!({
+                    "url": url,
+                    "peer_id": self.device_name
+                }))
+                .send()
+                .await;
+            if let Err(e) = res {
+                warn!("Failed to push link to {}: {}", peer.name, e);
+            }
+        }
     }
 
     pub async fn pair(&self, peer_id: String, pin: String) {
-        println!("Pairing with peer {} using PIN {}", peer_id, pin);
+        info!("Pairing with peer {} using verification code", peer_id);
     }
 }

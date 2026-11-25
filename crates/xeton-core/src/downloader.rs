@@ -1,4 +1,4 @@
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::sync::Arc;
 use tokio::sync::Mutex;
 use tracing::error;
@@ -21,19 +21,27 @@ pub struct Downloader {
 impl Downloader {
     #[uniffi::constructor]
     pub fn new(url: String, output_path: String, segments: u16) -> Arc<Self> {
-        let rt = tokio::runtime::Builder::new_current_thread()
-            .enable_all()
-            .build()
-            .expect("failed to build tokio runtime for FFI Downloader");
+        let rt = crate::uniffi_api::get_runtime();
 
-        // Create a temporary data dir for the standalone downloader
-        let data_dir = std::env::temp_dir().join("xeton_standalone");
+        let path = Path::new(&output_path);
+        let parent = path.parent().unwrap_or_else(|| Path::new("."));
+        let data_dir = if parent.as_os_str().is_empty() {
+            PathBuf::from(".xeton_standalone")
+        } else {
+            parent.join(".xeton_standalone")
+        };
         let mut settings = DownloadSettings::default();
         settings.default_thread_count = segments as u32;
 
-        let manager = rt
-            .block_on(DownloadManager::new(data_dir, settings))
-            .expect("failed to initialize DownloadManager for FFI Downloader");
+        let manager = match rt.block_on(DownloadManager::new(data_dir, settings)) {
+            Ok(m) => m,
+            Err(e) => {
+                error!("Failed to initialize DownloadManager for FFI Downloader: {}", e);
+                // Safe fallback to avoid crashing with unhandled panic
+                rt.block_on(DownloadManager::new(PathBuf::from(".xeton_fallback"), DownloadSettings::default()))
+                    .unwrap_or_else(|_| panic!("Fatal: cannot initialize download engine"))
+            }
+        };
 
         Arc::new(Self {
             manager,
@@ -91,12 +99,7 @@ impl Downloader {
     }
 
     pub fn get_status(&self) -> DownloadStatus {
-        let Ok(rt) = tokio::runtime::Builder::new_current_thread()
-            .enable_all()
-            .build()
-        else {
-            return DownloadStatus::Added;
-        };
+        let rt = crate::uniffi_api::get_runtime();
 
         rt.block_on(async {
             let id_guard = self.item_id.lock().await;

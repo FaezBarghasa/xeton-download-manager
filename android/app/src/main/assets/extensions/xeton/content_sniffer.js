@@ -1,14 +1,23 @@
 // Xeton Mobile Content Sniffer — detects video/audio tags, HLS playlists, and direct links
 (function() {
   const seenUrls = new Set();
+  const MAX_SEEN_URLS = 256;
   let debounceTimer = null;
+
+  function markSeen(url) {
+    if (seenUrls.size >= MAX_SEEN_URLS) {
+      const first = seenUrls.values().next().value;
+      seenUrls.delete(first);
+    }
+    seenUrls.add(url);
+  }
 
   function scanMedia() {
     const mediaElements = document.querySelectorAll("video, audio, source");
     for (const el of mediaElements) {
       const src = el.src || el.currentSrc;
       if (src && src.startsWith("http") && !seenUrls.has(src)) {
-        seenUrls.add(src);
+        markSeen(src);
         browser.runtime.sendMessage({
           type: "MEDIA_DETECTED",
           url: src,

@@ -27,6 +27,7 @@ import com.xeton.downloader.DownloadManagerEvents
 import com.xeton.downloader.NewDownloadItemProps
 import com.xeton.downloader.downloaditem.contexts.ResumedBy
 import com.xeton.downloader.downloaditem.contexts.User
+import com.xeton.downloader.monitor.ProcessingDownloadItemState
 import com.xeton.downloader.queue.DefaultQueueInfo
 import com.xeton.downloader.queue.activeQueuesFlow
 import com.xeton.downloader.queue.queueModelsFlow
@@ -214,9 +215,15 @@ class ABDMAppManager(
                         intent
                             .getLongExtra(AndroidConstants.Intents.TOGGLE_DOWNLOAD_ACTION_DOWNLOAD_ID, -1)
                             .takeIf { it > -1 }
-                            ?.let {
+                            ?.let { id ->
                                 scope.launch {
-                                    TODO("Toggle action not implemented yet")
+                                    val item = downloadSystem.downloadMonitor.downloadListFlow.value
+                                        .find { it.id == id } as? ProcessingDownloadItemState
+                                    when {
+                                        item?.canBePaused() == true -> downloadSystem.manualPause(id)
+                                        item?.canBeResumed() == true -> downloadSystem.userManualResume(id)
+                                        else -> downloadSystem.userManualResume(id)
+                                    }
                                 }
                             }
                     }

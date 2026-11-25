@@ -31,6 +31,6 @@ class AndroidDownloadErrorPageManager(
     }
 
     override fun closeDownloadErrorDialog() {
-        TODO("Not yet implemented")
+        // Download error dialog runs as standalone DownloadErrorActivity; safe no-op
     }
 }
