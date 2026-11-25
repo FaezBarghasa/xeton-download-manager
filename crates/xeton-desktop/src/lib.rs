@@ -18,6 +18,50 @@ pub fn run() {
                 eprintln!("[XETON] Found window: {}", label);
                 let _ = win.show();
             }
+
+            // Browser native-host bridge on 127.0.0.1:18512
+            let manager = app.state::<AppState>().manager.clone();
+            tauri::async_runtime::spawn(async move {
+                use tokio::io::{AsyncReadExt, AsyncWriteExt};
+                if let Ok(listener) = tokio::net::TcpListener::bind("127.0.0.1:18512").await {
+                    while let Ok((mut stream, _)) = listener.accept().await {
+                        let mgr = manager.clone();
+                        tauri::async_runtime::spawn(async move {
+                            let mut buf = vec![0u8; 8192];
+                            if let Ok(n) = stream.read(&mut buf).await {
+                                let req = String::from_utf8_lossy(&buf[..n]);
+                                if let Some(body) = req.split("\r\n\r\n").nth(1) {
+                                    if let Ok(val) = serde_json::from_str::<serde_json::Value>(body.trim_matches('\0')) {
+                                        if let Some(url) = val.get("url").and_then(|v| v.as_str()) {
+                                            let home = std::env::var("HOME").unwrap_or_else(|_| ".".into());
+                                            let folder = format!("{}/Downloads", home);
+                                            let name = val
+                                                .get("file_name")
+                                                .and_then(|v| v.as_str())
+                                                .map(String::from)
+                                                .unwrap_or_else(|| url.split('/').last().unwrap_or("download").to_string());
+                                            let props = xeton_core::models::NewDownloadProps {
+                                                folder,
+                                                name,
+                                                link: url.to_string(),
+                                                protocol: xeton_core::models::DownloadProtocol::Http,
+                                                preferred_connections: Some(8),
+                                                speed_limit: 0,
+                                                on_duplicate: xeton_core::models::DuplicateStrategy::AddNumbered,
+                                            };
+                                            if let Ok(id) = mgr.add_download(props).await {
+                                                let _ = mgr.resume(id).await;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            let _ = stream.write_all(b"HTTP/1.1 200 OK\r\nContent-Length: 2\r\n\r\nOK").await;
+                        });
+                    }
+                }
+            });
+
             Ok(())
         })
         .on_page_load(|_window, payload| {

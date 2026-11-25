@@ -82,6 +82,10 @@ async fn download_manager_add_list_pause_lifecycle() {
 
 #[tokio::test]
 async fn http_end_to_end_download_verifies_bytes() {
+    let _ = tracing_subscriber::fmt()
+        .with_max_level(tracing::Level::DEBUG)
+        .with_test_writer()
+        .try_init();
     use axum::{
         body::Body,
         http::{header, StatusCode},
@@ -95,12 +99,32 @@ async fn http_end_to_end_download_verifies_bytes() {
 
     let app = Router::new().route(
         "/payload.bin",
-        get(move || {
+        get(move |headers: axum::http::HeaderMap| {
             let bytes = payload.clone();
             async move {
+                let total = bytes.len();
+                if let Some(range_hdr) = headers.get(header::RANGE).and_then(|v| v.to_str().ok()) {
+                    if let Some(spec) = range_hdr.strip_prefix("bytes=") {
+                        let mut parts = spec.split('-');
+                        let start: usize = parts.next().and_then(|s| s.parse().ok()).unwrap_or(0);
+                        let end: usize = parts
+                            .next()
+                            .and_then(|s| if s.is_empty() { None } else { s.parse().ok() })
+                            .unwrap_or(total - 1)
+                            .min(total - 1);
+                        let slice = bytes[start..=end].to_vec();
+                        return Response::builder()
+                            .status(StatusCode::PARTIAL_CONTENT)
+                            .header(header::CONTENT_LENGTH, slice.len().to_string())
+                            .header(header::CONTENT_RANGE, format!("bytes {}-{}/{}", start, end, total))
+                            .header(header::ACCEPT_RANGES, "bytes")
+                            .body(Body::from(slice))
+                            .unwrap();
+                    }
+                }
                 Response::builder()
                     .status(StatusCode::OK)
-                    .header(header::CONTENT_LENGTH, bytes.len().to_string())
+                    .header(header::CONTENT_LENGTH, total.to_string())
                     .header(header::ACCEPT_RANGES, "bytes")
                     .body(Body::from(bytes))
                     .unwrap()
@@ -136,13 +160,16 @@ async fn http_end_to_end_download_verifies_bytes() {
         .await
         .expect("add_download");
 
-    manager.resume(id).await.expect("resume");
+    let resume_res = manager.resume(id).await;
+    assert!(resume_res.is_ok(), "resume failed: {:?}", resume_res);
 
     let dest_file = out_dir.join("payload.bin");
     let mut completed = false;
+    let mut last_status = None;
     for _ in 0..50 {
         if let Ok(list) = manager.get_download_list().await {
             if let Some(item) = list.into_iter().find(|i| i.numeric_id == id) {
+                last_status = Some(item.status.clone());
                 if item.status == DownloadStatus::Completed {
                     completed = true;
                     break;
@@ -152,7 +179,7 @@ async fn http_end_to_end_download_verifies_bytes() {
         tokio::time::sleep(std::time::Duration::from_millis(100)).await;
     }
 
-    assert!(completed, "HTTP download did not reach Completed within 5s");
+    assert!(completed, "HTTP download did not reach Completed within 5s (last_status={:?})", last_status);
     let actual = std::fs::read(&dest_file).expect("read downloaded file");
     assert_eq!(actual.len(), expected.len(), "downloaded byte length mismatch");
     assert_eq!(actual, expected, "downloaded file bytes corrupted");
