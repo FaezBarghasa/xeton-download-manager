@@ -79,3 +79,84 @@ async fn download_manager_add_list_pause_lifecycle() {
     let _ = std::fs::remove_dir_all(&data_dir);
     let _ = std::fs::remove_dir_all(&out_dir);
 }
+
+#[tokio::test]
+async fn http_end_to_end_download_verifies_bytes() {
+    use axum::{
+        body::Body,
+        http::{header, StatusCode},
+        response::Response,
+        routing::get,
+        Router,
+    };
+
+    let payload: Vec<u8> = (0..65_536u32).map(|i| (i % 251) as u8).collect();
+    let expected = payload.clone();
+
+    let app = Router::new().route(
+        "/payload.bin",
+        get(move || {
+            let bytes = payload.clone();
+            async move {
+                Response::builder()
+                    .status(StatusCode::OK)
+                    .header(header::CONTENT_LENGTH, bytes.len().to_string())
+                    .header(header::ACCEPT_RANGES, "bytes")
+                    .body(Body::from(bytes))
+                    .unwrap()
+            }
+        }),
+    );
+
+    let listener = tokio::net::TcpListener::bind("127.0.0.1:0")
+        .await
+        .expect("bind local mock server");
+    let addr = listener.local_addr().expect("local_addr");
+    tokio::spawn(async move {
+        let _ = axum::serve(listener, app).await;
+    });
+
+    let data_dir = unique_temp_dir("http_e2e_data");
+    let out_dir = unique_temp_dir("http_e2e_out");
+
+    let manager = DownloadManager::new(data_dir.clone(), DownloadSettings::default())
+        .await
+        .expect("init DownloadManager");
+
+    let id = manager
+        .add_download(NewDownloadProps {
+            link: format!("http://{}/payload.bin", addr),
+            folder: out_dir.to_string_lossy().to_string(),
+            name: "payload.bin".to_string(),
+            protocol: DownloadProtocol::Http,
+            preferred_connections: Some(2),
+            speed_limit: 0,
+            on_duplicate: DuplicateStrategy::Override,
+        })
+        .await
+        .expect("add_download");
+
+    manager.resume(id).await.expect("resume");
+
+    let dest_file = out_dir.join("payload.bin");
+    let mut completed = false;
+    for _ in 0..50 {
+        if let Ok(list) = manager.get_download_list().await {
+            if let Some(item) = list.into_iter().find(|i| i.numeric_id == id) {
+                if item.status == DownloadStatus::Completed {
+                    completed = true;
+                    break;
+                }
+            }
+        }
+        tokio::time::sleep(std::time::Duration::from_millis(100)).await;
+    }
+
+    assert!(completed, "HTTP download did not reach Completed within 5s");
+    let actual = std::fs::read(&dest_file).expect("read downloaded file");
+    assert_eq!(actual.len(), expected.len(), "downloaded byte length mismatch");
+    assert_eq!(actual, expected, "downloaded file bytes corrupted");
+
+    let _ = std::fs::remove_dir_all(&data_dir);
+    let _ = std::fs::remove_dir_all(&out_dir);
+}

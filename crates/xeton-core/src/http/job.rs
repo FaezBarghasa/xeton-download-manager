@@ -688,6 +688,8 @@ impl HttpJob {
         drop(item);
 
         self.save_state().await?;
+        let item_snapshot = self.item.read().await.clone();
+        let _ = self.dl_db.update(&item_snapshot).await;
         self.set_status(JobStatus::Finished);
 
         // Shut down disk actor

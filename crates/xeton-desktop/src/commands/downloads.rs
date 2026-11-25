@@ -60,59 +60,66 @@ pub async fn get_downloads(
         .await
         .map_err(|e| e.to_string())?;
 
-    let ui_items = list
-        .into_iter()
-        .map(|item| {
-            let status = match item.status {
-                xeton_core::models::DownloadStatus::Downloading => UiDownloadStatus::Downloading,
-                xeton_core::models::DownloadStatus::Completed => UiDownloadStatus::Completed,
-                xeton_core::models::DownloadStatus::Paused => UiDownloadStatus::Paused,
-                xeton_core::models::DownloadStatus::Error => UiDownloadStatus::Failed,
-                _ => UiDownloadStatus::Pending,
-            };
+    let mut ui_items = Vec::with_capacity(list.len());
+    for item in list {
+        let status = match item.status {
+            xeton_core::models::DownloadStatus::Downloading => UiDownloadStatus::Downloading,
+            xeton_core::models::DownloadStatus::Completed => UiDownloadStatus::Completed,
+            xeton_core::models::DownloadStatus::Paused => UiDownloadStatus::Paused,
+            xeton_core::models::DownloadStatus::Error => UiDownloadStatus::Failed,
+            _ => UiDownloadStatus::Pending,
+        };
 
-            let category = if item.name.ends_with(".zip")
-                || item.name.ends_with(".tar.gz")
-                || item.name.ends_with(".iso")
-            {
-                CategoryType::Compressed
-            } else if item.name.ends_with(".mp4") || item.name.ends_with(".mkv") {
-                CategoryType::Videos
-            } else if item.name.ends_with(".mp3") || item.name.ends_with(".flac") {
-                CategoryType::Music
-            } else if item.name.ends_with(".pdf") || item.name.ends_with(".doc") {
-                CategoryType::Documents
-            } else if item.name.ends_with(".deb")
-                || item.name.ends_with(".exe")
-                || item.name.ends_with(".AppImage")
-            {
-                CategoryType::Programs
+        let category = if item.name.ends_with(".zip")
+            || item.name.ends_with(".tar.gz")
+            || item.name.ends_with(".iso")
+        {
+            CategoryType::Compressed
+        } else if item.name.ends_with(".mp4") || item.name.ends_with(".mkv") {
+            CategoryType::Videos
+        } else if item.name.ends_with(".mp3") || item.name.ends_with(".flac") {
+            CategoryType::Music
+        } else if item.name.ends_with(".pdf") || item.name.ends_with(".doc") {
+            CategoryType::Documents
+        } else if item.name.ends_with(".deb")
+            || item.name.ends_with(".exe")
+            || item.name.ends_with(".AppImage")
+        {
+            CategoryType::Programs
+        } else {
+            CategoryType::Other
+        };
+
+        let parts = state
+            .manager
+            .get_download_parts(item.numeric_id)
+            .await
+            .unwrap_or_default();
+        let downloaded_size: u64 = parts.iter().map(|p| p.downloaded().max(0) as u64).sum();
+
+        let file_path = format!("{}/{}", item.folder.trim_end_matches('/'), item.name);
+
+        ui_items.push(UiDownloadItem {
+            id: item.numeric_id.to_string(),
+            name: item.name,
+            url: item.link,
+            category,
+            status,
+            total_size: if item.content_length > 0 {
+                Some(item.content_length as u64)
             } else {
-                CategoryType::Other
-            };
-
-            UiDownloadItem {
-                id: item.numeric_id.to_string(),
-                name: item.name,
-                url: item.link,
-                category,
-                status,
-                total_size: if item.content_length > 0 {
-                    Some(item.content_length as u64)
-                } else {
-                    None
-                },
-                downloaded_size: 0,
-                speed: 0,
-                eta_seconds: None,
-                connections: item.preferred_connections.unwrap_or(8),
-                date_added: item.date_added,
-                date_finished: item.complete_time,
-                file_path: format!("{}/{}", item.folder, ""),
-                error_message: None,
-            }
-        })
-        .collect();
+                None
+            },
+            downloaded_size,
+            speed: 0,
+            eta_seconds: None,
+            connections: item.preferred_connections.unwrap_or(8),
+            date_added: item.date_added,
+            date_finished: item.complete_time,
+            file_path,
+            error_message: None,
+        });
+    }
 
     Ok(ui_items)
 }
@@ -157,7 +164,7 @@ pub async fn add_download(
 
     Ok(UiDownloadItem {
         id: id.to_string(),
-        name,
+        name: name.clone(),
         url: request.url,
         category: request.category.unwrap_or(CategoryType::Other),
         status: UiDownloadStatus::Downloading,
@@ -168,7 +175,7 @@ pub async fn add_download(
         connections: request.connections.unwrap_or(8),
         date_added: chrono::Utc::now().timestamp(),
         date_finished: None,
-        file_path: format!("{}/{}", folder, ""),
+        file_path: format!("{}/{}", folder.trim_end_matches('/'), name),
         error_message: None,
     })
 }

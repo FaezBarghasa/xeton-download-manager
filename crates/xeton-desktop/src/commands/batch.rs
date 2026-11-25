@@ -31,9 +31,10 @@ pub async fn add_batch_downloads(
                 let _ = state.manager.resume(id).await;
             }
 
+            let file_name = item.file_name.clone();
             added.push(DownloadItem {
                 id: id.to_string(),
-                name: item.file_name,
+                name: file_name.clone(),
                 url: item.url,
                 category: item.category,
                 status: xeton_models::DownloadStatus::Downloading,
@@ -44,7 +45,7 @@ pub async fn add_batch_downloads(
                 connections: 8,
                 date_added: chrono::Utc::now().timestamp(),
                 date_finished: None,
-                file_path: format!("{}/download", folder),
+                file_path: format!("{}/{}", folder.trim_end_matches('/'), file_name),
                 error_message: None,
             });
         }

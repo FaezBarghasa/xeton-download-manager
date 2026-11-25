@@ -20,6 +20,8 @@ use crate::throttle::Throttler;
 #[derive(Clone)]
 pub enum ActiveJob {
     Http(Arc<HttpJob>),
+    Hls(Arc<crate::hls::job::HlsJob>),
+    Ftp(Arc<crate::protocols::ftp::FtpJob>),
     #[cfg(feature = "torrent")]
     Torrent(Arc<crate::protocols::torrent::TorrentJob>),
 }
@@ -28,6 +30,8 @@ impl ActiveJob {
     pub async fn resume(&self) -> anyhow::Result<()> {
         match self {
             Self::Http(job) => job.resume().await,
+            Self::Hls(job) => job.resume().await,
+            Self::Ftp(job) => job.resume().await,
             #[cfg(feature = "torrent")]
             Self::Torrent(job) => job.resume().await,
         }
@@ -36,6 +40,7 @@ impl ActiveJob {
     pub async fn pause(&self) -> anyhow::Result<()> {
         match self {
             Self::Http(job) => job.pause().await,
+            Self::Hls(_) | Self::Ftp(_) => Ok(()),
             #[cfg(feature = "torrent")]
             Self::Torrent(job) => job.pause().await,
         }
@@ -44,28 +49,26 @@ impl ActiveJob {
     pub async fn reset(&self) -> anyhow::Result<()> {
         match self {
             Self::Http(job) => job.reset().await,
+            Self::Hls(_) | Self::Ftp(_) => Ok(()),
             #[cfg(feature = "torrent")]
-            Self::Torrent(job) => {
-                // Not fully implemented yet, but we'll add stub
-                // job.reset().await
-                Ok(())
-            }
+            Self::Torrent(_job) => Ok(()),
         }
     }
 
     pub async fn remove_output_files(&self) {
         match self {
             Self::Http(job) => job.remove_output_files().await,
+            Self::Hls(_) | Self::Ftp(_) => {}
             #[cfg(feature = "torrent")]
-            Self::Torrent(job) => {
-                // stub
-            }
+            Self::Torrent(_job) => {}
         }
     }
 
     pub fn status_rx(&self) -> tokio::sync::watch::Receiver<JobStatus> {
         match self {
             Self::Http(job) => job.status_rx.clone(),
+            Self::Hls(job) => job.status_rx.clone(),
+            Self::Ftp(job) => job.status_rx.clone(),
             #[cfg(feature = "torrent")]
             Self::Torrent(job) => job.status_rx.clone(),
         }
@@ -342,6 +345,11 @@ impl DownloadManager {
         self.event_tx.subscribe()
     }
 
+    /// Get persisted byte-range parts for a download.
+    pub async fn get_download_parts(&self, id: i64) -> anyhow::Result<Vec<RangedPart>> {
+        self.store.get_parts(id).await
+    }
+
     // ── Internal ────────────────────────────────────────────────────────
 
     /// Create a job for a download item and add it to the registry.
@@ -350,6 +358,32 @@ impl DownloadManager {
         let proxy = self.proxy.read().await;
 
         let active_job = match item.protocol {
+            DownloadProtocol::Hls => {
+                let client = Arc::new(crate::connection::HttpClient::new(&proxy, "Xeton/0.9.0")?);
+                let job = crate::hls::job::HlsJob::new(
+                    item,
+                    self.settings.clone(),
+                    self.store.clone(),
+                    self.store.clone(),
+                    self.global_throttler.clone(),
+                    client,
+                    self.data_dir.clone(),
+                );
+                job.boot().await?;
+                ActiveJob::Hls(job)
+            }
+            DownloadProtocol::Ftp => {
+                let job = crate::protocols::ftp::FtpJob::new(
+                    item,
+                    self.settings.clone(),
+                    self.store.clone(),
+                    self.store.clone(),
+                    self.global_throttler.clone(),
+                    self.data_dir.clone(),
+                );
+                job.boot().await?;
+                ActiveJob::Ftp(job)
+            }
             #[cfg(feature = "torrent")]
             DownloadProtocol::Torrent => {
                 let job = crate::protocols::torrent::TorrentJob::new(

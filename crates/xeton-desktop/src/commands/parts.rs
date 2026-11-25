@@ -3,27 +3,34 @@ use crate::commands::downloads::AppState;
 
 #[tauri::command]
 pub async fn get_download_parts(
-    _state: tauri::State<'_, AppState>,
+    state: tauri::State<'_, AppState>,
     id: String,
 ) -> Result<DownloadPartsInfo, String> {
-    // Generate realistic multi-part download chunk segments
-    let total_size = 104_857_600; // 100 MB placeholder
-    let num_parts = 8;
-    let part_size = total_size / num_parts;
-    let mut parts = Vec::new();
+    let numeric_id = id
+        .parse::<i64>()
+        .map_err(|_| format!("Invalid download id: {id}"))?;
 
-    for i in 0..num_parts {
-        let start = i * part_size;
-        let end = if i == num_parts - 1 { total_size } else { (i + 1) * part_size };
-        let progress_ratio = ((i as f64 + 1.0) / (num_parts as f64)).min(0.95);
-        let current = start + ((end - start) as f64 * progress_ratio) as u64;
+    let ranged_parts = state
+        .manager
+        .get_download_parts(numeric_id)
+        .await
+        .map_err(|e| e.to_string())?;
+
+    let mut total_size = 0u64;
+    let mut parts = Vec::with_capacity(ranged_parts.len());
+
+    for (idx, p) in ranged_parts.iter().enumerate() {
+        let start = p.from.max(0) as u64;
+        let current = p.current.max(0) as u64;
+        let end = p.to.map(|t| (t + 1).max(0) as u64).unwrap_or(current);
+        total_size = total_size.max(end);
 
         parts.push(PartProgress {
-            part_id: i as u32,
+            part_id: idx as u32,
             start_byte: start,
             current_byte: current,
             end_byte: end,
-            speed: 512_000 + (i as u64 * 64_000),
+            speed: 0,
         });
     }
 
