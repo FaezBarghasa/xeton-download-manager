@@ -21,6 +21,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,7 +32,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.xetondownloadmanager.shared.ui.widget.Text
 import com.xetondownloadmanager.shared.util.ui.myColors
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 /**
  * Floating media download pill displayed when GeckoView / WebExtension sniffs
@@ -44,14 +47,19 @@ fun DownloadSuggestionPill(
 ) {
     var currentMedia by remember { mutableStateOf<SniffedMedia?>(null) }
     var visible by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
+    var autoDismissJob by remember { mutableStateOf<Job?>(null) }
 
     LaunchedEffect(Unit) {
         XetonWebExtensionBridge.mediaSuggestions.collect { sniffed ->
             currentMedia = sniffed
             visible = true
-            // Auto dismiss after 12 seconds if not interacted with
-            delay(12000L)
-            visible = false
+            // Decouple auto-dismiss from flow collection so new incoming media events are never stalled
+            autoDismissJob?.cancel()
+            autoDismissJob = coroutineScope.launch {
+                delay(8000L)
+                visible = false
+            }
         }
     }
 
@@ -70,6 +78,7 @@ fun DownloadSuggestionPill(
                 .clip(RoundedCornerShape(28.dp))
                 .background(myColors.surface)
                 .clickable {
+                    autoDismissJob?.cancel()
                     visible = false
                     onDownloadRequested(media)
                 }

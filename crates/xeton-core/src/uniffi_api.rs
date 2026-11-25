@@ -3,7 +3,7 @@
 // Wraps the DownloadManager in a UniFFI interface.
 
 use std::path::PathBuf;
-use std::sync::Arc;
+use std::sync::{Arc, LazyLock};
 
 use tokio::sync::Mutex;
 use tracing::info;
@@ -11,6 +11,18 @@ use tracing::info;
 use crate::connection::proxy::ProxyConfig;
 use crate::manager::DownloadManager;
 use crate::models::{DownloadItem, DownloadSettings, ManagerEvent, NewDownloadProps};
+
+static RUNTIME: LazyLock<tokio::runtime::Runtime> = LazyLock::new(|| {
+    tokio::runtime::Builder::new_multi_thread()
+        .enable_all()
+        .thread_name("xeton-core-worker")
+        .build()
+        .expect("Failed to initialize Xeton Tokio runtime")
+});
+
+pub fn get_runtime() -> &'static tokio::runtime::Runtime {
+    &RUNTIME
+}
 
 /// The primary engine interface exposed via FFI.
 #[derive(uniffi::Object)]
@@ -28,13 +40,7 @@ impl XetonEngine {
     /// `data_dir` is where the embedded database and settings will be stored.
     #[uniffi::constructor]
     pub fn new(data_dir: String, settings: DownloadSettings) -> Result<Arc<Self>, String> {
-        // We use block_on here because constructors in UniFFI cannot currently be async.
-        // It's safe as this is called once on startup.
-        let rt = tokio::runtime::Builder::new_current_thread()
-            .enable_all()
-            .build()
-            .map_err(|e| e.to_string())?;
-
+        let rt = get_runtime();
         let manager = rt
             .block_on(DownloadManager::new(PathBuf::from(data_dir), settings))
             .map_err(|e| e.to_string())?;

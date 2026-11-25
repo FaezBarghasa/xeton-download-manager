@@ -6,6 +6,8 @@ import kotlinx.coroutines.flow.asSharedFlow
 import org.json.JSONObject
 import org.mozilla.geckoview.GeckoRuntime
 import org.mozilla.geckoview.WebExtension
+import java.util.Collections
+import java.util.LinkedHashMap
 
 data class SniffedMedia(
     val url: String,
@@ -16,7 +18,14 @@ data class SniffedMedia(
 )
 
 object XetonWebExtensionBridge {
-    private val headersByUrl = mutableMapOf<String, MutableMap<String, String>>()
+    // Thread-safe bounded LRU cache for headers (max 256 entries to prevent memory leaks)
+    private val headersByUrl: MutableMap<String, Map<String, String>> = Collections.synchronizedMap(
+        object : LinkedHashMap<String, Map<String, String>>(256, 0.75f, true) {
+            override fun removeEldestEntry(eldest: MutableMap.MutableEntry<String, Map<String, String>>?): Boolean {
+                return size > 256
+            }
+        }
+    )
     private val _mediaSuggestions = MutableSharedFlow<SniffedMedia>(extraBufferCapacity = 64)
     val mediaSuggestions: SharedFlow<SniffedMedia> = _mediaSuggestions.asSharedFlow()
 

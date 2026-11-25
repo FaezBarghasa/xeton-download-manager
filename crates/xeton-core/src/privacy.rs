@@ -83,38 +83,24 @@ impl PrivacyDownloadPolicy {
         if filtered_pairs.is_empty() {
             parsed.set_query(None);
         } else {
-            let mut serializer = reqwest::Url::parse("http://dummy/?").unwrap();
-            let mut pairs = serializer.query_pairs_mut();
-            for (k, v) in filtered_pairs {
-                pairs.append_pair(&k, &v);
-            }
-            drop(pairs);
-            parsed.set_query(serializer.query());
+            parsed
+                .query_pairs_mut()
+                .clear()
+                .extend_pairs(filtered_pairs);
         }
 
         parsed.to_string()
     }
 
-    /// Sanitize Referer header to origin only to avoid leaking session tokens or path info.
+    /// Sanitize Referer header to canonical origin only (RFC 6454) to avoid leaking session tokens or path info.
     pub fn sanitize_referer_header(&self, raw_referer: &str) -> Option<String> {
         if !self.sanitize_referer {
             return Some(raw_referer.to_string());
         }
 
-        let Ok(parsed) = reqwest::Url::parse(raw_referer) else {
-            return None;
-        };
-
-        if let Some(host) = parsed.host_str() {
-            let scheme = parsed.scheme();
-            if let Some(port) = parsed.port() {
-                Some(format!("{}://{}:{}", scheme, host, port))
-            } else {
-                Some(format!("{}://{}", scheme, host))
-            }
-        } else {
-            None
-        }
+        let parsed = reqwest::Url::parse(raw_referer).ok()?;
+        let ascii = parsed.origin().ascii_serialization();
+        if ascii == "null" { None } else { Some(ascii) }
     }
 }
 
