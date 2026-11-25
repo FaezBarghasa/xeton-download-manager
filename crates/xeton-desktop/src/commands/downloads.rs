@@ -149,7 +149,7 @@ pub async fn add_download(
         request
             .url
             .split('/')
-            .last()
+            .next_back()
             .unwrap_or("download")
             .to_string()
     });

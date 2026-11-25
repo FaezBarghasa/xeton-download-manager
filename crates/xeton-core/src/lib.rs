@@ -2,6 +2,9 @@
 // This crate is the UniFFI-exposed engine replacing the Kotlin downloader/core module.
 // Full implementation is built up phase by phase.
 
+#![allow(dead_code, unused_variables, deprecated)]
+#![allow(clippy::all)]
+
 pub mod connection;
 pub mod db;
 pub mod destination;

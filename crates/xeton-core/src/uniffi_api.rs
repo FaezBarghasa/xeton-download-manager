@@ -121,7 +121,7 @@ impl XetonEngine {
         }
     }
 
-    pub async fn get_torrent_metadata(&self, id: i64) -> Option<crate::models::TorrentMetadata> {
+    pub async fn get_torrent_metadata(&self, _id: i64) -> Option<crate::models::TorrentMetadata> {
         // Implementation would delegate to DownloadManager which delegates to ActiveJob::Torrent
         // For roadmap implementation, we'll return a stub
         Some(crate::models::TorrentMetadata {

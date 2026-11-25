@@ -95,7 +95,7 @@ impl DiskActor {
         }
 
         // Open or create the file
-        let mut file = OpenOptions::new()
+        let file = OpenOptions::new()
             .create(true)
             .write(true)
             .read(true)

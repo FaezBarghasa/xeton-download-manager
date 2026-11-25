@@ -68,34 +68,32 @@ pub fn run() {
                                     &buf[body_start..(body_start + content_len).min(buf.len())];
                                 if let Ok(val) =
                                     serde_json::from_slice::<serde_json::Value>(body_slice)
+                                    && let Some(url) = val.get("url").and_then(|v| v.as_str())
                                 {
-                                    if let Some(url) = val.get("url").and_then(|v| v.as_str()) {
-                                        let home =
-                                            std::env::var("HOME").unwrap_or_else(|_| ".".into());
-                                        let folder = format!("{}/Downloads", home);
-                                        let name = val
-                                            .get("file_name")
-                                            .and_then(|v| v.as_str())
-                                            .map(String::from)
-                                            .unwrap_or_else(|| {
-                                                url.split('/')
-                                                    .last()
-                                                    .unwrap_or("download")
-                                                    .to_string()
-                                            });
-                                        let props = xeton_core::models::NewDownloadProps {
-                                            folder,
-                                            name,
-                                            link: url.to_string(),
-                                            protocol: xeton_core::models::DownloadProtocol::Http,
-                                            preferred_connections: Some(8),
-                                            speed_limit: 0,
-                                            on_duplicate:
-                                                xeton_core::models::DuplicateStrategy::AddNumbered,
-                                        };
-                                        if let Ok(id) = mgr.add_download(props).await {
-                                            let _ = mgr.resume(id).await;
-                                        }
+                                    let home = std::env::var("HOME").unwrap_or_else(|_| ".".into());
+                                    let folder = format!("{}/Downloads", home);
+                                    let name = val
+                                        .get("file_name")
+                                        .and_then(|v| v.as_str())
+                                        .map(String::from)
+                                        .unwrap_or_else(|| {
+                                            url.split('/')
+                                                .next_back()
+                                                .unwrap_or("download")
+                                                .to_string()
+                                        });
+                                    let props = xeton_core::models::NewDownloadProps {
+                                        folder,
+                                        name,
+                                        link: url.to_string(),
+                                        protocol: xeton_core::models::DownloadProtocol::Http,
+                                        preferred_connections: Some(8),
+                                        speed_limit: 0,
+                                        on_duplicate:
+                                            xeton_core::models::DuplicateStrategy::AddNumbered,
+                                    };
+                                    if let Ok(id) = mgr.add_download(props).await {
+                                        let _ = mgr.resume(id).await;
                                     }
                                 }
                             }
