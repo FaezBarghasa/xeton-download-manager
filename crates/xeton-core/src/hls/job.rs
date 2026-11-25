@@ -19,6 +19,8 @@ use reqwest::header::HeaderMap;
 #[cfg(feature = "hls")]
 use tokio::sync::{Mutex, RwLock, watch};
 #[cfg(feature = "hls")]
+use tokio_util::sync::CancellationToken;
+#[cfg(feature = "hls")]
 use tracing::{debug, info};
 
 #[cfg(feature = "hls")]
@@ -56,6 +58,7 @@ pub struct HlsJob {
     /// Index of the next segment to download.
     next_segment: Mutex<usize>,
     data_dir: PathBuf,
+    cancel: Mutex<Option<CancellationToken>>,
 }
 
 /// Represents a single HLS media segment.
@@ -97,6 +100,7 @@ impl HlsJob {
             segments: Mutex::new(Vec::new()),
             next_segment: Mutex::new(0),
             data_dir,
+            cancel: Mutex::new(None),
         })
     }
 
@@ -126,6 +130,9 @@ impl HlsJob {
     pub async fn resume(self: &Arc<Self>) -> anyhow::Result<()> {
         let id = self.item.read().await.numeric_id;
         info!("Resuming HLS job #{}", id);
+
+        let cancel = CancellationToken::new();
+        *self.cancel.lock().await = Some(cancel.clone());
 
         let _ = self.status_tx.send(JobStatus::Resuming);
 
@@ -262,6 +269,14 @@ impl HlsJob {
         let mut write_offset: u64 = 0;
 
         for i in *next..total {
+            if self.cancel.lock().await.as_ref().map_or(false, |c| c.is_cancelled()) {
+                info!("HLS download paused/cancelled at segment {}/{}", i, total);
+                let _ = self.status_tx.send(JobStatus::Canceled {
+                    reason: "paused".into(),
+                });
+                return Ok(());
+            }
+
             let segment = &segments_snapshot[i];
 
             // Download segment
@@ -348,6 +363,51 @@ impl HlsJob {
         let _ = self.status_tx.send(JobStatus::Finished);
         info!("HLS job #{} completed", item.numeric_id);
         Ok(())
+    }
+
+    /// Pause the HLS download.
+    pub async fn pause(&self) -> anyhow::Result<()> {
+        let id = self.item.read().await.numeric_id;
+        info!("Pausing HLS job #{}", id);
+
+        if let Some(cancel) = self.cancel.lock().await.take() {
+            cancel.cancel();
+        }
+
+        let mut item = self.item.write().await;
+        item.status = DownloadStatus::Paused;
+        drop(item);
+
+        let _ = self.status_tx.send(JobStatus::Canceled {
+            reason: "paused".into(),
+        });
+
+        if let Some(disk) = self.disk.lock().await.take() {
+            let _ = disk.flush().await;
+        }
+
+        Ok(())
+    }
+
+    /// Reset the HLS download.
+    pub async fn reset(&self) -> anyhow::Result<()> {
+        self.pause().await?;
+        *self.next_segment.lock().await = 0;
+        let mut segments = self.segments.lock().await;
+        for s in segments.iter_mut() {
+            s.downloaded = false;
+        }
+        self.remove_output_files().await;
+        Ok(())
+    }
+
+    /// Remove downloaded files from disk.
+    pub async fn remove_output_files(&self) {
+        let item = self.item.read().await;
+        let output_path = PathBuf::from(&item.folder).join(&item.name);
+        let _ = tokio::fs::remove_file(&output_path).await;
+        let incomplete_path = crate::destination::IncompleteFileUtil::add_indicator(&output_path, item.numeric_id);
+        let _ = tokio::fs::remove_file(&incomplete_path).await;
     }
 }
 

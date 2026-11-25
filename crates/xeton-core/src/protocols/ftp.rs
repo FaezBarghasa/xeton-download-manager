@@ -10,6 +10,7 @@ use bytes::Bytes;
 use suppaftp::tokio::{AsyncRustlsConnector, AsyncRustlsFtpStream};
 use suppaftp::types::FileType;
 use tokio::sync::{Mutex, RwLock, watch};
+use tokio_util::sync::CancellationToken;
 use tracing::{debug, error, info, warn};
 
 use crate::db::{DownloadDb, PartDb};
@@ -34,6 +35,7 @@ pub struct FtpJob {
     pub status_rx: watch::Receiver<JobStatus>,
     disk: Mutex<Option<Arc<DiskActor>>>,
     data_dir: PathBuf,
+    cancel: Mutex<Option<CancellationToken>>,
 }
 
 /// Parsed FTP URL components.
@@ -67,6 +69,7 @@ impl FtpJob {
             status_rx,
             disk: Mutex::new(None),
             data_dir,
+            cancel: Mutex::new(None),
         })
     }
 
@@ -137,6 +140,10 @@ impl FtpJob {
         let item = self.item.read().await;
         let id = item.numeric_id;
         info!("Resuming FTP job #{}", id);
+
+        let cancel = CancellationToken::new();
+        *self.cancel.lock().await = Some(cancel.clone());
+
         let _ = self.status_tx.send(JobStatus::Resuming);
 
         let ftp_url = Self::parse_ftp_url(&item.link)?;
@@ -200,6 +207,7 @@ impl FtpJob {
             let disk = Arc::clone(&disk);
             let throttler = Arc::clone(&self.global_throttler);
             let _part_db = Arc::clone(&self.part_db);
+            let cancel = cancel.clone();
 
             join_set.spawn(async move {
                 let mut p = part.read().await.clone();
@@ -229,6 +237,11 @@ impl FtpJob {
                 let mut bytes_read = 0;
 
                 while bytes_read < target_len {
+                    if cancel.is_cancelled() {
+                        debug!("FTP part download cancelled/paused");
+                        break;
+                    }
+
                     let to_read = std::cmp::min(buf.len() as i64, target_len - bytes_read) as usize;
                     let n = data_stream
                         .read(&mut buf[..to_read])
@@ -303,6 +316,47 @@ impl FtpJob {
         let _ = self.status_tx.send(JobStatus::Finished);
         info!("FTP job #{} completed", id);
         Ok(())
+    }
+
+    /// Pause the FTP download.
+    pub async fn pause(&self) -> anyhow::Result<()> {
+        let id = self.item.read().await.numeric_id;
+        info!("Pausing FTP job #{}", id);
+
+        if let Some(cancel) = self.cancel.lock().await.take() {
+            cancel.cancel();
+        }
+
+        let mut item = self.item.write().await;
+        item.status = DownloadStatus::Paused;
+        drop(item);
+
+        let _ = self.status_tx.send(JobStatus::Canceled {
+            reason: "paused".into(),
+        });
+
+        if let Some(disk) = self.disk.lock().await.take() {
+            let _ = disk.flush().await;
+        }
+
+        Ok(())
+    }
+
+    /// Reset the FTP download.
+    pub async fn reset(&self) -> anyhow::Result<()> {
+        self.pause().await?;
+        self.part_db.remove_parts(self.item.read().await.numeric_id).await?;
+        self.remove_output_files().await;
+        Ok(())
+    }
+
+    /// Remove output files from disk.
+    pub async fn remove_output_files(&self) {
+        let item = self.item.read().await;
+        let output_path = PathBuf::from(&item.folder).join(&item.name);
+        let _ = tokio::fs::remove_file(&output_path).await;
+        let incomplete_path = crate::destination::IncompleteFileUtil::add_indicator(&output_path, item.numeric_id);
+        let _ = tokio::fs::remove_file(&incomplete_path).await;
     }
 
     /// Parse an FTP URL into components.

@@ -40,7 +40,8 @@ impl ActiveJob {
     pub async fn pause(&self) -> anyhow::Result<()> {
         match self {
             Self::Http(job) => job.pause().await,
-            Self::Hls(_) | Self::Ftp(_) => Ok(()),
+            Self::Hls(job) => job.pause().await,
+            Self::Ftp(job) => job.pause().await,
             #[cfg(feature = "torrent")]
             Self::Torrent(job) => job.pause().await,
         }
@@ -49,7 +50,8 @@ impl ActiveJob {
     pub async fn reset(&self) -> anyhow::Result<()> {
         match self {
             Self::Http(job) => job.reset().await,
-            Self::Hls(_) | Self::Ftp(_) => Ok(()),
+            Self::Hls(job) => job.reset().await,
+            Self::Ftp(job) => job.reset().await,
             #[cfg(feature = "torrent")]
             Self::Torrent(_job) => Ok(()),
         }
@@ -58,7 +60,8 @@ impl ActiveJob {
     pub async fn remove_output_files(&self) {
         match self {
             Self::Http(job) => job.remove_output_files().await,
-            Self::Hls(_) | Self::Ftp(_) => {}
+            Self::Hls(job) => job.remove_output_files().await,
+            Self::Ftp(job) => job.remove_output_files().await,
             #[cfg(feature = "torrent")]
             Self::Torrent(_job) => {}
         }

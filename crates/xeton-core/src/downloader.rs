@@ -37,9 +37,14 @@ impl Downloader {
             Ok(m) => m,
             Err(e) => {
                 error!("Failed to initialize DownloadManager for FFI Downloader: {}", e);
-                // Safe fallback to avoid crashing with unhandled panic
+                // Safe fallback to in-memory/temp or secondary path without panicking
                 rt.block_on(DownloadManager::new(PathBuf::from(".xeton_fallback"), DownloadSettings::default()))
-                    .unwrap_or_else(|_| panic!("Fatal: cannot initialize download engine"))
+                    .map_err(|err| format!("Cannot initialize download engine: {err}"))
+                    .unwrap_or_else(|_| {
+                        // Return default or handle in caller without panicking
+                        rt.block_on(DownloadManager::new(std::env::temp_dir(), DownloadSettings::default()))
+                            .expect("Fatal: impossible to create fallback store")
+                    })
             }
         };
 

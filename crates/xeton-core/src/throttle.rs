@@ -63,8 +63,11 @@ impl Throttler {
         if byte_count == 0 {
             return;
         }
-        let guard = self.limiter.read().await;
-        if let Some(limiter) = guard.as_ref() {
+        let limiter = {
+            let guard = self.limiter.read().await;
+            guard.clone()
+        };
+        if let Some(limiter) = limiter {
             // Governor works with NonZeroU32 cell counts.
             // We split large requests into governor-sized chunks to avoid
             // exceeding the burst capacity.

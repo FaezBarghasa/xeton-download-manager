@@ -6,6 +6,10 @@ use tracing::debug;
 /// Runs ffmpeg via the command line interface as a fallback
 /// when the native ffmpeg-next bindings are not available or fail.
 pub async fn run_ffmpeg_cli(args: &[&str]) -> anyhow::Result<()> {
+    if cfg!(target_os = "android") {
+        anyhow::bail!("FFmpeg CLI is not available on Android; platform media muxer or native transcoder must be used.");
+    }
+
     debug!("Running ffmpeg CLI: ffmpeg {}", args.join(" "));
 
     let output = Command::new("ffmpeg")
