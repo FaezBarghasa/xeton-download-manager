@@ -250,7 +250,7 @@ pub fn AddDownloadModal(
                                 input {
                                     r#type: "range",
                                     min: "1",
-                                    max: "32",
+                                    max: "256",
                                     value: "{threads}",
                                     oninput: move |e| {
                                         if let Ok(val) = e.value().parse::<u32>() {
@@ -259,7 +259,7 @@ pub fn AddDownloadModal(
                                     },
                                     style: "width: 100%; cursor: pointer;"
                                 }
-                                span { style: "font-size: 11px; color: {theme.on_surface_muted};", "Higher threads increase speed on high-bandwidth networks, but may trigger rate-limiting on sensitive hosts." }
+                                span { style: "font-size: 11px; color: {theme.on_surface_muted};", "Configurable up to 256 parallel connections. Tokio green tasks maximize line-rate throughput without OS thread contention." }
                             }
                         }
                     }

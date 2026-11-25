@@ -17,6 +17,13 @@
   "host_permissions": [
     "*://*/*"
   ],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["video_sniffer_overlay.js"],
+      "run_at": "document_idle"
+    }
+  ],
   "background": {
     "service_worker": "background.js",
     "type": "module"

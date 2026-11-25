@@ -44,6 +44,12 @@ chrome.runtime.onInstalled.addListener(async () => {
   });
 
   chrome.contextMenus.create({
+    id: "scan-webpage-with-xeton",
+    title: "⚡ Scan Webpage with Xeton (Batch Filter)...",
+    contexts: ["page"]
+  });
+
+  chrome.contextMenus.create({
     id: "download-selected-links-with-xeton",
     title: "Download selected links with Xeton",
     contexts: ["selection"]
@@ -149,6 +155,11 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
     sendToXeton("add_download", url, tab.title + " (Video)", referrer);
   } else if (info.menuItemId === "download-page-with-xeton") {
     sendToXeton("add_download", info.pageUrl, tab.title, referrer);
+  } else if (info.menuItemId === "scan-webpage-with-xeton") {
+    chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      files: ["content_scanner.js"]
+    });
   } else if (info.menuItemId === "download-all-links-with-xeton") {
     chrome.scripting.executeScript({
       target: { tabId: tab.id },
@@ -200,6 +211,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       sender.tab ? sender.tab.url : null
     );
     sendResponse({ success: true });
+  } else if (request.action === "send_batch_to_xeton") {
+    if (Array.isArray(request.batch)) {
+      request.batch.forEach((item) => {
+        sendToXeton("add_download", item.url, item.file_name, request.referrer);
+      });
+      sendResponse({ success: true, count: request.batch.length });
+    }
   }
   return true;
 });
