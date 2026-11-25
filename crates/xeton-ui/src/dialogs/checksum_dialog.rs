@@ -1,12 +1,9 @@
-use dioxus::prelude::*;
 use crate::tauri_bindings::invoke;
+use dioxus::prelude::*;
 use xeton_models::{ChecksumAlgorithm, ChecksumRequest, ChecksumResult};
 
 #[component]
-pub fn ChecksumModal(
-    file_path: Option<String>,
-    on_close: EventHandler<()>,
-) -> Element {
+pub fn ChecksumModal(file_path: Option<String>, on_close: EventHandler<()>) -> Element {
     let mut path = use_signal(|| file_path.unwrap_or_default());
     let mut algorithm = use_signal(|| ChecksumAlgorithm::Sha256);
     let mut calculated_hash = use_signal(|| "".to_string());

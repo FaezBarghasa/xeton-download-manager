@@ -1,5 +1,5 @@
-use dioxus::prelude::*;
 use crate::theme::ThemePalette;
+use dioxus::prelude::*;
 use xeton_models::{DownloadItem, DownloadPartsInfo, DownloadStatus};
 
 #[component]
@@ -22,8 +22,14 @@ pub fn DownloadDetailsModal(
     let total_mb = current.total_size.unwrap_or(0) as f64 / (1024.0 * 1024.0);
     let downloaded_mb = current.downloaded_size as f64 / (1024.0 * 1024.0);
     let progress = if let Some(tot) = current.total_size {
-        if tot > 0 { (current.downloaded_size as f64 / tot as f64) * 100.0 } else { 0.0 }
-    } else { 0.0 };
+        if tot > 0 {
+            (current.downloaded_size as f64 / tot as f64) * 100.0
+        } else {
+            0.0
+        }
+    } else {
+        0.0
+    };
 
     rsx! {
         div {

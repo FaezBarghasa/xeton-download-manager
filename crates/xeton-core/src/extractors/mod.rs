@@ -3,10 +3,10 @@
 // Platform resolver pipeline that extracts direct download URLs
 // from YouTube, TikTok, Instagram, Spotify, SoundCloud, etc.
 
-pub mod ytdlp;
+pub mod social;
 pub mod soundcloud;
 pub mod spotify;
-pub mod social;
+pub mod ytdlp;
 
 use async_trait::async_trait;
 use serde::{Deserialize, Serialize};

@@ -7,15 +7,15 @@ use std::path::PathBuf;
 use std::sync::Arc;
 
 use bytes::Bytes;
-use suppaftp::tokio::{AsyncRustlsFtpStream, AsyncRustlsConnector};
+use suppaftp::tokio::{AsyncRustlsConnector, AsyncRustlsFtpStream};
 use suppaftp::types::FileType;
-use tokio::sync::{watch, Mutex, RwLock};
+use tokio::sync::{Mutex, RwLock, watch};
 use tracing::{debug, error, info, warn};
 
 use crate::db::{DownloadDb, PartDb};
-use crate::part::split_to_ranges;
 use crate::destination::DiskActor;
 use crate::models::*;
+use crate::part::split_to_ranges;
 use crate::throttle::Throttler;
 
 /// Async FTP download engine.
@@ -83,9 +83,10 @@ impl FtpJob {
             let _ = suppaftp::rustls::crypto::ring::default_provider().install_default();
         });
 
-        let mut control = AsyncRustlsFtpStream::connect(format!("{}:{}", ftp_url.host, ftp_url.port))
-            .await
-            .map_err(|e| anyhow::anyhow!("FTP connect failed: {}", e))?;
+        let mut control =
+            AsyncRustlsFtpStream::connect(format!("{}:{}", ftp_url.host, ftp_url.port))
+                .await
+                .map_err(|e| anyhow::anyhow!("FTP connect failed: {}", e))?;
 
         if ftp_url.secure {
             let mut root_store = suppaftp::rustls::RootCertStore::empty();
@@ -94,19 +95,20 @@ impl FtpJob {
                 let _ = root_store.add(cert);
             }
             if !native_certs.errors.is_empty() {
-                warn!("Some errors occurred while loading native certificates: {:?}", native_certs.errors);
+                warn!(
+                    "Some errors occurred while loading native certificates: {:?}",
+                    native_certs.errors
+                );
             }
-            root_store.extend(
-                webpki_roots::TLS_SERVER_ROOTS
-                    .iter()
-                    .cloned(),
-            );
+            root_store.extend(webpki_roots::TLS_SERVER_ROOTS.iter().cloned());
 
             let config = suppaftp::rustls::ClientConfig::builder()
                 .with_root_certificates(root_store)
                 .with_no_client_auth();
-            
-            let connector = AsyncRustlsConnector::from(suppaftp::tokio_rustls::TlsConnector::from(std::sync::Arc::new(config)));
+
+            let connector = AsyncRustlsConnector::from(suppaftp::tokio_rustls::TlsConnector::from(
+                std::sync::Arc::new(config),
+            ));
             control = control
                 .into_secure(connector, &ftp_url.host)
                 .await
@@ -160,7 +162,7 @@ impl FtpJob {
         let mut parts = self.part_db.get_parts(id).await?;
         let conn_count = self.settings.read().await.default_thread_count as i32;
         let min_part_size = self.settings.read().await.min_part_size as i64;
-        
+
         let should_init = parts.is_empty() || parts.len() != conn_count as usize;
         if should_init {
             parts.clear();
@@ -170,7 +172,11 @@ impl FtpJob {
             }
         } else {
             if parts.is_empty() {
-                let end = if file_size > 0 { Some(file_size as i64 - 1) } else { None };
+                let end = if file_size > 0 {
+                    Some(file_size as i64 - 1)
+                } else {
+                    None
+                };
                 parts.push(RangedPart::new(0, end, 0));
             }
         }
@@ -203,36 +209,53 @@ impl FtpJob {
 
                 let mut control = Self::connect_control(&ftp_url).await?;
 
-                control.resume_transfer(p.current as usize).await.map_err(|e| anyhow::anyhow!("FTP part REST failed: {}", e))?;
+                control
+                    .resume_transfer(p.current as usize)
+                    .await
+                    .map_err(|e| anyhow::anyhow!("FTP part REST failed: {}", e))?;
 
-                let data_stream = control.retr_as_stream(&ftp_url.path).await.map_err(|e| anyhow::anyhow!("FTP part RETR failed: {}", e))?;
+                let data_stream = control
+                    .retr_as_stream(&ftp_url.path)
+                    .await
+                    .map_err(|e| anyhow::anyhow!("FTP part RETR failed: {}", e))?;
 
                 let mut data_stream = data_stream;
                 let mut writer = disk.writer_for(p.current as u64);
 
                 use tokio::io::AsyncReadExt;
                 let mut buf = vec![0u8; 65536];
-                
+
                 let target_len = p.remaining().unwrap_or(std::i64::MAX);
                 let mut bytes_read = 0;
 
                 while bytes_read < target_len {
                     let to_read = std::cmp::min(buf.len() as i64, target_len - bytes_read) as usize;
-                    let n = data_stream.read(&mut buf[..to_read]).await.map_err(|e| anyhow::anyhow!("FTP read failed: {}", e))?;
-                    if n == 0 { break; }
-                    
+                    let n = data_stream
+                        .read(&mut buf[..to_read])
+                        .await
+                        .map_err(|e| anyhow::anyhow!("FTP read failed: {}", e))?;
+                    if n == 0 {
+                        break;
+                    }
+
                     throttler.acquire(n as u32).await;
                     let data = Bytes::copy_from_slice(&buf[..n]);
-                    writer.write(data).await.map_err(|e| anyhow::anyhow!("Write failed: {}", e))?;
-                    
+                    writer
+                        .write(data)
+                        .await
+                        .map_err(|e| anyhow::anyhow!("Write failed: {}", e))?;
+
                     bytes_read += n as i64;
-                    
+
                     // Simple auto-save simulation
                     p.current += n as i64;
                     *part.write().await = p.clone();
                 }
 
-                control.finalize_retr_stream(data_stream).await.map_err(|e| anyhow::anyhow!("FTP finalize failed: {}", e))?;
+                control
+                    .finalize_retr_stream(data_stream)
+                    .await
+                    .map_err(|e| anyhow::anyhow!("FTP finalize failed: {}", e))?;
                 control.quit().await.ok();
 
                 Ok(())
@@ -243,11 +266,11 @@ impl FtpJob {
         let mut total_success = true;
         while let Some(res) = join_set.join_next().await {
             match res {
-                Ok(Ok(_)) => {},
+                Ok(Ok(_)) => {}
                 Ok(Err(e)) => {
                     error!("Part failed: {}", e);
                     total_success = false;
-                },
+                }
                 Err(e) => {
                     error!("Join error: {}", e);
                     total_success = false;
@@ -298,7 +321,10 @@ impl FtpJob {
 
         let (username, password) = if let Some(auth) = auth_part {
             if let Some(colon) = auth.find(':') {
-                (Some(auth[..colon].to_string()), Some(auth[colon + 1..].to_string()))
+                (
+                    Some(auth[..colon].to_string()),
+                    Some(auth[colon + 1..].to_string()),
+                )
             } else {
                 (Some(auth.to_string()), None)
             }

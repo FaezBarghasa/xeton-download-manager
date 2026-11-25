@@ -8,7 +8,7 @@ use std::sync::Arc;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use dashmap::DashMap;
-use tokio::sync::{broadcast, RwLock};
+use tokio::sync::{RwLock, broadcast};
 use tracing::{debug, info, warn};
 
 use crate::connection::proxy::ProxyConfig;
@@ -114,7 +114,8 @@ impl DownloadManager {
         let (event_tx, event_rx) = broadcast::channel(256);
         let global_throttler = Arc::new(Throttler::new(settings.global_speed_limit));
         let queue_manager = Arc::new(QueueManager::new(store.clone()));
-        let progress_batcher = ProgressBatcher::new(store.clone(), std::time::Duration::from_millis(500));
+        let progress_batcher =
+            ProgressBatcher::new(store.clone(), std::time::Duration::from_millis(500));
 
         let manager = Arc::new(Self {
             store,
@@ -168,9 +169,7 @@ impl DownloadManager {
         let output_path = PathBuf::from(&props.folder).join(&props.name);
         let duplicates: Vec<_> = all_downloads
             .iter()
-            .filter(|d| {
-                PathBuf::from(&d.folder).join(&d.name) == output_path
-            })
+            .filter(|d| PathBuf::from(&d.folder).join(&d.name) == output_path)
             .collect();
 
         if !duplicates.is_empty() {
@@ -350,6 +349,16 @@ impl DownloadManager {
         self.store.get_parts(id).await
     }
 
+    /// Get live (downloaded_bytes, speed_bps) for a download job.
+    pub async fn get_live_stats(&self, id: i64) -> (u64, u64) {
+        if let Some(job_ref) = self.jobs.get(&id) {
+            if let ActiveJob::Http(http_job) = job_ref.value() {
+                return http_job.live_stats().await;
+            }
+        }
+        (0, 0)
+    }
+
     // ── Internal ────────────────────────────────────────────────────────
 
     /// Create a job for a download item and add it to the registry.
@@ -443,9 +452,9 @@ fn generate_numbered_name(name: &str, existing: &[DownloadItem], folder: &str) -
     loop {
         let candidate = format!("{} ({}){}", stem, counter, ext);
         let candidate_path = PathBuf::from(folder).join(&candidate);
-        let exists = existing.iter().any(|d| {
-            PathBuf::from(&d.folder).join(&d.name) == candidate_path
-        });
+        let exists = existing
+            .iter()
+            .any(|d| PathBuf::from(&d.folder).join(&d.name) == candidate_path);
         if !exists {
             return candidate;
         }

@@ -234,7 +234,8 @@ mod tests {
         };
 
         let json = serde_json::to_string(&item).expect("Failed to serialize");
-        let deserialized: DownloadItem = serde_json::from_str(&json).expect("Failed to deserialize");
+        let deserialized: DownloadItem =
+            serde_json::from_str(&json).expect("Failed to deserialize");
 
         assert_eq!(item, deserialized);
         assert_eq!(deserialized.category, CategoryType::Compressed);

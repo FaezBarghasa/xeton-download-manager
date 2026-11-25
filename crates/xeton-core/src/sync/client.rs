@@ -34,12 +34,14 @@ impl SyncService {
         let lock = self.devices.lock().await;
         // Need to clone manually because we return Vec<PeerDevice> to UniFFI, so fields need Clone.
         // Actually UniFFI generates the conversion for Records, but we need to derive Clone.
-        lock.iter().map(|d| PeerDevice {
-            id: d.id.clone(),
-            name: d.name.clone(),
-            ip: d.ip.clone(),
-            port: d.port,
-        }).collect()
+        lock.iter()
+            .map(|d| PeerDevice {
+                id: d.id.clone(),
+                name: d.name.clone(),
+                ip: d.ip.clone(),
+                port: d.port,
+            })
+            .collect()
     }
 
     pub async fn push_link(&self, peer_id: String, url: String) {

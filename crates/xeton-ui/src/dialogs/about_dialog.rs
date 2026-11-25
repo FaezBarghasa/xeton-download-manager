@@ -1,10 +1,8 @@
-use dioxus::prelude::*;
 use crate::components::icons::IconXetonLogo;
+use dioxus::prelude::*;
 
 #[component]
-pub fn AboutModal(
-    on_close: EventHandler<()>,
-) -> Element {
+pub fn AboutModal(on_close: EventHandler<()>) -> Element {
     let mut active_tab = use_signal(|| "about");
 
     rsx! {

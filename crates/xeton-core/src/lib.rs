@@ -2,23 +2,23 @@
 // This crate is the UniFFI-exposed engine replacing the Kotlin downloader/core module.
 // Full implementation is built up phase by phase.
 
-pub mod db;
-pub mod models;
 pub mod connection;
+pub mod db;
 pub mod destination;
-pub mod part;
-pub mod http;
-pub mod hls;
-pub mod queue;
-pub mod manager;
-pub mod extractors;
-pub mod protocols;
-pub mod transcoder;
-pub mod throttle;
-pub mod uniffi_api;
 pub mod downloader;
+pub mod extractors;
+pub mod hls;
+pub mod http;
+pub mod manager;
+pub mod models;
+pub mod part;
+pub mod protocols;
+pub mod queue;
+pub mod throttle;
+pub mod transcoder;
+pub mod uniffi_api;
 
-pub use uniffi_api::{extract_audio, merge_video_audio, extract_media_info};
+pub use uniffi_api::{extract_audio, extract_media_info, merge_video_audio};
 
 #[cfg(feature = "sync")]
 pub mod sync;

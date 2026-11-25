@@ -90,12 +90,24 @@ pub async fn get_downloads(
             CategoryType::Other
         };
 
-        let parts = state
-            .manager
-            .get_download_parts(item.numeric_id)
-            .await
-            .unwrap_or_default();
-        let downloaded_size: u64 = parts.iter().map(|p| p.downloaded().max(0) as u64).sum();
+        let (live_downloaded, speed) = state.manager.get_live_stats(item.numeric_id).await;
+        let downloaded_size = if live_downloaded > 0 {
+            live_downloaded
+        } else {
+            let parts = state
+                .manager
+                .get_download_parts(item.numeric_id)
+                .await
+                .unwrap_or_default();
+            parts.iter().map(|p| p.downloaded().max(0) as u64).sum()
+        };
+
+        let eta_seconds = if speed > 0 && item.content_length > 0 {
+            let remaining = (item.content_length as u64).saturating_sub(downloaded_size);
+            Some(remaining / speed)
+        } else {
+            None
+        };
 
         let file_path = format!("{}/{}", item.folder.trim_end_matches('/'), item.name);
 
@@ -111,8 +123,8 @@ pub async fn get_downloads(
                 None
             },
             downloaded_size,
-            speed: 0,
-            eta_seconds: None,
+            speed,
+            eta_seconds,
             connections: item.preferred_connections.unwrap_or(8),
             date_added: item.date_added,
             date_finished: item.complete_time,
@@ -213,5 +225,14 @@ pub async fn delete_download(state: tauri::State<'_, AppState>, id: String) -> R
             .await
             .map_err(|e| e.to_string())?;
     }
+    Ok(())
+}
+
+#[tauri::command]
+pub async fn set_speed_limit(
+    state: tauri::State<'_, AppState>,
+    bytes_per_sec: i64,
+) -> Result<(), String> {
+    state.manager.set_global_speed_limit(bytes_per_sec).await;
     Ok(())
 }

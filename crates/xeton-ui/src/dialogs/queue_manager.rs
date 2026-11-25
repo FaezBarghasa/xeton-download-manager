@@ -1,33 +1,33 @@
-use dioxus::prelude::*;
 use crate::tauri_bindings::{invoke, invoke_no_args};
-use xeton_models::{QueueItem, PowerAction};
+use dioxus::prelude::*;
+use xeton_models::{PowerAction, QueueItem};
 
 #[component]
-pub fn QueueManagerModal(
-    on_close: EventHandler<()>,
-) -> Element {
-    let mut queues = use_signal(|| vec![
-        QueueItem {
-            id: "default".to_string(),
-            name: "Default Queue".to_string(),
-            max_concurrent: 3,
-            is_active: true,
-            scheduled_start: None,
-            scheduled_stop: None,
-            power_action: PowerAction::None,
-            items_count: 0,
-        },
-        QueueItem {
-            id: "night".to_string(),
-            name: "Night Queue".to_string(),
-            max_concurrent: 5,
-            is_active: false,
-            scheduled_start: Some("02:00".to_string()),
-            scheduled_stop: Some("08:00".to_string()),
-            power_action: PowerAction::Sleep,
-            items_count: 0,
-        },
-    ]);
+pub fn QueueManagerModal(on_close: EventHandler<()>) -> Element {
+    let mut queues = use_signal(|| {
+        vec![
+            QueueItem {
+                id: "default".to_string(),
+                name: "Default Queue".to_string(),
+                max_concurrent: 3,
+                is_active: true,
+                scheduled_start: None,
+                scheduled_stop: None,
+                power_action: PowerAction::None,
+                items_count: 0,
+            },
+            QueueItem {
+                id: "night".to_string(),
+                name: "Night Queue".to_string(),
+                max_concurrent: 5,
+                is_active: false,
+                scheduled_start: Some("02:00".to_string()),
+                scheduled_stop: Some("08:00".to_string()),
+                power_action: PowerAction::Sleep,
+                items_count: 0,
+            },
+        ]
+    });
 
     let mut selected_queue_idx = use_signal(|| 0usize);
     let mut is_creating_new = use_signal(|| false);

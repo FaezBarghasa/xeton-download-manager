@@ -14,7 +14,6 @@ use std::path::{Path, PathBuf};
 use bytes::Bytes;
 use thiserror::Error;
 use tokio::fs::{self, File, OpenOptions};
-use tokio::io::{AsyncSeekExt, AsyncWriteExt};
 use tokio::sync::{mpsc, oneshot};
 use tracing::{debug, error, warn};
 
@@ -44,9 +43,9 @@ pub type DiskWriterActor = DiskActor;
 async fn write_all_at(file: &tokio::fs::File, data: Bytes, offset: u64) -> std::io::Result<()> {
     let cloned = file.try_clone().await?;
     let std_file = cloned.into_std().await;
-    tokio::task::spawn_blocking(move || {
-        std_file.write_all_at(&data, offset)
-    }).await.map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?
+    tokio::task::spawn_blocking(move || std_file.write_all_at(&data, offset))
+        .await
+        .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?
 }
 
 // ─── Write Commands ─────────────────────────────────────────────────────────
@@ -56,7 +55,9 @@ pub enum WriteCmd {
     /// Write `data` at absolute file offset `offset`.
     Write { offset: u64, data: Bytes },
     /// Flush all buffered writes to disk.
-    Flush { reply: oneshot::Sender<Result<(), DestinationError>> },
+    Flush {
+        reply: oneshot::Sender<Result<(), DestinationError>>,
+    },
     /// Shut down the actor, closing the file handle.
     Shutdown,
 }
@@ -111,60 +112,68 @@ impl DiskActor {
         // 2048 entries × ~64KB average chunk = ~128 MB buffered max.
         let (tx, mut rx) = mpsc::channel::<WriteCmd>(2048);
 
+        let mut std_file = file.into_std().await;
         let actor_path = path.clone();
-        tokio::spawn(async move {
-            debug!("DiskActor started for {}", actor_path.display());
+        std::thread::Builder::new()
+            .name("xeton-disk-io".into())
+            .spawn(move || {
+                use std::io::Write;
+                debug!(
+                    "DiskActor dedicated I/O thread started for {}",
+                    actor_path.display()
+                );
 
-            while let Some(cmd) = rx.recv().await {
-                match cmd {
-                    WriteCmd::Write { offset, data } => {
+                while let Some(cmd) = rx.blocking_recv() {
+                    match cmd {
+                        WriteCmd::Write { offset, data } => {
+                            #[cfg(unix)]
+                            {
+                                if let Err(e) = std_file.write_all_at(&data, offset) {
+                                    error!("Write error at offset {}: {}", offset, e);
+                                }
+                            }
+                            #[cfg(not(unix))]
+                            {
+                                use std::io::{Seek, SeekFrom};
+                                if let Err(e) = std_file.seek(SeekFrom::Start(offset)) {
+                                    error!("Seek error at offset {}: {}", offset, e);
+                                    continue;
+                                }
+                                if let Err(e) = std_file.write_all(&data) {
+                                    error!("Write error at offset {}: {}", offset, e);
+                                }
+                            }
+                        }
+                        WriteCmd::Flush { reply } => {
+                            let result = std_file.flush().map_err(DestinationError::Io);
+                            let _ = reply.send(result);
+                        }
+                        WriteCmd::Shutdown => {
+                            let _ = std_file.flush();
+                            debug!("DiskActor shutting down for {}", actor_path.display());
+                            break;
+                        }
+                    }
+                }
+
+                // Drain remaining writes before closing
+                while let Ok(cmd) = rx.try_recv() {
+                    if let WriteCmd::Write { offset, data } = cmd {
                         #[cfg(unix)]
                         {
-                            if let Err(e) = write_all_at(&file, data, offset).await {
-                                error!("Write error at offset {}: {}", offset, e);
-                            }
+                            let _ = std_file.write_all_at(&data, offset);
                         }
                         #[cfg(not(unix))]
                         {
-                            use std::io::SeekFrom;
-                            if let Err(e) = file.seek(SeekFrom::Start(offset)).await {
-                                error!("Seek error at offset {}: {}", offset, e);
-                                continue;
-                            }
-                            if let Err(e) = file.write_all(&data).await {
-                                error!("Write error at offset {}: {}", offset, e);
-                            }
+                            use std::io::{Seek, SeekFrom};
+                            let _ = std_file.seek(SeekFrom::Start(offset));
+                            let _ = std_file.write_all(&data);
                         }
                     }
-                    WriteCmd::Flush { reply } => {
-                        let result = file.flush().await.map_err(DestinationError::Io);
-                        let _ = reply.send(result);
-                    }
-                    WriteCmd::Shutdown => {
-                        let _ = file.flush().await;
-                        debug!("DiskActor shutting down for {}", actor_path.display());
-                        break;
-                    }
                 }
-            }
-
-            // Drain remaining writes before closing
-            while let Ok(cmd) = rx.try_recv() {
-                if let WriteCmd::Write { offset, data } = cmd {
-                    #[cfg(unix)]
-                    {
-                        let _ = write_all_at(&file, data, offset).await;
-                    }
-                    #[cfg(not(unix))]
-                    {
-                        use std::io::SeekFrom;
-                        let _ = file.seek(SeekFrom::Start(offset)).await;
-                        let _ = file.write_all(&data).await;
-                    }
-                }
-            }
-            let _ = file.flush().await;
-        });
+                let _ = std_file.flush();
+            })
+            .map_err(DestinationError::Io)?;
 
         Ok(Self { tx, path })
     }
@@ -185,7 +194,9 @@ impl DiskActor {
             .send(WriteCmd::Flush { reply: reply_tx })
             .await
             .map_err(|_| DestinationError::ChannelClosed)?;
-        reply_rx.await.map_err(|_| DestinationError::ChannelClosed)?
+        reply_rx
+            .await
+            .map_err(|_| DestinationError::ChannelClosed)?
     }
 
     /// Shut down the actor and close the file handle.
@@ -228,7 +239,9 @@ impl DiskActor {
         // On Windows, use SetFileInformationByHandle with FileAllocationInfo.
         // This extends the file allocation instantaneously.
         use std::os::windows::io::AsRawHandle;
-        use windows_sys::Win32::Storage::FileSystem::{SetFileInformationByHandle, FileAllocationInfo, FILE_ALLOCATION_INFO};
+        use windows_sys::Win32::Storage::FileSystem::{
+            FILE_ALLOCATION_INFO, FileAllocationInfo, SetFileInformationByHandle,
+        };
 
         let handle = file.as_raw_handle() as isize;
         let info = FILE_ALLOCATION_INFO {
@@ -247,9 +260,12 @@ impl DiskActor {
         if result == 0 {
             return Err(DestinationError::Io(std::io::Error::last_os_error()));
         }
-        
+
         file.set_len(size).await?; // Set logical size as well
-        debug!("Pre-allocated {} bytes using SetFileInformationByHandle", size);
+        debug!(
+            "Pre-allocated {} bytes using SetFileInformationByHandle",
+            size
+        );
         Ok(())
     }
 
@@ -368,8 +384,7 @@ impl IncompleteFileUtil {
 
     /// Check if a path has an incomplete indicator.
     pub fn has_indicator(path: &Path) -> bool {
-        path.to_str()
-            .is_some_and(|s| s.contains(".xdlpart."))
+        path.to_str().is_some_and(|s| s.contains(".xdlpart."))
     }
 }
 

@@ -1,6 +1,6 @@
-use dioxus::prelude::*;
 use crate::components::icons::{IconClose, IconMaximize, IconMinimize, IconXetonLogo};
 use crate::theme::ThemePalette;
+use dioxus::prelude::*;
 
 #[component]
 pub fn Titlebar(
@@ -12,33 +12,40 @@ pub fn Titlebar(
     let mut active_menu = use_signal(|| Option::<String>::None);
 
     let menu_options = vec![
-        ("File", vec![
-            ("new_download", "New Download..."),
-            ("batch_download", "Add Batch Downloads..."),
-            ("separator", ""),
-            ("exit", "Exit"),
-        ]),
-        ("Edit", vec![
-            ("select_all", "Select All"),
-            ("delete", "Delete Selected"),
-        ]),
-        ("View", vec![
-            ("refresh", "Refresh List"),
-        ]),
-        ("Tools", vec![
-            ("queue_manager", "Queue Manager..."),
-            ("categories", "Manage Categories..."),
-            ("checksum", "Verify File Integrity (Checksum)..."),
-            ("per_host", "Per-Host Connection Rules..."),
-            ("separator", ""),
-            ("preferences", "Preferences & Settings..."),
-        ]),
-        ("Help", vec![
-            ("documentation", "Documentation"),
-            ("check_updates", "Check for Updates..."),
-            ("separator", ""),
-            ("about", "About Xeton Download Manager"),
-        ]),
+        (
+            "File",
+            vec![
+                ("new_download", "New Download..."),
+                ("batch_download", "Add Batch Downloads..."),
+                ("separator", ""),
+                ("exit", "Exit"),
+            ],
+        ),
+        (
+            "Edit",
+            vec![("select_all", "Select All"), ("delete", "Delete Selected")],
+        ),
+        ("View", vec![("refresh", "Refresh List")]),
+        (
+            "Tools",
+            vec![
+                ("queue_manager", "Queue Manager..."),
+                ("categories", "Manage Categories..."),
+                ("checksum", "Verify File Integrity (Checksum)..."),
+                ("per_host", "Per-Host Connection Rules..."),
+                ("separator", ""),
+                ("preferences", "Preferences & Settings..."),
+            ],
+        ),
+        (
+            "Help",
+            vec![
+                ("documentation", "Documentation"),
+                ("check_updates", "Check for Updates..."),
+                ("separator", ""),
+                ("about", "About Xeton Download Manager"),
+            ],
+        ),
     ];
 
     rsx! {

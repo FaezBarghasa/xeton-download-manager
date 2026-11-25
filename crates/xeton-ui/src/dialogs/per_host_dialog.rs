@@ -2,23 +2,23 @@ use dioxus::prelude::*;
 use xeton_models::PerHostConfig;
 
 #[component]
-pub fn PerHostModal(
-    on_close: EventHandler<()>,
-) -> Element {
-    let mut hosts = use_signal(|| vec![
-        PerHostConfig {
-            host: "github.com".to_string(),
-            max_connections: 8,
-            speed_limit_bytes_per_sec: None,
-            user_agent: None,
-        },
-        PerHostConfig {
-            host: "archive.org".to_string(),
-            max_connections: 4,
-            speed_limit_bytes_per_sec: Some(2048 * 1024),
-            user_agent: None,
-        },
-    ]);
+pub fn PerHostModal(on_close: EventHandler<()>) -> Element {
+    let mut hosts = use_signal(|| {
+        vec![
+            PerHostConfig {
+                host: "github.com".to_string(),
+                max_connections: 8,
+                speed_limit_bytes_per_sec: None,
+                user_agent: None,
+            },
+            PerHostConfig {
+                host: "archive.org".to_string(),
+                max_connections: 4,
+                speed_limit_bytes_per_sec: Some(2048 * 1024),
+                user_agent: None,
+            },
+        ]
+    });
 
     let mut new_host = use_signal(|| "".to_string());
     let mut new_conns = use_signal(|| 8u32);

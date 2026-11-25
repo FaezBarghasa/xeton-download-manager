@@ -1,6 +1,6 @@
-use dioxus::prelude::*;
 use crate::components::icons::IconZap;
 use crate::theme::ThemePalette;
+use dioxus::prelude::*;
 
 #[component]
 pub fn Footer(
@@ -11,8 +11,13 @@ pub fn Footer(
     on_cycle_density: Option<EventHandler<()>>,
 ) -> Element {
     let mut speed_preset_idx = use_signal(|| 0usize);
-    let presets = ["Unlimited", "10 MB/s", "5 MB/s", "1 MB/s"];
-    let current_preset = presets[*speed_preset_idx.read() % presets.len()];
+    let presets = [
+        ("Unlimited", 0i64),
+        ("10 MB/s", 10 * 1024 * 1024),
+        ("5 MB/s", 5 * 1024 * 1024),
+        ("1 MB/s", 1024 * 1024),
+    ];
+    let (current_preset, _) = presets[*speed_preset_idx.read() % presets.len()];
 
     let speed_formatted = if total_speed == 0 {
         "0 B/s".into()
@@ -48,6 +53,14 @@ pub fn Footer(
                     onclick: move |_| {
                         let next = (*speed_preset_idx.peek() + 1) % presets.len();
                         speed_preset_idx.set(next);
+                        let bytes_per_sec = presets[next].1;
+                        spawn(async move {
+                            let _ = crate::tauri_bindings::invoke::<(), _>(
+                                "set_speed_limit",
+                                &serde_json::json!({ "bytesPerSec": bytes_per_sec }),
+                            )
+                            .await;
+                        });
                     },
                     IconZap { size: 12, color: Some(theme.primary.to_string()) }
                     span { style: "color: {theme.on_surface_muted};", "Limiter:" }

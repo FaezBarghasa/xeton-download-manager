@@ -1,6 +1,6 @@
-use dioxus::prelude::*;
 use crate::components::icons::{IconPause, IconPlus, IconResume};
 use crate::theme::ThemePalette;
+use dioxus::prelude::*;
 use xeton_models::CategoryType;
 
 #[component]
@@ -83,6 +83,15 @@ pub fn Sidebar(
                 button {
                     class: "xeton-icon-btn",
                     style: "min-width: 22px; min-height: 22px; padding: 2px;",
+                    title: "Manage Queues",
+                    onclick: move |_| {
+                        spawn(async move {
+                            let _ = crate::tauri_bindings::invoke_no_args::<Vec<xeton_models::QueueItem>>(
+                                "get_queues",
+                            )
+                            .await;
+                        });
+                    },
                     IconPlus { size: 13 }
                 }
             }

@@ -11,18 +11,18 @@ use std::sync::Arc;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use reqwest::header::HeaderMap;
-use tokio::sync::{watch, Mutex, RwLock};
+use tokio::sync::{Mutex, RwLock, watch};
 use tokio::task::JoinHandle;
-use tokio::time::{interval, Duration};
+use tokio::time::{Duration, interval};
 use tokio_util::sync::CancellationToken;
 use tracing::{debug, info};
 
-use crate::connection::{HttpClient, DEFAULT_USER_AGENT};
 use crate::connection::proxy::ProxyConfig;
+use crate::connection::{DEFAULT_USER_AGENT, HttpClient};
 use crate::db::{DownloadDb, PartDb, ProgressBatcher};
-use crate::destination::{atomic_rename, DiskActor, IncompleteFileUtil};
+use crate::destination::{DiskActor, IncompleteFileUtil, atomic_rename};
 use crate::models::*;
-use crate::part::{split_to_ranges, PartRunner, SplitGuard};
+use crate::part::{PartRunner, SplitGuard, split_to_ranges};
 use crate::throttle::{ThrottleChain, Throttler};
 
 /// Delay between retry attempts in milliseconds.
@@ -196,7 +196,7 @@ impl HttpJob {
         // Start dynamic re-segmenting monitor
         self.start_split_monitor().await;
 
-        // Update status
+        // Update status BEFORE spawning completion watcher
         {
             let mut item = self.item.write().await;
             item.status = DownloadStatus::Downloading;
@@ -206,6 +206,38 @@ impl HttpJob {
         }
         self.save_state().await?;
         self.set_status(JobStatus::Downloading);
+
+        // Watch for all part runners completing -> transition to Completed
+        let job_weak = Arc::downgrade(self);
+        tokio::spawn(async move {
+            let mut ticker = interval(Duration::from_millis(50));
+            loop {
+                ticker.tick().await;
+                let Some(job) = job_weak.upgrade() else {
+                    break;
+                };
+                if job.item.read().await.status != DownloadStatus::Downloading {
+                    break;
+                }
+                let runners = job.runners.lock().await;
+                if runners.is_empty() {
+                    continue;
+                }
+                let mut all_done = true;
+                for r in runners.iter() {
+                    let p = r.part.lock().await;
+                    if !p.is_completed() {
+                        all_done = false;
+                        break;
+                    }
+                }
+                drop(runners);
+                if all_done {
+                    let _ = job.on_download_finished().await;
+                    break;
+                }
+            }
+        });
 
         Ok(())
     }
@@ -259,6 +291,24 @@ impl HttpJob {
     pub async fn downloaded_size(&self) -> i64 {
         let parts = self.parts.lock().await;
         parts.iter().map(|p| p.downloaded()).sum()
+    }
+
+    /// Get live (downloaded_bytes, speed_bps) directly from active runners.
+    pub async fn live_stats(&self) -> (u64, u64) {
+        let runners = self.runners.lock().await;
+        if runners.is_empty() {
+            let parts = self.parts.lock().await;
+            let dl: u64 = parts.iter().map(|p| p.downloaded().max(0) as u64).sum();
+            return (dl, 0);
+        }
+        let mut dl = 0u64;
+        let mut spd = 0u64;
+        for r in runners.iter() {
+            let p = r.part.lock().await;
+            dl += p.downloaded().max(0) as u64;
+            spd += r.speed_tracker.speed_bps();
+        }
+        (dl, spd)
     }
 
     // ── Internal methods ────────────────────────────────────────────────
@@ -349,7 +399,9 @@ impl HttpJob {
             parts.push(RangedPart::new(0, None, 0));
         } else if *sc == Some(true) {
             // Multi-part download
-            let conn_count = item.preferred_connections.unwrap_or(settings.default_thread_count);
+            let conn_count = item
+                .preferred_connections
+                .unwrap_or(settings.default_thread_count);
             let ranges = split_to_ranges(item.content_length, conn_count, settings.min_part_size);
             for (start, end) in ranges {
                 parts.push(RangedPart::new(start, Some(end), start));
@@ -418,7 +470,9 @@ impl HttpJob {
         let url = item.link.clone();
         let headers = HeaderMap::new();
         let strict = *self.strict_mode.lock().await;
-        let conn_count = item.preferred_connections.unwrap_or(settings.default_thread_count);
+        let conn_count = item
+            .preferred_connections
+            .unwrap_or(settings.default_thread_count);
 
         let throttle = Arc::new(ThrottleChain::new(vec![
             self.global_throttler.clone(),
@@ -482,7 +536,7 @@ impl HttpJob {
                 let id = item.read().await.numeric_id;
                 let item_data = item.read().await.clone();
                 let parts_data: Vec<RangedPart> = parts.lock().await.clone();
-                
+
                 // Send debounced updates through the batcher instead of hitting the DB directly
                 let _ = batcher.update_item(item_data).await;
                 let _ = batcher.update_parts(id, parts_data).await;
@@ -571,7 +625,10 @@ impl HttpJob {
                         continue;
                     }
                     // None ETA = speed is 0 = infinitely slow → always the worst candidate
-                    let eta = runner.estimated_eta().await.unwrap_or(Duration::from_secs(u64::MAX));
+                    let eta = runner
+                        .estimated_eta()
+                        .await
+                        .unwrap_or(Duration::from_secs(u64::MAX));
                     if eta > slowest_eta {
                         slowest_eta = eta;
                         slowest_idx = Some(i);
@@ -588,7 +645,9 @@ impl HttpJob {
 
                 // 5. Try to split the slowest segment
                 let target_runner = &current_runners[target_idx];
-                let new_part = split_guard.try_split(&target_runner.part, min_part_size).await;
+                let new_part = split_guard
+                    .try_split(&target_runner.part, min_part_size)
+                    .await;
 
                 drop(current_runners);
 
@@ -645,7 +704,9 @@ impl HttpJob {
         self.batcher.update_item(item.clone()).await?;
 
         let parts = self.parts.lock().await;
-        self.batcher.update_parts(item.numeric_id, parts.clone()).await?;
+        self.batcher
+            .update_parts(item.numeric_id, parts.clone())
+            .await?;
         Ok(())
     }
 
@@ -672,6 +733,7 @@ impl HttpJob {
         }
 
         drop(settings);
+        drop(item);
 
         // Finalize
         let mut item = self.item.write().await;

@@ -1,7 +1,7 @@
-use dioxus::prelude::*;
-use xeton_models::{DownloadItem, DownloadStatus};
 use crate::components::icons::{IconPause, IconResume};
 use crate::theme::ThemePalette;
+use dioxus::prelude::*;
+use xeton_models::{DownloadItem, DownloadStatus};
 
 #[component]
 pub fn MobileCard(
@@ -37,8 +37,16 @@ pub fn MobileCard(
         "-".to_string()
     };
 
-    let bar_class = if is_downloading { "xeton-progress-active" } else { "" };
-    let bar_bg = if is_downloading { String::new() } else { format!("background-color: {};", status_color) };
+    let bar_class = if is_downloading {
+        "xeton-progress-active"
+    } else {
+        ""
+    };
+    let bar_bg = if is_downloading {
+        String::new()
+    } else {
+        format!("background-color: {};", status_color)
+    };
 
     rsx! {
         div {

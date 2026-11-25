@@ -1,5 +1,5 @@
-use xeton_models::{DownloadPartsInfo, PartProgress};
 use crate::commands::downloads::AppState;
+use xeton_models::{DownloadPartsInfo, PartProgress};
 
 #[tauri::command]
 pub async fn get_download_parts(

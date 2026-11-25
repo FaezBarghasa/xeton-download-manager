@@ -6,7 +6,7 @@
 use std::path::PathBuf;
 use std::sync::Arc;
 
-use tokio::sync::{watch, RwLock};
+use tokio::sync::{RwLock, watch};
 use tracing::{debug, info};
 
 use crate::db::DownloadDb;
@@ -85,26 +85,17 @@ impl TorrentJob {
         let add_opts = librqbit::AddTorrentOptions::default();
         let add_result = if link.starts_with("magnet:") {
             session
-                .add_torrent(
-                    librqbit::AddTorrent::from_url(&link),
-                    Some(add_opts),
-                )
+                .add_torrent(librqbit::AddTorrent::from_url(&link), Some(add_opts))
                 .await
         } else if link.ends_with(".torrent") || link.starts_with("http") {
             session
-                .add_torrent(
-                    librqbit::AddTorrent::from_url(&link),
-                    Some(add_opts),
-                )
+                .add_torrent(librqbit::AddTorrent::from_url(&link), Some(add_opts))
                 .await
         } else {
             // Try as file path
             let data = tokio::fs::read(&link).await?;
             session
-                .add_torrent(
-                    librqbit::AddTorrent::from_bytes(data),
-                    Some(add_opts),
-                )
+                .add_torrent(librqbit::AddTorrent::from_bytes(data), Some(add_opts))
                 .await
         };
 
@@ -116,7 +107,12 @@ impl TorrentJob {
         // Update item with torrent metadata
         {
             let mut item = self.item.write().await;
-            if let Some(total_bytes) = handle.metadata.load().as_ref().map(|r| r.lengths.total_length()) {
+            if let Some(total_bytes) = handle
+                .metadata
+                .load()
+                .as_ref()
+                .map(|r| r.lengths.total_length())
+            {
                 item.content_length = total_bytes as i64;
             }
             item.status = DownloadStatus::Downloading;

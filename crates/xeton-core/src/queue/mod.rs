@@ -7,9 +7,9 @@ pub mod manager;
 use std::collections::HashSet;
 use std::sync::Arc;
 
-use tokio::sync::{broadcast, watch, Mutex, RwLock};
+use tokio::sync::{Mutex, RwLock, broadcast, watch};
 use tokio::task::JoinHandle;
-use tokio::time::{sleep, Duration};
+use tokio::time::{Duration, sleep};
 use tracing::warn;
 
 use crate::db::QueueDb;
@@ -103,10 +103,7 @@ impl Queue {
         let active_ids: Vec<i64> = self.active_ids.lock().await.iter().copied().collect();
         let queue_id = self.id().await;
         for id in active_ids {
-            let _ = self.command_tx.send(QueueCommand::StopJob {
-                id,
-                queue_id,
-            });
+            let _ = self.command_tx.send(QueueCommand::StopJob { id, queue_id });
         }
 
         *stopping = false;
@@ -157,7 +154,11 @@ impl Queue {
             let handle = tokio::spawn(async move {
                 sleep(Duration::from_millis(500)).await;
                 Self::actual_shake_static(
-                    &model, &active_ids, &canceled_ids, &active_flow, &command_tx,
+                    &model,
+                    &active_ids,
+                    &canceled_ids,
+                    &active_flow,
+                    &command_tx,
                 )
                 .await;
             });
@@ -220,10 +221,7 @@ impl Queue {
             let stop_ids: Vec<i64> = active.iter().take(to_stop).copied().collect();
             for id in stop_ids {
                 active.remove(&id);
-                let _ = command_tx.send(QueueCommand::StopJob {
-                    id,
-                    queue_id,
-                });
+                let _ = command_tx.send(QueueCommand::StopJob { id, queue_id });
             }
         }
     }

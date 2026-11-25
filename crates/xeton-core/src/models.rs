@@ -399,8 +399,14 @@ impl From<&DownloadItem> for DownloadTask {
 impl From<DownloadTask> for DownloadItem {
     fn from(task: DownloadTask) -> Self {
         let path = std::path::Path::new(&task.dest_path);
-        let folder = path.parent().map(|p| p.to_string_lossy().into_owned()).unwrap_or_default();
-        let name = path.file_name().map(|n| n.to_string_lossy().into_owned()).unwrap_or_default();
+        let folder = path
+            .parent()
+            .map(|p| p.to_string_lossy().into_owned())
+            .unwrap_or_default();
+        let name = path
+            .file_name()
+            .map(|n| n.to_string_lossy().into_owned())
+            .unwrap_or_default();
         Self {
             numeric_id: task.id,
             name,
@@ -485,4 +491,3 @@ impl From<BlockChecksum> for Block {
         }
     }
 }
-

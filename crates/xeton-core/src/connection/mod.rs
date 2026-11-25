@@ -8,14 +8,17 @@ pub mod proxy;
 use std::pin::Pin;
 
 use bytes::Bytes;
-use reqwest::header::{HeaderMap, ACCEPT_RANGES, CONTENT_LENGTH, CONTENT_RANGE, CONTENT_TYPE, ETAG, LAST_MODIFIED, RANGE};
+use reqwest::header::{
+    ACCEPT_RANGES, CONTENT_LENGTH, CONTENT_RANGE, CONTENT_TYPE, ETAG, HeaderMap, LAST_MODIFIED,
+    RANGE,
+};
 use reqwest::{Client, Response, StatusCode};
 use thiserror::Error;
 use tokio_stream::Stream;
 use tracing::debug;
 
-use crate::models::{ContentRange, ResponseInfo};
 use self::proxy::ProxyConfig;
+use crate::models::{ContentRange, ResponseInfo};
 
 // ─── Errors ─────────────────────────────────────────────────────────────────
 
@@ -50,8 +53,10 @@ impl HttpClient {
             .user_agent(user_agent)
             .gzip(true)
             .brotli(true)
+            .tcp_nodelay(true)
             .tcp_keepalive(std::time::Duration::from_secs(30))
-            .pool_max_idle_per_host(32)
+            .pool_max_idle_per_host(64)
+            .pool_idle_timeout(std::time::Duration::from_secs(90))
             .connect_timeout(std::time::Duration::from_secs(30))
             .timeout(std::time::Duration::from_secs(300));
 
@@ -78,7 +83,11 @@ impl HttpClient {
 
     /// Send a HEAD-like GET request to fetch server info without downloading the body.
     /// Mirrors `HttpDownloaderClient.test()`.
-    pub async fn test(&self, url: &str, headers: &HeaderMap) -> Result<ResponseInfo, ConnectionError> {
+    pub async fn test(
+        &self,
+        url: &str,
+        headers: &HeaderMap,
+    ) -> Result<ResponseInfo, ConnectionError> {
         let resp = self
             .inner
             .get(url)
@@ -88,7 +97,10 @@ impl HttpClient {
             .await?;
 
         let info = Self::extract_response_info(&resp);
-        debug!("Test response for {}: status={}, resume={}", url, info.status, info.resume_support);
+        debug!(
+            "Test response for {}: status={}, resume={}",
+            url, info.status, info.resume_support
+        );
         Ok(info)
     }
 
@@ -149,15 +161,12 @@ impl HttpClient {
 
         // Total length from Content-Range header (full file size)
         let content_range = Self::parse_content_range(headers);
-        let total_length = content_range
-            .as_ref()
-            .and_then(|cr| cr.total)
-            .or_else(|| {
-                headers
-                    .get(CONTENT_LENGTH)
-                    .and_then(|v| v.to_str().ok())
-                    .and_then(|v| v.parse::<i64>().ok())
-            });
+        let total_length = content_range.as_ref().and_then(|cr| cr.total).or_else(|| {
+            headers
+                .get(CONTENT_LENGTH)
+                .and_then(|v| v.to_str().ok())
+                .and_then(|v| v.parse::<i64>().ok())
+        });
 
         let content_length = headers
             .get(CONTENT_LENGTH)

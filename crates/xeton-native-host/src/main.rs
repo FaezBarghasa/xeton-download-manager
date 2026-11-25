@@ -1,6 +1,6 @@
-use std::io::{self, Read, Write};
 use byteorder::{NativeEndian, ReadBytesExt, WriteBytesExt};
 use serde_json::Value;
+use std::io::{self, Read, Write};
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::TcpStream;
 
@@ -29,7 +29,10 @@ async fn forward_to_desktop(payload: &Value) -> Result<String, String> {
     if resp_str.starts_with("HTTP/1.1 200") || resp_str.starts_with("HTTP/1.0 200") {
         Ok("queued".to_string())
     } else {
-        Err(format!("Desktop bridge rejected request: {}", resp_str.lines().next().unwrap_or("")))
+        Err(format!(
+            "Desktop bridge rejected request: {}",
+            resp_str.lines().next().unwrap_or("")
+        ))
     }
 }
 

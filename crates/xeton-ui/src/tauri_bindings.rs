@@ -51,7 +51,10 @@ extern "C" {
 }
 
 #[cfg(target_arch = "wasm32")]
-pub async fn invoke<T: serde::de::DeserializeOwned, A: serde::Serialize>(cmd: &str, args: &A) -> Result<T, String> {
+pub async fn invoke<T: serde::de::DeserializeOwned, A: serde::Serialize>(
+    cmd: &str,
+    args: &A,
+) -> Result<T, String> {
     let js_args = serde_wasm_bindgen::to_value(args).map_err(|e| e.to_string())?;
     let promise = raw_invoke(cmd, js_args);
     let js_val = wasm_bindgen_futures::JsFuture::from(promise)
@@ -76,7 +79,10 @@ pub async fn invoke_no_args<T: serde::de::DeserializeOwned>(cmd: &str) -> Result
 }
 
 #[cfg(not(target_arch = "wasm32"))]
-pub async fn invoke<T: serde::de::DeserializeOwned, A: serde::Serialize>(_cmd: &str, _args: &A) -> Result<T, String> {
+pub async fn invoke<T: serde::de::DeserializeOwned, A: serde::Serialize>(
+    _cmd: &str,
+    _args: &A,
+) -> Result<T, String> {
     Err("Not running in wasm".into())
 }
 

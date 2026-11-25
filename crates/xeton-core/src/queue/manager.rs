@@ -7,9 +7,9 @@ use std::sync::Arc;
 use dashmap::DashMap;
 use tracing::info;
 
+use super::Queue;
 use crate::db::QueueDb;
 use crate::models::QueueModel;
-use super::Queue;
 
 /// Manages all download queues.
 ///
@@ -65,7 +65,10 @@ impl QueueManager {
 
     /// Get all queues.
     pub fn all_queues(&self) -> Vec<Arc<Queue>> {
-        self.queues.iter().map(|entry| entry.value().clone()).collect()
+        self.queues
+            .iter()
+            .map(|entry| entry.value().clone())
+            .collect()
     }
 
     /// Notify all queues about a download event.

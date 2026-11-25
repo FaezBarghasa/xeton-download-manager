@@ -87,11 +87,11 @@ async fn http_end_to_end_download_verifies_bytes() {
         .with_test_writer()
         .try_init();
     use axum::{
+        Router,
         body::Body,
-        http::{header, StatusCode},
+        http::{StatusCode, header},
         response::Response,
         routing::get,
-        Router,
     };
 
     let payload: Vec<u8> = (0..65_536u32).map(|i| (i % 251) as u8).collect();
@@ -116,7 +116,10 @@ async fn http_end_to_end_download_verifies_bytes() {
                         return Response::builder()
                             .status(StatusCode::PARTIAL_CONTENT)
                             .header(header::CONTENT_LENGTH, slice.len().to_string())
-                            .header(header::CONTENT_RANGE, format!("bytes {}-{}/{}", start, end, total))
+                            .header(
+                                header::CONTENT_RANGE,
+                                format!("bytes {}-{}/{}", start, end, total),
+                            )
                             .header(header::ACCEPT_RANGES, "bytes")
                             .body(Body::from(slice))
                             .unwrap();
@@ -179,9 +182,17 @@ async fn http_end_to_end_download_verifies_bytes() {
         tokio::time::sleep(std::time::Duration::from_millis(100)).await;
     }
 
-    assert!(completed, "HTTP download did not reach Completed within 5s (last_status={:?})", last_status);
+    assert!(
+        completed,
+        "HTTP download did not reach Completed within 5s (last_status={:?})",
+        last_status
+    );
     let actual = std::fs::read(&dest_file).expect("read downloaded file");
-    assert_eq!(actual.len(), expected.len(), "downloaded byte length mismatch");
+    assert_eq!(
+        actual.len(),
+        expected.len(),
+        "downloaded byte length mismatch"
+    );
     assert_eq!(actual, expected, "downloaded file bytes corrupted");
 
     let _ = std::fs::remove_dir_all(&data_dir);

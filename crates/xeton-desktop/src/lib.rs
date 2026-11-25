@@ -6,8 +6,8 @@ use tauri::Manager;
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     eprintln!("[XETON] Starting xeton-desktop...");
-    let state = tauri::async_runtime::block_on(AppState::new())
-        .expect("failed to initialize AppState");
+    let state =
+        tauri::async_runtime::block_on(AppState::new()).expect("failed to initialize AppState");
     eprintln!("[XETON] AppState initialized successfully");
 
     #[allow(unused_mut)]
@@ -27,36 +27,81 @@ pub fn run() {
                     while let Ok((mut stream, _)) = listener.accept().await {
                         let mgr = manager.clone();
                         tauri::async_runtime::spawn(async move {
-                            let mut buf = vec![0u8; 8192];
-                            if let Ok(n) = stream.read(&mut buf).await {
-                                let req = String::from_utf8_lossy(&buf[..n]);
-                                if let Some(body) = req.split("\r\n\r\n").nth(1) {
-                                    if let Ok(val) = serde_json::from_str::<serde_json::Value>(body.trim_matches('\0')) {
-                                        if let Some(url) = val.get("url").and_then(|v| v.as_str()) {
-                                            let home = std::env::var("HOME").unwrap_or_else(|_| ".".into());
-                                            let folder = format!("{}/Downloads", home);
-                                            let name = val
-                                                .get("file_name")
-                                                .and_then(|v| v.as_str())
-                                                .map(String::from)
-                                                .unwrap_or_else(|| url.split('/').last().unwrap_or("download").to_string());
-                                            let props = xeton_core::models::NewDownloadProps {
-                                                folder,
-                                                name,
-                                                link: url.to_string(),
-                                                protocol: xeton_core::models::DownloadProtocol::Http,
-                                                preferred_connections: Some(8),
-                                                speed_limit: 0,
-                                                on_duplicate: xeton_core::models::DuplicateStrategy::AddNumbered,
-                                            };
-                                            if let Ok(id) = mgr.add_download(props).await {
-                                                let _ = mgr.resume(id).await;
-                                            }
+                            let mut buf = Vec::with_capacity(4096);
+                            let mut tmp = [0u8; 2048];
+                            let mut header_end = None;
+                            while buf.len() < 1024 * 1024 {
+                                match stream.read(&mut tmp).await {
+                                    Ok(0) | Err(_) => break,
+                                    Ok(n) => {
+                                        buf.extend_from_slice(&tmp[..n]);
+                                        if let Some(pos) =
+                                            buf.windows(4).position(|w| w == b"\r\n\r\n")
+                                        {
+                                            header_end = Some(pos + 4);
+                                            break;
                                         }
                                     }
                                 }
                             }
-                            let _ = stream.write_all(b"HTTP/1.1 200 OK\r\nContent-Length: 2\r\n\r\nOK").await;
+                            if let Some(body_start) = header_end {
+                                let headers_str = String::from_utf8_lossy(&buf[..body_start]);
+                                let content_len = headers_str
+                                    .lines()
+                                    .find_map(|line| {
+                                        let (k, v) = line.split_once(':')?;
+                                        if k.trim().eq_ignore_ascii_case("content-length") {
+                                            v.trim().parse::<usize>().ok()
+                                        } else {
+                                            None
+                                        }
+                                    })
+                                    .unwrap_or(0)
+                                    .min(1024 * 1024);
+                                while buf.len() < body_start + content_len {
+                                    match stream.read(&mut tmp).await {
+                                        Ok(0) | Err(_) => break,
+                                        Ok(n) => buf.extend_from_slice(&tmp[..n]),
+                                    }
+                                }
+                                let body_slice =
+                                    &buf[body_start..(body_start + content_len).min(buf.len())];
+                                if let Ok(val) =
+                                    serde_json::from_slice::<serde_json::Value>(body_slice)
+                                {
+                                    if let Some(url) = val.get("url").and_then(|v| v.as_str()) {
+                                        let home =
+                                            std::env::var("HOME").unwrap_or_else(|_| ".".into());
+                                        let folder = format!("{}/Downloads", home);
+                                        let name = val
+                                            .get("file_name")
+                                            .and_then(|v| v.as_str())
+                                            .map(String::from)
+                                            .unwrap_or_else(|| {
+                                                url.split('/')
+                                                    .last()
+                                                    .unwrap_or("download")
+                                                    .to_string()
+                                            });
+                                        let props = xeton_core::models::NewDownloadProps {
+                                            folder,
+                                            name,
+                                            link: url.to_string(),
+                                            protocol: xeton_core::models::DownloadProtocol::Http,
+                                            preferred_connections: Some(8),
+                                            speed_limit: 0,
+                                            on_duplicate:
+                                                xeton_core::models::DuplicateStrategy::AddNumbered,
+                                        };
+                                        if let Ok(id) = mgr.add_download(props).await {
+                                            let _ = mgr.resume(id).await;
+                                        }
+                                    }
+                                }
+                            }
+                            let _ = stream
+                                .write_all(b"HTTP/1.1 200 OK\r\nContent-Length: 2\r\n\r\nOK")
+                                .await;
                         });
                     }
                 }
@@ -65,7 +110,11 @@ pub fn run() {
             Ok(())
         })
         .on_page_load(|_window, payload| {
-            eprintln!("[XETON] Page load: {:?} url: {}", payload.event(), payload.url());
+            eprintln!(
+                "[XETON] Page load: {:?} url: {}",
+                payload.event(),
+                payload.url()
+            );
         });
 
     #[cfg(desktop)]
@@ -98,7 +147,8 @@ pub fn run() {
             save_app_settings,
             calculate_checksum,
             add_batch_downloads,
-            get_download_parts
+            get_download_parts,
+            set_speed_limit
         ])
         .run(tauri::generate_context!())
         .expect("error while running Xeton Download Manager");

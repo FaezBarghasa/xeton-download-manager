@@ -1,6 +1,6 @@
+use crate::commands::downloads::AppState;
 use xeton_core::models::{DownloadProtocol, DuplicateStrategy, NewDownloadProps};
 use xeton_models::{BatchDownloadRequest, DownloadItem};
-use crate::commands::downloads::AppState;
 
 #[tauri::command]
 pub async fn add_batch_downloads(
@@ -8,7 +8,9 @@ pub async fn add_batch_downloads(
     request: BatchDownloadRequest,
 ) -> Result<Vec<DownloadItem>, String> {
     let home = std::env::var("HOME").unwrap_or_else(|_| ".".into());
-    let folder = request.output_dir.unwrap_or_else(|| format!("{}/Downloads", home));
+    let folder = request
+        .output_dir
+        .unwrap_or_else(|| format!("{}/Downloads", home));
     let mut added = Vec::new();
 
     for item in request.items {

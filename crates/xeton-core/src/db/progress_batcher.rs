@@ -3,13 +3,13 @@
 // Prevents database write-bottlenecks during high-speed downloads by debouncing
 // progress updates (DownloadItem, RangedParts, and BlockUpdates) using a channel-based aggregator.
 
+use crate::db::{DownloadDb, PartDb, SurrealStore};
+use crate::models::{DownloadItem, RangedPart};
 use std::collections::HashMap;
 use std::sync::Arc;
 use std::time::Duration;
 use tokio::sync::mpsc;
 use tokio::time::sleep;
-use crate::models::{DownloadItem, RangedPart};
-use crate::db::{DownloadDb, PartDb, SurrealStore};
 
 #[derive(Clone, Debug)]
 pub struct BlockUpdate {
@@ -20,7 +20,10 @@ pub struct BlockUpdate {
 
 pub enum BatchUpdate {
     Item(DownloadItem),
-    Parts { download_id: i64, parts: Vec<RangedPart> },
+    Parts {
+        download_id: i64,
+        parts: Vec<RangedPart>,
+    },
     Block(BlockUpdate),
 }
 
@@ -40,7 +43,8 @@ impl ProgressBatcher {
             let mut block_updates: HashMap<i64, Vec<BlockUpdate>> = HashMap::new();
 
             loop {
-                let has_pending = !items.is_empty() || !parts_map.is_empty() || !block_updates.is_empty();
+                let has_pending =
+                    !items.is_empty() || !parts_map.is_empty() || !block_updates.is_empty();
 
                 let update = if has_pending {
                     tokio::select! {
@@ -67,10 +71,14 @@ impl ProgressBatcher {
                         // Flush items
                         for (_, item) in items.drain() {
                             if let Err(e) = store.update(&item).await {
-                                tracing::error!("Failed to flush item {} progress: {}", item.numeric_id, e);
+                                tracing::error!(
+                                    "Failed to flush item {} progress: {}",
+                                    item.numeric_id,
+                                    e
+                                );
                             }
                         }
-                        
+
                         // Apply block updates to parts first to preserve recent progress
                         for (task_id, updates) in block_updates.drain() {
                             // Fetch current parts from database or local map
@@ -80,7 +88,11 @@ impl ProgressBatcher {
                                 match store.get_parts(task_id).await {
                                     Ok(p) => p,
                                     Err(e) => {
-                                        tracing::error!("Failed to load parts for task {} during block update flush: {}", task_id, e);
+                                        tracing::error!(
+                                            "Failed to load parts for task {} during block update flush: {}",
+                                            task_id,
+                                            e
+                                        );
                                         continue;
                                     }
                                 }
@@ -100,14 +112,22 @@ impl ProgressBatcher {
                             }
 
                             if let Err(e) = store.set_parts(task_id, &parts).await {
-                                tracing::error!("Failed to save parts for task {} after block updates: {}", task_id, e);
+                                tracing::error!(
+                                    "Failed to save parts for task {} after block updates: {}",
+                                    task_id,
+                                    e
+                                );
                             }
                         }
 
                         // Flush remaining parts updates
                         for (download_id, parts) in parts_map.drain() {
                             if let Err(e) = store.set_parts(download_id, &parts).await {
-                                tracing::error!("Failed to flush parts for job {}: {}", download_id, e);
+                                tracing::error!(
+                                    "Failed to flush parts for job {}: {}",
+                                    download_id,
+                                    e
+                                );
                             }
                         }
                     }
@@ -120,21 +140,28 @@ impl ProgressBatcher {
 
     /// Queue a DownloadItem progress update.
     pub async fn update_item(&self, item: DownloadItem) -> anyhow::Result<()> {
-        self.tx.send(BatchUpdate::Item(item))
+        self.tx
+            .send(BatchUpdate::Item(item))
             .await
             .map_err(|_| anyhow::anyhow!("ProgressBatcher channel closed"))
     }
 
     /// Queue a parts list progress update.
-    pub async fn update_parts(&self, download_id: i64, parts: Vec<RangedPart>) -> anyhow::Result<()> {
-        self.tx.send(BatchUpdate::Parts { download_id, parts })
+    pub async fn update_parts(
+        &self,
+        download_id: i64,
+        parts: Vec<RangedPart>,
+    ) -> anyhow::Result<()> {
+        self.tx
+            .send(BatchUpdate::Parts { download_id, parts })
             .await
             .map_err(|_| anyhow::anyhow!("ProgressBatcher channel closed"))
     }
 
     /// Queue a block write completion update.
     pub async fn update_block(&self, update: BlockUpdate) -> anyhow::Result<()> {
-        self.tx.send(BatchUpdate::Block(update))
+        self.tx
+            .send(BatchUpdate::Block(update))
             .await
             .map_err(|_| anyhow::anyhow!("ProgressBatcher channel closed"))
     }

@@ -1,11 +1,8 @@
-use dioxus::prelude::*;
 use crate::theme::ThemePalette;
+use dioxus::prelude::*;
 
 #[component]
-pub fn MobileBrowserPage(
-    theme: ThemePalette,
-    on_back: EventHandler<()>,
-) -> Element {
+pub fn MobileBrowserPage(theme: ThemePalette, on_back: EventHandler<()>) -> Element {
     let mut current_url = use_signal(|| String::new());
     let mut tab_count = use_signal(|| 1);
 

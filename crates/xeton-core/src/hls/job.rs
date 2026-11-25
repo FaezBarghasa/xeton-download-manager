@@ -17,7 +17,7 @@ use cbc::cipher::{BlockModeDecrypt, KeyIvInit};
 #[cfg(feature = "hls")]
 use reqwest::header::HeaderMap;
 #[cfg(feature = "hls")]
-use tokio::sync::{watch, Mutex, RwLock};
+use tokio::sync::{Mutex, RwLock, watch};
 #[cfg(feature = "hls")]
 use tracing::{debug, info};
 
@@ -113,7 +113,10 @@ impl HlsJob {
         }
 
         // Find next un-downloaded segment
-        let next = segments.iter().position(|s| !s.downloaded).unwrap_or(segments.len());
+        let next = segments
+            .iter()
+            .position(|s| !s.downloaded)
+            .unwrap_or(segments.len());
         *self.next_segment.lock().await = next;
 
         Ok(())
@@ -147,7 +150,13 @@ impl HlsJob {
             };
             let headers = HeaderMap::new();
 
-            let resp = self.client.inner().get(&url).headers(headers).send().await?;
+            let resp = self
+                .client
+                .inner()
+                .get(&url)
+                .headers(headers)
+                .send()
+                .await?;
             let body = resp.bytes().await?;
             let body_str = String::from_utf8_lossy(&body);
 
@@ -166,9 +175,8 @@ impl HlsJob {
                         if let Some(ref key) = segment.key {
                             if key.method == m3u8_rs::KeyMethod::AES128 {
                                 current_key_uri = key.uri.clone();
-                                current_iv = key.iv.as_ref().and_then(|iv_str| {
-                                    parse_hex_iv(iv_str)
-                                });
+                                current_iv =
+                                    key.iv.as_ref().and_then(|iv_str| parse_hex_iv(iv_str));
                             } else if key.method == m3u8_rs::KeyMethod::None {
                                 current_key_uri = None;
                                 current_iv = None;
@@ -215,7 +223,9 @@ impl HlsJob {
 
     /// Prepare the output file.
     async fn prepare_destination(&self) -> anyhow::Result<()> {
-        let _ = self.status_tx.send(JobStatus::PreparingFile { progress: None });
+        let _ = self
+            .status_tx
+            .send(JobStatus::PreparingFile { progress: None });
 
         let item = self.item.read().await;
         let settings = self.settings.read().await;
@@ -245,7 +255,9 @@ impl HlsJob {
         drop(segments);
 
         let disk_guard = self.disk.lock().await;
-        let disk = disk_guard.as_ref().ok_or_else(|| anyhow::anyhow!("No disk"))?;
+        let disk = disk_guard
+            .as_ref()
+            .ok_or_else(|| anyhow::anyhow!("No disk"))?;
 
         let mut write_offset: u64 = 0;
 
@@ -253,12 +265,7 @@ impl HlsJob {
             let segment = &segments_snapshot[i];
 
             // Download segment
-            let resp = self
-                .client
-                .inner()
-                .get(&segment.uri)
-                .send()
-                .await?;
+            let resp = self.client.inner().get(&segment.uri).send().await?;
 
             let mut data = resp.bytes().await?;
 
@@ -274,7 +281,10 @@ impl HlsJob {
 
             // Write to file
             let mut writer = disk.writer_for(write_offset);
-            writer.write(data.clone()).await.map_err(|e| anyhow::anyhow!("{}", e))?;
+            writer
+                .write(data.clone())
+                .await
+                .map_err(|e| anyhow::anyhow!("{}", e))?;
             write_offset += data.len() as u64;
 
             // Mark as downloaded
@@ -326,7 +336,10 @@ impl HlsJob {
         let settings = self.settings.read().await;
         if settings.append_extension_to_incomplete {
             let output_path = PathBuf::from(&item.folder).join(&item.name);
-            let incomplete = crate::destination::IncompleteFileUtil::add_indicator(&output_path, item.numeric_id);
+            let incomplete = crate::destination::IncompleteFileUtil::add_indicator(
+                &output_path,
+                item.numeric_id,
+            );
             if incomplete.exists() {
                 crate::destination::atomic_rename(&incomplete, &output_path).await?;
             }

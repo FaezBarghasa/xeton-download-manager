@@ -8,9 +8,9 @@ use std::sync::Arc;
 use tokio::sync::Mutex;
 use tracing::info;
 
+use crate::connection::proxy::ProxyConfig;
 use crate::manager::DownloadManager;
 use crate::models::{DownloadItem, DownloadSettings, ManagerEvent, NewDownloadProps};
-use crate::connection::proxy::ProxyConfig;
 
 /// The primary engine interface exposed via FFI.
 #[derive(uniffi::Object)]
@@ -82,7 +82,10 @@ impl XetonEngine {
 
     /// Get all downloads.
     pub async fn get_download_list(&self) -> Result<Vec<DownloadItem>, String> {
-        self.manager.get_download_list().await.map_err(|e| e.to_string())
+        self.manager
+            .get_download_list()
+            .await
+            .map_err(|e| e.to_string())
     }
 
     /// Set the global speed limit (bytes per second).
@@ -94,7 +97,7 @@ impl XetonEngine {
     pub async fn reload_settings(&self, settings: DownloadSettings) {
         self.manager.reload_settings(settings).await;
     }
-    
+
     /// Set the global proxy configuration.
     pub async fn set_proxy(&self, proxy: ProxyConfig) {
         self.manager.set_proxy(proxy).await;
@@ -131,7 +134,10 @@ impl XetonEngine {
     pub async fn set_torrent_file_selection(&self, id: i64, selected_indices: Vec<u32>) {
         // Implementation would delegate to DownloadManager which delegates to ActiveJob::Torrent
         // For roadmap implementation, we stub
-        info!("Setting torrent file selection for {}: {:?}", id, selected_indices);
+        info!(
+            "Setting torrent file selection for {}: {:?}",
+            id, selected_indices
+        );
     }
 }
 
@@ -173,4 +179,3 @@ pub async fn extract_media_info(url: String) -> Result<crate::extractors::Extrac
     let router = crate::extractors::ExtractorRouter::new();
     router.extract(&url).await.map_err(|e| e.to_string())
 }
-

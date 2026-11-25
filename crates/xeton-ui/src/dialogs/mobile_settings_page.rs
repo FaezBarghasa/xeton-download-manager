@@ -1,11 +1,8 @@
-use dioxus::prelude::*;
 use crate::theme::ThemePalette;
+use dioxus::prelude::*;
 
 #[component]
-pub fn MobileSettingsPage(
-    theme: ThemePalette,
-    on_back: EventHandler<()>,
-) -> Element {
+pub fn MobileSettingsPage(theme: ThemePalette, on_back: EventHandler<()>) -> Element {
     let mut show_average_speed = use_signal(|| true);
     let mut notification_enabled = use_signal(|| true);
     let mut speed_limiter_enabled = use_signal(|| false);

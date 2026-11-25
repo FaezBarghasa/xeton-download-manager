@@ -1,6 +1,6 @@
-use dioxus::prelude::*;
 use crate::components::icons::{IconChevronDown, IconChevronUp};
 use crate::theme::ThemePalette;
+use dioxus::prelude::*;
 use xeton_models::{DownloadItem, DownloadStatus};
 
 fn format_size(bytes: u64) -> String {

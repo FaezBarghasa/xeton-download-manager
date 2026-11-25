@@ -1,5 +1,5 @@
-use dioxus::prelude::*;
 use crate::theme::ThemePalette;
+use dioxus::prelude::*;
 use xeton_models::{BatchDownloadItem, BatchDownloadRequest, CategoryType};
 
 #[component]

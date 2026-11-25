@@ -7,7 +7,11 @@ use std::num::NonZeroU32;
 use std::sync::Arc;
 use std::sync::atomic::{AtomicI64, Ordering};
 
-use governor::{Quota, RateLimiter, clock::DefaultClock, state::{InMemoryState, NotKeyed}};
+use governor::{
+    Quota, RateLimiter,
+    clock::DefaultClock,
+    state::{InMemoryState, NotKeyed},
+};
 
 /// Async-compatible rate limiter wrapping `governor::RateLimiter`.
 ///

@@ -13,14 +13,14 @@ use std::sync::Arc;
 
 use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
+use surrealdb::Surreal;
 use surrealdb::engine::local::SurrealKv;
 use surrealdb::types::RecordId;
 use surrealdb::types::SurrealValue;
-use surrealdb::Surreal;
 use tracing::{debug, info, warn};
 
-use crate::db::{DownloadDb, PartDb, QueueDb, BlockDb};
-use crate::models::{DownloadItem, QueueModel, RangedPart, Block, PartSegment, BlockChecksum};
+use crate::db::{BlockDb, DownloadDb, PartDb, QueueDb};
+use crate::models::{Block, BlockChecksum, DownloadItem, PartSegment, QueueModel, RangedPart};
 
 /// Discover default data directory based on OS.
 pub fn discover_data_dir() -> PathBuf {
@@ -35,7 +35,11 @@ pub fn discover_data_dir() -> PathBuf {
     #[cfg(target_os = "macos")]
     {
         if let Ok(home) = std::env::var("HOME") {
-            PathBuf::from(home).join("Library").join("Application Support").join("Xeton").join("data")
+            PathBuf::from(home)
+                .join("Library")
+                .join("Application Support")
+                .join("Xeton")
+                .join("data")
         } else {
             PathBuf::from("/Library/Application Support/Xeton/data")
         }
@@ -44,7 +48,10 @@ pub fn discover_data_dir() -> PathBuf {
     {
         // Linux/Android/Fallback
         if let Ok(home) = std::env::var("HOME") {
-            PathBuf::from(home).join(".config").join("xeton").join("data")
+            PathBuf::from(home)
+                .join(".config")
+                .join("xeton")
+                .join("data")
         } else {
             PathBuf::from("/data/local/tmp/xeton/data")
         }
@@ -62,6 +69,12 @@ struct TaskInsert {
     protocol: crate::models::DownloadProtocol,
     total_size: i64,
     status: crate::models::DownloadStatus,
+    server_etag: Option<String>,
+    date_added: i64,
+    start_time: Option<i64>,
+    complete_time: Option<i64>,
+    preferred_connections: Option<u32>,
+    speed_limit: i64,
 }
 
 #[derive(Debug, Serialize, Deserialize, SurrealValue)]
@@ -74,6 +87,12 @@ struct TaskRow {
     protocol: crate::models::DownloadProtocol,
     total_size: i64,
     status: crate::models::DownloadStatus,
+    server_etag: Option<String>,
+    date_added: Option<i64>,
+    start_time: Option<i64>,
+    complete_time: Option<i64>,
+    preferred_connections: Option<u32>,
+    speed_limit: Option<i64>,
 }
 
 impl From<&DownloadItem> for TaskInsert {
@@ -85,6 +104,12 @@ impl From<&DownloadItem> for TaskInsert {
             protocol: item.protocol.clone(),
             total_size: item.content_length,
             status: item.status.clone(),
+            server_etag: item.server_etag.clone(),
+            date_added: item.date_added,
+            start_time: item.start_time,
+            complete_time: item.complete_time,
+            preferred_connections: item.preferred_connections,
+            speed_limit: item.speed_limit,
         }
     }
 }
@@ -92,8 +117,14 @@ impl From<&DownloadItem> for TaskInsert {
 impl From<TaskRow> for DownloadItem {
     fn from(row: TaskRow) -> Self {
         let path = std::path::Path::new(&row.dest_path);
-        let folder = path.parent().map(|p| p.to_string_lossy().into_owned()).unwrap_or_default();
-        let name = path.file_name().map(|n| n.to_string_lossy().into_owned()).unwrap_or_default();
+        let folder = path
+            .parent()
+            .map(|p| p.to_string_lossy().into_owned())
+            .unwrap_or_default();
+        let name = path
+            .file_name()
+            .map(|n| n.to_string_lossy().into_owned())
+            .unwrap_or_default();
         Self {
             numeric_id: row.numeric_id,
             name,
@@ -102,12 +133,12 @@ impl From<TaskRow> for DownloadItem {
             content_length: row.total_size,
             status: row.status,
             protocol: row.protocol,
-            server_etag: None,
-            date_added: 0,
-            start_time: None,
-            complete_time: None,
-            preferred_connections: None,
-            speed_limit: 0,
+            server_etag: row.server_etag,
+            date_added: row.date_added.unwrap_or(0),
+            start_time: row.start_time,
+            complete_time: row.complete_time,
+            preferred_connections: row.preferred_connections,
+            speed_limit: row.speed_limit.unwrap_or(0),
         }
     }
 }
@@ -217,6 +248,12 @@ impl SurrealStore {
                 DEFINE FIELD protocol ON TABLE task TYPE any;
                 DEFINE FIELD total_size ON TABLE task TYPE int;
                 DEFINE FIELD status ON TABLE task TYPE any;
+                DEFINE FIELD server_etag ON TABLE task TYPE option<string>;
+                DEFINE FIELD date_added ON TABLE task TYPE option<int>;
+                DEFINE FIELD start_time ON TABLE task TYPE option<int>;
+                DEFINE FIELD complete_time ON TABLE task TYPE option<int>;
+                DEFINE FIELD preferred_connections ON TABLE task TYPE option<int>;
+                DEFINE FIELD speed_limit ON TABLE task TYPE option<int>;
 
                 DEFINE TABLE part SCHEMAFULL;
                 DEFINE FIELD id ON TABLE part TYPE record<part>;
@@ -253,10 +290,7 @@ impl SurrealStore {
         let result: Option<CounterRecord> = self
             .db
             .upsert(("counters", "download_id"))
-            .content(CounterRecord {
-                id: None,
-                value: 1,
-            })
+            .content(CounterRecord { id: None, value: 1 })
             .await?;
 
         if let Some(_counter) = result {
@@ -304,7 +338,11 @@ impl DownloadDb for SurrealStore {
         }
 
         let records: Vec<IdOnly> = result.take(0)?;
-        Ok(records.into_iter().next().map(|r| r.numeric_id).unwrap_or(0))
+        Ok(records
+            .into_iter()
+            .next()
+            .map(|r| r.numeric_id)
+            .unwrap_or(0))
     }
 
     async fn add(&self, item: &DownloadItem) -> anyhow::Result<()> {
@@ -339,7 +377,9 @@ impl DownloadDb for SurrealStore {
 #[async_trait]
 impl PartDb for SurrealStore {
     async fn get_parts(&self, download_id: i64) -> anyhow::Result<Vec<RangedPart>> {
-        let mut result = self.db.query("SELECT * FROM part WHERE task_id = $download_id ORDER BY part_index ASC")
+        let mut result = self
+            .db
+            .query("SELECT * FROM part WHERE task_id = $download_id ORDER BY part_index ASC")
             .bind(("download_id", download_id))
             .await?;
         let segments: Vec<PartSegment> = result.take(0)?;
@@ -350,7 +390,8 @@ impl PartDb for SurrealStore {
         self.remove_parts(download_id).await?;
         for (idx, part) in parts.iter().enumerate() {
             let segment = PartSegment::from_ranged_part(download_id, idx as u32, part);
-            let _: Option<PartSegment> = self.db
+            let _: Option<PartSegment> = self
+                .db
                 .create(("part", format!("{}_{}", download_id, idx)))
                 .content(segment)
                 .await?;
@@ -359,7 +400,9 @@ impl PartDb for SurrealStore {
     }
 
     async fn remove_parts(&self, download_id: i64) -> anyhow::Result<()> {
-        let _: Vec<PartSegment> = self.db.query("DELETE FROM part WHERE task_id = $download_id")
+        let _: Vec<PartSegment> = self
+            .db
+            .query("DELETE FROM part WHERE task_id = $download_id")
             .bind(("download_id", download_id))
             .await?
             .take(0)?;
@@ -386,11 +429,7 @@ impl QueueDb for SurrealStore {
             id: None,
             inner: model.clone(),
         };
-        let _: Option<QueueRecord> = self
-            .db
-            .upsert(("queues", model.id))
-            .content(record)
-            .await?;
+        let _: Option<QueueRecord> = self.db.upsert(("queues", model.id)).content(record).await?;
         Ok(())
     }
 
@@ -405,7 +444,9 @@ impl QueueDb for SurrealStore {
 #[async_trait]
 impl BlockDb for SurrealStore {
     async fn get_blocks(&self, task_id: i64) -> anyhow::Result<Vec<Block>> {
-        let mut result = self.db.query("SELECT * FROM block_checksum WHERE task_id = $task_id ORDER BY block_index ASC")
+        let mut result = self
+            .db
+            .query("SELECT * FROM block_checksum WHERE task_id = $task_id ORDER BY block_index ASC")
             .bind(("task_id", task_id))
             .await?;
         let checksums: Vec<BlockChecksum> = result.take(0)?;
@@ -416,7 +457,8 @@ impl BlockDb for SurrealStore {
         self.remove_blocks(task_id).await?;
         for (idx, block) in blocks.iter().enumerate() {
             let bc = BlockChecksum::from(block);
-            let _: Option<BlockChecksum> = self.db
+            let _: Option<BlockChecksum> = self
+                .db
                 .create(("block_checksum", format!("{}_{}", task_id, idx)))
                 .content(bc)
                 .await?;
@@ -425,7 +467,9 @@ impl BlockDb for SurrealStore {
     }
 
     async fn remove_blocks(&self, task_id: i64) -> anyhow::Result<()> {
-        let _: Vec<BlockChecksum> = self.db.query("DELETE FROM block_checksum WHERE task_id = $task_id")
+        let _: Vec<BlockChecksum> = self
+            .db
+            .query("DELETE FROM block_checksum WHERE task_id = $task_id")
             .bind(("task_id", task_id))
             .await?
             .take(0)?;
@@ -439,7 +483,10 @@ impl SurrealStore {
     pub async fn migrate_from_json_if_needed(&self, data_dir: &Path) -> anyhow::Result<()> {
         let existing: Vec<TaskRow> = self.db.select("task").await?;
         if !existing.is_empty() {
-            debug!("SurrealDB already has {} downloads, skipping JSON migration", existing.len());
+            debug!(
+                "SurrealDB already has {} downloads, skipping JSON migration",
+                existing.len()
+            );
             return Ok(());
         }
 
@@ -471,7 +518,10 @@ impl SurrealStore {
         }
 
         if migrated > 0 {
-            info!("Successfully migrated {} downloads from JSON to SurrealDB", migrated);
+            info!(
+                "Successfully migrated {} downloads from JSON to SurrealDB",
+                migrated
+            );
         }
 
         Ok(())

@@ -12,13 +12,13 @@
 //   - Stop signal via `Arc<AtomicBool>`.
 //   - Dynamic part splitting via `SplitGuard` (shared mutex).
 
-use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 use std::sync::Arc;
+use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 use std::time::Instant;
 
 use thiserror::Error;
-use tokio::sync::{watch, Mutex};
-use tokio::time::{sleep, Duration};
+use tokio::sync::{Mutex, watch};
+use tokio::time::{Duration, sleep};
 use tokio_stream::StreamExt;
 use tracing::{debug, warn};
 

@@ -41,9 +41,12 @@ impl Extractor for SpotifyExtractor {
         debug!("Extracting Spotify: {}", url);
 
         // A robust way to get basic metadata without OAuth is using the oEmbed API
-        let oembed_url = format!("https://open.spotify.com/oembed?url={}", urlencoding::encode(url));
+        let oembed_url = format!(
+            "https://open.spotify.com/oembed?url={}",
+            urlencoding::encode(url)
+        );
         let resp = self.client.get(&oembed_url).send().await?;
-        
+
         let metadata = if resp.status().is_success() {
             resp.json::<EmbedResponse>().await.ok()
         } else {
@@ -52,7 +55,10 @@ impl Extractor for SpotifyExtractor {
 
         // Use the metadata to perform a search on YouTube using yt-dlp.
         let mut streams = Vec::new();
-        let title = metadata.as_ref().and_then(|m| m.title.clone()).unwrap_or_else(|| "Spotify Track".to_string());
+        let title = metadata
+            .as_ref()
+            .and_then(|m| m.title.clone())
+            .unwrap_or_else(|| "Spotify Track".to_string());
         let mut duration_sec = None;
         let mut uploader = None;
         let mut description = None;
@@ -69,7 +75,7 @@ impl Extractor for SpotifyExtractor {
                 }
             }
         }
-        
+
         Ok(ExtractedMedia {
             title,
             streams,

@@ -22,8 +22,7 @@ pub fn CategoryModal(
     let mut default_path = use_signal(|| initial_cat.default_path.unwrap_or_default());
 
     let preset_colors = vec![
-        "#3b82f6", "#ef4444", "#10b981", "#f59e0b",
-        "#8b5cf6", "#ec4899", "#06b6d4", "#64748b",
+        "#3b82f6", "#ef4444", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899", "#06b6d4", "#64748b",
     ];
 
     rsx! {

@@ -1,5 +1,5 @@
+use crate::theme::{THEME_DARK, THEME_LIGHT, THEME_OBSIDIAN, ThemePalette};
 use dioxus::prelude::*;
-use crate::theme::{ThemePalette, THEME_DARK, THEME_LIGHT, THEME_OBSIDIAN};
 
 #[component]
 pub fn SettingsModal(

@@ -1,6 +1,6 @@
-use dioxus::prelude::*;
 use crate::components::icons::{IconSearch, IconXetonLogo};
 use crate::theme::ThemePalette;
+use dioxus::prelude::*;
 
 #[component]
 pub fn MobileHeader(

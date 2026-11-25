@@ -1,6 +1,6 @@
-use dioxus::prelude::*;
 use crate::components::icons::{IconAlertTriangle, IconClose};
 use crate::theme::ThemePalette;
+use dioxus::prelude::*;
 
 #[component]
 pub fn DownloadErrorModal(
@@ -23,7 +23,10 @@ pub fn DownloadErrorModal(
         None => "Network Connection Failure".to_string(),
     };
 
-    let full_error_details = format!("Error: {}\nDetails: {}\n{}", error_title, error_message, status_str);
+    let full_error_details = format!(
+        "Error: {}\nDetails: {}\n{}",
+        error_title, error_message, status_str
+    );
 
     rsx! {
         div {

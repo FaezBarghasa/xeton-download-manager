@@ -1,7 +1,7 @@
-use dioxus::prelude::*;
-use xeton_models::CategoryType;
 use crate::components::icons::{IconMenu, IconPlus, IconSearch};
 use crate::theme::ThemePalette;
+use dioxus::prelude::*;
+use xeton_models::CategoryType;
 
 #[component]
 pub fn MobileBottomBar(

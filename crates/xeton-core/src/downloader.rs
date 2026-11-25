@@ -4,7 +4,7 @@ use tokio::sync::Mutex;
 use tracing::error;
 
 use crate::manager::DownloadManager;
-use crate::models::{DownloadStatus, DownloadSettings, NewDownloadProps};
+use crate::models::{DownloadSettings, DownloadStatus, NewDownloadProps};
 
 /// Low-level Downloader exposed via FFI.
 /// This acts as a lightweight single-file API that wraps the full Xeton engine.
@@ -48,8 +48,16 @@ impl Downloader {
         let mut id_guard = self.item_id.lock().await;
         if id_guard.is_none() {
             let path = Path::new(&self.output_path);
-            let folder = path.parent().unwrap_or_else(|| Path::new("")).to_string_lossy().to_string();
-            let name = path.file_name().unwrap_or_default().to_string_lossy().to_string();
+            let folder = path
+                .parent()
+                .unwrap_or_else(|| Path::new(""))
+                .to_string_lossy()
+                .to_string();
+            let name = path
+                .file_name()
+                .unwrap_or_default()
+                .to_string_lossy()
+                .to_string();
 
             let props = NewDownloadProps {
                 link: self.url.clone(),

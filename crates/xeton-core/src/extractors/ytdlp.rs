@@ -125,14 +125,8 @@ impl Extractor for YtDlpExtractor {
                 _ => continue,
             };
 
-            let has_video = fmt
-                .vcodec
-                .as_ref()
-                .is_some_and(|v| v != "none");
-            let has_audio = fmt
-                .acodec
-                .as_ref()
-                .is_some_and(|a| a != "none");
+            let has_video = fmt.vcodec.as_ref().is_some_and(|v| v != "none");
+            let has_audio = fmt.acodec.as_ref().is_some_and(|a| a != "none");
 
             let stream_type = match (has_video, has_audio) {
                 (true, true) => "video+audio",

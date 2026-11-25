@@ -99,13 +99,8 @@ impl Extractor for SoundCloudExtractor {
             for transcoding in &media.transcodings {
                 // Resolve the actual stream URL
                 let stream_url = format!("{}?client_id={}", transcoding.url, client_id);
-                let stream_resp: ScStreamUrl = self
-                    .client
-                    .get(&stream_url)
-                    .send()
-                    .await?
-                    .json()
-                    .await?;
+                let stream_resp: ScStreamUrl =
+                    self.client.get(&stream_url).send().await?.json().await?;
 
                 let codec = if transcoding.preset.contains("opus") {
                     "opus"
@@ -193,7 +188,10 @@ impl SoundCloudExtractor {
                         if let Some(end) = js[start..].find('"') {
                             let id = js[start..start + end].to_string();
                             *self.client_id.write().await = Some(id.clone());
-                            debug!("Discovered SoundCloud client_id: {}...", &id[..8.min(id.len())]);
+                            debug!(
+                                "Discovered SoundCloud client_id: {}...",
+                                &id[..8.min(id.len())]
+                            );
                             return Ok(id);
                         }
                     }

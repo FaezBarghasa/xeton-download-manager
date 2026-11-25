@@ -2,7 +2,7 @@ use dioxus::prelude::*;
 use std::collections::{HashMap, HashSet};
 
 use xeton_models::{
-    AddDownloadRequest, CategoryType, DownloadItem, DownloadStatus, CustomCategory,
+    AddDownloadRequest, CategoryType, CustomCategory, DownloadItem, DownloadStatus,
 };
 
 mod components;
@@ -11,25 +11,22 @@ mod tauri_bindings;
 mod theme;
 
 use components::footer::Footer;
-use components::icons::{
-    IconDelete, IconPause, IconPlus, IconResume, IconSettings, IconZap,
-};
+use components::icons::{IconDelete, IconPause, IconPlus, IconResume, IconSettings, IconZap};
+use components::mobile_bottom_bar::MobileBottomBar;
+use components::mobile_card::MobileCard;
+use components::mobile_header::MobileHeader;
 use components::sidebar::Sidebar;
 use components::table::DownloadTable;
 use components::titlebar::Titlebar;
-use components::mobile_header::MobileHeader;
-use components::mobile_bottom_bar::MobileBottomBar;
-use components::mobile_card::MobileCard;
 
 use dialogs::{
-    AddDownloadModal, BatchDownloadModal, DownloadDetailsModal, QueueManagerModal,
-    CategoryModal, ChecksumModal, EditDownloadModal, PerHostModal, AboutModal,
-    ConfirmModal, ConfirmKind, SettingsModal, DownloadErrorModal, QRCodeModal,
-    MobileAddSheet, MobileMenuSheet, MobileSetupWizard, MobileSettingsPage,
-    MobileBrowserPage, MobileAddModal,
+    AboutModal, AddDownloadModal, BatchDownloadModal, CategoryModal, ChecksumModal, ConfirmKind,
+    ConfirmModal, DownloadDetailsModal, DownloadErrorModal, EditDownloadModal, MobileAddModal,
+    MobileAddSheet, MobileBrowserPage, MobileMenuSheet, MobileSettingsPage, MobileSetupWizard,
+    PerHostModal, QRCodeModal, QueueManagerModal, SettingsModal,
 };
 use tauri_bindings::{invoke, invoke_no_args};
-use theme::{ThemePalette, THEME_DARK};
+use theme::{THEME_DARK, ThemePalette};
 
 #[component]
 pub fn App() -> Element {
@@ -42,7 +39,7 @@ pub fn App() -> Element {
                 id: "1".into(),
                 name: "ubuntu-24.04-desktop-amd64.iso".into(),
                 url: "https://releases.ubuntu.com/24.04/ubuntu-24.04-desktop-amd64.iso".into(),
-                category: CategoryType::Other,
+                category: CategoryType::Compressed,
                 status: DownloadStatus::Downloading,
                 total_size: Some(6_111_000_000),
                 downloaded_size: 2_450_000_000,
@@ -57,7 +54,9 @@ pub fn App() -> Element {
             DownloadItem {
                 id: "2".into(),
                 name: "Blender-4.1.0-linux-x64.tar.xz".into(),
-                url: "https://download.blender.org/release/Blender4.1/blender-4.1.0-linux-x64.tar.xz".into(),
+                url:
+                    "https://download.blender.org/release/Blender4.1/blender-4.1.0-linux-x64.tar.xz"
+                        .into(),
                 category: CategoryType::Programs,
                 status: DownloadStatus::Paused,
                 total_size: Some(340_000_000),
@@ -131,7 +130,8 @@ pub fn App() -> Element {
     let mut is_qr_modal_open = use_signal(|| false);
     let mut error_dialog_title = use_signal(|| "Download Error".to_string());
     let mut error_dialog_message = use_signal(|| "Failed to connect to remote server".to_string());
-    let mut qr_dialog_url = use_signal(|| "https://github.com/FaezBarghasa/xeton-download-manager".to_string());
+    let mut qr_dialog_url =
+        use_signal(|| "https://github.com/FaezBarghasa/xeton-download-manager".to_string());
 
     let mut targeted_item = use_signal(|| Option::<DownloadItem>::None);
     let parts_info = use_signal(|| Option::<xeton_models::DownloadPartsInfo>::None);
@@ -148,7 +148,8 @@ pub fn App() -> Element {
             {
                 let promise = js_sys::Promise::new(&mut |resolve, _| {
                     if let Some(win) = web_sys::window() {
-                        let _ = win.set_timeout_with_callback_and_timeout_and_arguments_0(&resolve, 1000);
+                        let _ = win
+                            .set_timeout_with_callback_and_timeout_and_arguments_0(&resolve, 1000);
                     }
                 });
                 let _ = wasm_bindgen_futures::JsFuture::from(promise).await;
@@ -172,19 +173,31 @@ pub fn App() -> Element {
         let cat = *selected_category.read();
         let query = search_query.read().to_lowercase();
         let list = downloads.read();
-        list.iter().filter(|d| {
-            let matches_cat = cat == CategoryType::All || d.category == cat;
-            let matches_search = query.is_empty() || d.name.to_lowercase().contains(&query);
-            matches_cat && matches_search
-        }).cloned().collect()
+        list.iter()
+            .filter(|d| {
+                let matches_cat = cat == CategoryType::All || d.category == cat;
+                let matches_search = query.is_empty() || d.name.to_lowercase().contains(&query);
+                matches_cat && matches_search
+            })
+            .cloned()
+            .collect()
     });
 
     let active_count = use_memo(move || {
-        downloads.read().iter().filter(|d| d.status == DownloadStatus::Downloading).count()
+        downloads
+            .read()
+            .iter()
+            .filter(|d| d.status == DownloadStatus::Downloading)
+            .count()
     });
 
     let total_speed = use_memo(move || {
-        downloads.read().iter().filter(|d| d.status == DownloadStatus::Downloading).map(|d| d.speed).sum::<u64>()
+        downloads
+            .read()
+            .iter()
+            .filter(|d| d.status == DownloadStatus::Downloading)
+            .map(|d| d.speed)
+            .sum::<u64>()
     });
 
     let theme = *current_theme.read();

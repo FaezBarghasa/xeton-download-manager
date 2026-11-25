@@ -1,11 +1,8 @@
-use dioxus::prelude::*;
 use crate::theme::ThemePalette;
+use dioxus::prelude::*;
 
 #[component]
-pub fn MobileSetupWizard(
-    theme: ThemePalette,
-    on_finish: EventHandler<()>,
-) -> Element {
+pub fn MobileSetupWizard(theme: ThemePalette, on_finish: EventHandler<()>) -> Element {
     let mut step = use_signal(|| 1);
     let mut selected_language = use_signal(|| "System (English)".to_string());
     let mut selected_theme = use_signal(|| "Dark".to_string());
