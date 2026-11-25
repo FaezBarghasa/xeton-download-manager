@@ -10,38 +10,37 @@ pub struct ExtensionInstallResult {
 }
 
 fn get_native_host_binary_path() -> PathBuf {
-    if let Ok(exe) = std::env::current_exe() {
-        if let Some(parent) = exe.parent() {
-            let candidate = parent.join("xeton-native-host");
-            if candidate.exists() {
-                return candidate;
-            }
+    if let Ok(exe) = std::env::current_exe()
+        && let Some(parent) = exe.parent()
+    {
+        let candidate = parent.join("xeton-native-host");
+        if candidate.exists() {
+            return candidate;
         }
     }
     // Fallback to local cargo debug/release or default user location
     let home = std::env::var("HOME").unwrap_or_else(|_| ".".into());
-    let default_path = PathBuf::from(home)
+    PathBuf::from(home)
         .join(".local")
         .join("bin")
-        .join("xeton-native-host");
-    default_path
+        .join("xeton-native-host")
 }
 
 fn get_extension_source_dir() -> PathBuf {
     // 1. Check relative to current exe
-    if let Ok(exe) = std::env::current_exe() {
-        if let Some(parent) = exe.parent() {
-            let candidate = parent.join("extension");
-            if candidate.exists() {
-                return candidate;
-            }
-            // Check workspace root if running inside target/debug
-            let candidate2 = parent.join("../../../extension");
-            if candidate2.exists() {
-                if let Ok(canon) = candidate2.canonicalize() {
-                    return canon;
-                }
-            }
+    if let Ok(exe) = std::env::current_exe()
+        && let Some(parent) = exe.parent()
+    {
+        let candidate = parent.join("extension");
+        if candidate.exists() {
+            return candidate;
+        }
+        // Check workspace root if running inside target/debug
+        let candidate2 = parent.join("../../../extension");
+        if candidate2.exists()
+            && let Ok(canon) = candidate2.canonicalize()
+        {
+            return canon;
         }
     }
 
@@ -65,7 +64,6 @@ fn get_extension_source_dir() -> PathBuf {
 #[tauri::command]
 pub async fn get_extension_info() -> Result<ExtensionInstallResult, String> {
     let ext_dir = get_extension_source_dir();
-    let host_bin = get_native_host_binary_path();
 
     Ok(ExtensionInstallResult {
         success: ext_dir.exists(),
@@ -118,10 +116,10 @@ pub async fn install_browser_extension() -> Result<ExtensionInstallResult, Strin
     for dir in chrome_targets {
         let _ = tokio::fs::create_dir_all(&dir).await;
         let file = dir.join("com.xeton.integration.json");
-        if let Ok(json_str) = serde_json::to_string_pretty(&chrome_manifest_json) {
-            if tokio::fs::write(&file, json_str).await.is_ok() {
-                installed_chrome.push(file.to_string_lossy().to_string());
-            }
+        if let Ok(json_str) = serde_json::to_string_pretty(&chrome_manifest_json)
+            && tokio::fs::write(&file, json_str).await.is_ok()
+        {
+            installed_chrome.push(file.to_string_lossy().to_string());
         }
     }
 
@@ -129,10 +127,10 @@ pub async fn install_browser_extension() -> Result<ExtensionInstallResult, Strin
     let _ = tokio::fs::create_dir_all(&firefox_dir).await;
     let firefox_file = firefox_dir.join("com.xeton.integration.json");
     let mut installed_firefox = None;
-    if let Ok(json_str) = serde_json::to_string_pretty(&firefox_manifest_json) {
-        if tokio::fs::write(&firefox_file, json_str).await.is_ok() {
-            installed_firefox = Some(firefox_file.to_string_lossy().to_string());
-        }
+    if let Ok(json_str) = serde_json::to_string_pretty(&firefox_manifest_json)
+        && tokio::fs::write(&firefox_file, json_str).await.is_ok()
+    {
+        installed_firefox = Some(firefox_file.to_string_lossy().to_string());
     }
 
     Ok(ExtensionInstallResult {
