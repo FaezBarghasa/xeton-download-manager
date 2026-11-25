@@ -104,3 +104,27 @@ pub async fn delete_queue(state: tauri::State<'_, QueueState>, id: String) -> Re
     persist_queues(&lock).await?;
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_queue_item_defaults() {
+        let q = QueueItem {
+            id: "queue-test".into(),
+            name: "Test Queue".into(),
+            max_concurrent: 4,
+            is_active: true,
+            scheduled_start: Some("01:00".into()),
+            scheduled_stop: Some("06:00".into()),
+            power_action: PowerAction::None,
+            items_count: 0,
+        };
+        let serialized = serde_json::to_string(&q).expect("serialize queue");
+        let deserialized: QueueItem = serde_json::from_str(&serialized).expect("deserialize queue");
+        assert_eq!(deserialized.id, "queue-test");
+        assert_eq!(deserialized.max_concurrent, 4);
+        assert!(deserialized.is_active);
+    }
+}
