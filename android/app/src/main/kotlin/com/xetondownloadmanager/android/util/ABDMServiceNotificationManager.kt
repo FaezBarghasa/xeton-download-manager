@@ -104,8 +104,11 @@ class ABDMServiceNotificationManager(
             AndroidConstants.NOTIFICATION_DOWNLOAD_CHANEL_ID,
             AndroidConstants.NOTIFICATION_DOWNLOAD_CHANEL_NAME,
             NotificationManager.IMPORTANCE_LOW,
-        )
-        notificationChanel.setShowBadge(false)
+        ).apply {
+            setShowBadge(false)
+            setSound(null, null)
+            enableVibration(false)
+        }
         notificationManagerCompat.createNotificationChannel(notificationChanel)
     }
 

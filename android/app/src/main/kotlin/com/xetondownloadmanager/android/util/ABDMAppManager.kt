@@ -120,8 +120,9 @@ class ABDMAppManager(
                             )
                             val now = System.currentTimeMillis()
                             val sinceLastSoundMillis = now - lastNotificationSound
-                            // don't repeatedly play notification!
-                            if (sinceLastSoundMillis > 5_000) {
+                            // Only play notification sounds for critical terminal events (Success or Error), never for in-flight progress/loading
+                            val shouldPlaySound = notification.notificationType is NotificationType.Success || notification.notificationType is NotificationType.Error
+                            if (shouldPlaySound && sinceLastSoundMillis > 5_000) {
                                 runCatching {
                                     platformNotificationSound().play(notification.notificationType)
                                     lastNotificationSound = now

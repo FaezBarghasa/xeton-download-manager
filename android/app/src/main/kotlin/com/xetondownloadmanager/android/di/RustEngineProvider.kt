@@ -3,9 +3,12 @@ package com.xetondownloadmanager.android.di
 import android.content.Context
 import com.xeton.downloader.DownloadSettings
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import uniffi.xeton_core.NewDownloadProps
 import uniffi.xeton_core.XetonEngine
 import uniffi.xeton_core.DownloadSettings as RustDownloadSettings
@@ -20,9 +23,6 @@ class RustEngineProvider(
     private val context: Context,
     private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO),
 ) {
-    @Volatile
-    private var engine: XetonEngine? = null
-
     init {
         // Load the compiled NDK native library
         try {
@@ -32,18 +32,25 @@ class RustEngineProvider(
         }
     }
 
+    private val engineDeferred: Deferred<XetonEngine> = scope.async(Dispatchers.IO) {
+        val eng = buildEngine()
+        try {
+            eng.boot()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        migrateLegacyJsonIfNeeded(eng)
+        eng
+    }
+
+    suspend fun awaitEngine(): XetonEngine = engineDeferred.await()
+
     fun getEngine(): XetonEngine {
-        return engine ?: synchronized(this) {
-            engine ?: buildEngine().also {
-                engine = it
-                scope.launch {
-                    try {
-                        it.boot()
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
-                }
-            }
+        return if (engineDeferred.isCompleted) {
+            @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+            engineDeferred.getCompleted()
+        } else {
+            runBlocking(Dispatchers.IO) { engineDeferred.await() }
         }
     }
 
@@ -58,11 +65,7 @@ class RustEngineProvider(
             maxRetryCount = 5u,
             appendExtensionToIncomplete = true,
         )
-        return XetonEngine(dataDir, settings).also { engine ->
-            scope.launch {
-                migrateLegacyJsonIfNeeded(engine)
-            }
-        }
+        return XetonEngine(dataDir, settings)
     }
 
     private suspend fun migrateLegacyJsonIfNeeded(engine: XetonEngine) {
@@ -108,7 +111,7 @@ class RustEngineProvider(
     ) {
         scope.launch {
             try {
-                getEngine().addDownload(
+                awaitEngine().addDownload(
                     NewDownloadProps(
                         name = name,
                         folder = folder,
@@ -128,7 +131,7 @@ class RustEngineProvider(
     fun resume(id: Long) {
         scope.launch {
             try {
-                getEngine().resume(id)
+                awaitEngine().resume(id)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -138,7 +141,7 @@ class RustEngineProvider(
     fun pause(id: Long) {
         scope.launch {
             try {
-                getEngine().pause(id)
+                awaitEngine().pause(id)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -148,7 +151,7 @@ class RustEngineProvider(
     fun deleteDownload(id: Long, removeFile: Boolean) {
         scope.launch {
             try {
-                getEngine().deleteDownload(id, removeFile)
+                awaitEngine().deleteDownload(id, removeFile)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -157,7 +160,7 @@ class RustEngineProvider(
 
     suspend fun getDownloadList(): List<uniffi.xeton_core.DownloadItem> {
         return try {
-            getEngine().getDownloadList()
+            awaitEngine().getDownloadList()
         } catch (e: Exception) {
             emptyList()
         }
@@ -166,7 +169,7 @@ class RustEngineProvider(
     fun setGlobalSpeedLimit(bytesPerSecond: Long) {
         scope.launch {
             try {
-                getEngine().setGlobalSpeedLimit(bytesPerSecond)
+                awaitEngine().setGlobalSpeedLimit(bytesPerSecond)
             } catch (e: Exception) {
                 e.printStackTrace()
             }

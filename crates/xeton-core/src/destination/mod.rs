@@ -99,15 +99,24 @@ impl DiskActor {
                 use std::io::Write;
                 debug!("DiskActor dedicated RawFd I/O thread started for {}", label);
 
+                let mut last_error: Option<std::io::Error> = None;
+
                 while let Some(cmd) = rx.blocking_recv() {
                     match cmd {
                         WriteCmd::Write { offset, data } => {
-                            if let Err(e) = std_file.write_all_at(&data, offset) {
-                                error!("RawFd write error at offset {}: {}", offset, e);
+                            if last_error.is_none() {
+                                if let Err(e) = std_file.write_all_at(&data, offset) {
+                                    error!("RawFd write error at offset {}: {}", offset, e);
+                                    last_error = Some(e);
+                                }
                             }
                         }
                         WriteCmd::Flush { reply } => {
-                            let result = (&std_file).flush().map_err(DestinationError::Io);
+                            let result = if let Some(ref e) = last_error {
+                                Err(DestinationError::Io(std::io::Error::new(e.kind(), e.to_string())))
+                            } else {
+                                (&std_file).flush().map_err(DestinationError::Io)
+                            };
                             let _ = reply.send(result);
                         }
                         WriteCmd::Shutdown => {
@@ -169,29 +178,38 @@ impl DiskActor {
                     actor_path.display()
                 );
 
+                let mut last_error: Option<std::io::Error> = None;
+
                 while let Some(cmd) = rx.blocking_recv() {
                     match cmd {
                         WriteCmd::Write { offset, data } => {
-                            #[cfg(unix)]
-                            {
-                                if let Err(e) = std_file.write_all_at(&data, offset) {
-                                    error!("Write error at offset {}: {}", offset, e);
+                            if last_error.is_none() {
+                                #[cfg(unix)]
+                                {
+                                    if let Err(e) = std_file.write_all_at(&data, offset) {
+                                        error!("Write error at offset {}: {}", offset, e);
+                                        last_error = Some(e);
+                                    }
                                 }
-                            }
-                            #[cfg(not(unix))]
-                            {
-                                use std::io::{Seek, SeekFrom};
-                                if let Err(e) = std_file.seek(SeekFrom::Start(offset)) {
-                                    error!("Seek error at offset {}: {}", offset, e);
-                                    continue;
-                                }
-                                if let Err(e) = std_file.write_all(&data) {
-                                    error!("Write error at offset {}: {}", offset, e);
+                                #[cfg(not(unix))]
+                                {
+                                    use std::io::{Seek, SeekFrom};
+                                    if let Err(e) = std_file.seek(SeekFrom::Start(offset)) {
+                                        error!("Seek error at offset {}: {}", offset, e);
+                                        last_error = Some(e);
+                                    } else if let Err(e) = std_file.write_all(&data) {
+                                        error!("Write error at offset {}: {}", offset, e);
+                                        last_error = Some(e);
+                                    }
                                 }
                             }
                         }
                         WriteCmd::Flush { reply } => {
-                            let result = std_file.flush().map_err(DestinationError::Io);
+                            let result = if let Some(ref e) = last_error {
+                                Err(DestinationError::Io(std::io::Error::new(e.kind(), e.to_string())))
+                            } else {
+                                std_file.flush().map_err(DestinationError::Io)
+                            };
                             let _ = reply.send(result);
                         }
                         WriteCmd::Shutdown => {
@@ -204,16 +222,20 @@ impl DiskActor {
 
                 // Drain remaining writes before closing
                 while let Ok(cmd) = rx.try_recv() {
-                    if let WriteCmd::Write { offset, data } = cmd {
-                        #[cfg(unix)]
-                        {
-                            let _ = std_file.write_all_at(&data, offset);
-                        }
-                        #[cfg(not(unix))]
-                        {
-                            use std::io::{Seek, SeekFrom};
-                            let _ = std_file.seek(SeekFrom::Start(offset));
-                            let _ = std_file.write_all(&data);
+                    if last_error.is_none() {
+                        if let WriteCmd::Write { offset, data } = cmd {
+                            #[cfg(unix)]
+                            {
+                                if let Err(e) = std_file.write_all_at(&data, offset) {
+                                    error!("Drain write error: {}", e);
+                                }
+                            }
+                            #[cfg(not(unix))]
+                            {
+                                use std::io::{Seek, SeekFrom};
+                                let _ = std_file.seek(SeekFrom::Start(offset));
+                                let _ = std_file.write_all(&data);
+                            }
                         }
                     }
                 }

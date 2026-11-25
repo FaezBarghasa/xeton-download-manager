@@ -11698,6 +11698,7 @@ dependencies = [
  "urlencoding",
  "webpki-roots 1.0.12",
  "windows-sys 0.61.2",
+ "zeroize",
 ]
 
 [[package]]

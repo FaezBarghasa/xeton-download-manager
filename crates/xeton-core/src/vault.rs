@@ -15,6 +15,7 @@ use std::path::Path;
 use chacha20poly1305::aead::{Aead, KeyInit};
 use chacha20poly1305::{Key, XChaCha20Poly1305, XNonce};
 use thiserror::Error;
+use zeroize::Zeroize;
 
 pub const VAULT_CHUNK_SIZE: usize = 64 * 1024; // 64 KiB
 pub const VAULT_MAGIC: &[u8; 10] = b"XETNVAULT\x01";
@@ -34,6 +35,12 @@ pub enum VaultError {
 pub struct VaultSink {
     cipher: XChaCha20Poly1305,
     base_nonce: [u8; 24],
+}
+
+impl Drop for VaultSink {
+    fn drop(&mut self) {
+        self.base_nonce.zeroize();
+    }
 }
 
 impl VaultSink {
