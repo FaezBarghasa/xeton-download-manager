@@ -46,15 +46,19 @@ impl ProgressBatcher {
                 let has_pending =
                     !items.is_empty() || !parts_map.is_empty() || !block_updates.is_empty();
 
-                let update = if has_pending {
+                let (update, channel_closed) = if has_pending {
                     tokio::select! {
-                        val = rx.recv() => val,
-                        _ = sleep(flush_interval) => {
-                            None
-                        }
+                        val = rx.recv() => match val {
+                            Some(v) => (Some(v), false),
+                            None => (None, true),
+                        },
+                        _ = sleep(flush_interval) => (None, false),
                     }
                 } else {
-                    rx.recv().await
+                    match rx.recv().await {
+                        Some(v) => (Some(v), false),
+                        None => (None, true),
+                    }
                 };
 
                 match update {
@@ -129,6 +133,11 @@ impl ProgressBatcher {
                                     e
                                 );
                             }
+                        }
+
+                        if channel_closed {
+                            tracing::debug!("ProgressBatcher channel closed; shutting down background writer task.");
+                            break;
                         }
                     }
                 }

@@ -34,6 +34,23 @@ pub enum ConnectionError {
     Unsuccessful(String),
 }
 
+impl ConnectionError {
+    /// Returns true if the error is considered transient/retryable.
+    /// Permanent HTTP client errors (400, 401, 403, 404, 405, 410) are not retryable.
+    pub fn is_retryable(&self) -> bool {
+        match self {
+            Self::ServerError { status, .. } => {
+                // 408 Request Timeout, 429 Too Many Requests, or 5xx Server Errors are retryable.
+                *status == 408 || *status == 429 || *status >= 500
+            }
+            Self::Request(err) => {
+                err.is_timeout() || err.is_connect() || !err.is_status()
+            }
+            Self::Unsuccessful(_) => false,
+        }
+    }
+}
+
 // ─── HttpClient ─────────────────────────────────────────────────────────────
 
 /// High-level HTTP client wrapping `reqwest::Client`.

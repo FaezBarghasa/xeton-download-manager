@@ -138,6 +138,20 @@ pub enum PartError {
     Stream(String),
 }
 
+impl PartError {
+    /// Returns whether this part error can be recovered from via retry.
+    pub fn is_retryable(&self) -> bool {
+        match self {
+            Self::Connection(e) => e.is_retryable(),
+            Self::PartMismatch { .. } => false,
+            Self::Cancelled => false,
+            Self::TooManyRetries { .. } => false,
+            Self::Write(_) => false,
+            Self::Stream(_) => true,
+        }
+    }
+}
+
 // ─── PartRunner ─────────────────────────────────────────────────────────────
 
 /// Async download worker for a single byte range.
@@ -283,13 +297,17 @@ impl PartRunner {
                         break;
                     }
                     Err(e) => {
+                        if !e.is_retryable() || runner.is_stopped() {
+                            warn!("Non-retryable part error: {}", e);
+                            runner.set_status(PartStatus::Canceled(format!("{}", e)));
+                            if let Some(ref cb) = runner.on_too_many_errors {
+                                cb(e);
+                            }
+                            break;
+                        }
                         tries += 1;
                         warn!("Part download error (try {}): {}", tries, e);
                         runner.set_status(PartStatus::Canceled(format!("{}", e)));
-
-                        if runner.is_stopped() {
-                            break;
-                        }
                         // Retryable — loop continues
                     }
                 }
@@ -402,10 +420,8 @@ impl PartRunner {
         }
 
         // Stream ended — check if we're done
-        let part = self.part.lock().await;
+        let mut part = self.part.lock().await;
         if part.is_completed() || part.is_blind() {
-            drop(part);
-            let mut part = self.part.lock().await;
             if part.is_blind() {
                 part.set_blind_as_completed();
             }

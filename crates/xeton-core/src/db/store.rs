@@ -44,16 +44,24 @@ pub fn discover_data_dir() -> PathBuf {
             PathBuf::from("/Library/Application Support/Xeton/data")
         }
     }
-    #[cfg(not(any(target_os = "windows", target_os = "macos")))]
+    #[cfg(target_os = "android")]
     {
-        // Linux/Android/Fallback
+        if let Ok(data_dir) = std::env::var("ANDROID_DATA") {
+            PathBuf::from(data_dir).join("data/com.xetondownloadmanager/files/xeton/data")
+        } else {
+            PathBuf::from("./.xeton_data")
+        }
+    }
+    #[cfg(all(not(any(target_os = "windows", target_os = "macos")), not(target_os = "android")))]
+    {
+        // Linux/Fallback
         if let Ok(home) = std::env::var("HOME") {
             PathBuf::from(home)
                 .join(".config")
                 .join("xeton")
                 .join("data")
         } else {
-            PathBuf::from("/data/local/tmp/xeton/data")
+            PathBuf::from("/tmp/xeton/data")
         }
     }
 }
