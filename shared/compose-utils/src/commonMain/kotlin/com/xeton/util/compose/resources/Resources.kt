@@ -12,7 +12,7 @@ typealias MyStringResource = com.xeton.resources.contracts.MyStringResource
 @Composable
 fun myStringResource(key: MyStringResource): String {
     val languageManager = LocalLanguageManager.current
-    val language by languageManager.selectedLanguage.collectAsState()
+    val language by languageManager.selectedLanguage.collectAsState<String?>()
     return remember(language, key) {
         languageManager.getMessage(key.id)
     }
@@ -21,7 +21,7 @@ fun myStringResource(key: MyStringResource): String {
 @Composable
 fun myStringResource(key: MyStringResource, args: Map<String, String>): String {
     val languageManager = LocalLanguageManager.current
-    val language by languageManager.selectedLanguage.collectAsState()
+    val language by languageManager.selectedLanguage.collectAsState<String?>()
     return remember(language, key, args) {
         languageManager
             .getMessage(key.id)

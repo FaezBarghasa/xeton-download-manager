@@ -57,6 +57,7 @@ kotlin {
         androidMain.dependencies {
             api(libs.androidx.core.ktx)
             api(libs.androidx.activity.compose)
+            api(project(":shared:resources"))
         }
         val desktopMain by getting
         desktopMain.dependencies {

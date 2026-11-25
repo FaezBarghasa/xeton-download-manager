@@ -159,11 +159,12 @@ fun BrowserPage(
                 ) {
                     DownloadSuggestionPill(
                         onDownloadRequested = { sniffed ->
-                            browserComponent.onLinkSelected(
-                                url = sniffed.url,
-                                userAgent = sniffed.headers["user-agent"],
-                                page = sniffed.pageUrl,
-                            )
+                            tab?.let { currentTab ->
+                                browserComponent.onLinkSelected(
+                                    link = sniffed.url,
+                                    tab = currentTab,
+                                )
+                            }
                         }
                     )
                     Spacer(

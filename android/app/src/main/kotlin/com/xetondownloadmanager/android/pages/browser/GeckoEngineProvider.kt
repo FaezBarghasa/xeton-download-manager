@@ -49,7 +49,7 @@ object GeckoEngineProvider {
             .accept(
                 { ext ->
                     xetonExtension = ext
-                    XetonWebExtensionBridge.registerNativePort(runtime, ext)
+                    ext?.let { XetonWebExtensionBridge.registerNativePort(runtime, it) }
                 },
                 { err ->
                     // Fallback to file asset URI if resource scheme differs across builds

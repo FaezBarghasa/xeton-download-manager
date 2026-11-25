@@ -48,9 +48,20 @@ class AndroidFileUtil : FileUtilsBase(), KoinComponent {
     }
 
     override fun openFolderInternal(folder: File): Boolean {
-        throw UnsupportedOperationException(
-            "Android doesn't support open folder"
-        )
+        return runCatching {
+            val uri = androidx.core.content.FileProvider.getUriForFile(
+                context,
+                "${context.packageName}.fileprovider",
+                folder
+            )
+            val intent = android.content.Intent(android.content.Intent.ACTION_VIEW).apply {
+                setDataAndType(uri, "*/*")
+                addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            context.startActivity(intent)
+            true
+        }.getOrElse { false }
     }
 
     override fun isRemovableStorage(path: String): Boolean {

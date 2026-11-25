@@ -44,11 +44,13 @@ class HttpPartDownloader(
         from: Long,
         to: Long?,
     ): Connection<HttpResponseInfo> {
-        // [DELEGATED TO RUST]
-        // In Phase 1, we bypass OkHttp and use the Rust core `Downloader`.
-        // The actual connection logic is now handled internally by xeton_core/http/job.rs
-        // This is a placeholder for the actual integration point where Kotlin hands off to Rust.
-        throw UnsupportedOperationException("Delegated to Rust XetonCore Downloader")
+        return client.connect(
+            credentials = credentials,
+            start = from,
+            end = to,
+        ).apply {
+            responseInfo.expectSuccess()
+        }
     }
 
     override fun onFinish() {

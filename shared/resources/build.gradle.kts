@@ -37,11 +37,9 @@ kotlin {
     }
     sourceSets {
         commonMain {
-            kotlin {
-                srcDirs(propertiesToKotlinTask.map { it.outputDir })
-                srcDirs(generateResourceMap.map { it.outputDir })
-                srcDirs(generateResObject.map { it.outputDir })
-            }
+            kotlin.srcDir(propertiesToKotlinTask.map { it.outputDir })
+            kotlin.srcDir(generateResourceMap.map { it.outputDir })
+            kotlin.srcDir(generateResObject.map { it.outputDir })
             dependencies {
                 implementation(libs.compose.ui)
                 api(libs.okio.okio)
