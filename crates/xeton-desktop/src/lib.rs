@@ -19,11 +19,18 @@ pub fn run() {
                 let _ = win.show();
             }
 
-            // Browser native-host bridge on 127.0.0.1:18512
+            // Browser native-host bridge
             let manager = app.state::<AppState>().manager.clone();
+            let settings_state = app.state::<SettingsState>();
+            let port = settings_state
+                .settings
+                .try_read()
+                .map(|s| s.browser_integration_port)
+                .unwrap_or(18512);
+            let addr = format!("127.0.0.1:{}", port);
             tauri::async_runtime::spawn(async move {
                 use tokio::io::{AsyncReadExt, AsyncWriteExt};
-                if let Ok(listener) = tokio::net::TcpListener::bind("127.0.0.1:18512").await {
+                if let Ok(listener) = tokio::net::TcpListener::bind(&addr).await {
                     while let Ok((mut stream, _)) = listener.accept().await {
                         let mgr = manager.clone();
                         tauri::async_runtime::spawn(async move {

@@ -51,6 +51,7 @@ pub fn MobileBottomBar(
 
             // Scrollable Categories
             div {
+                class: "xeton-pill-scroll",
                 style: "
                     display: flex; align-items: center; gap: 6px; flex: 1;
                     overflow-x: auto; scrollbar-width: none; padding: 0 4px;

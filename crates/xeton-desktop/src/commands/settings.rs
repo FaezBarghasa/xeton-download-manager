@@ -41,6 +41,7 @@ pub async fn get_app_settings(
 #[tauri::command]
 pub async fn save_app_settings(
     state: tauri::State<'_, SettingsState>,
+    app_state: tauri::State<'_, crate::AppState>,
     settings: FullAppSettings,
 ) -> Result<(), String> {
     let path = settings_path();
@@ -51,6 +52,16 @@ pub async fn save_app_settings(
     tokio::fs::write(&path, json)
         .await
         .map_err(|e| e.to_string())?;
+
+    if settings.speed_limit_enabled && settings.max_download_speed > 0 {
+        app_state
+            .manager
+            .set_global_speed_limit(settings.max_download_speed as i64)
+            .await;
+    } else {
+        app_state.manager.set_global_speed_limit(0).await;
+    }
+
     *state.settings.write().await = settings;
     Ok(())
 }
