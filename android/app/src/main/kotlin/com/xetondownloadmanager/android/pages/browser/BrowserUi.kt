@@ -45,9 +45,11 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.xetondownloadmanager.android.pages.browser.bookmark.BookmarkList
@@ -625,11 +627,16 @@ fun AddressField(
             fr.requestFocus()
         }
         var editingText by remember {
-            mutableStateOf(url)
+            mutableStateOf(
+                TextFieldValue(
+                    text = url,
+                    selection = TextRange(0, url.length),
+                )
+            )
         }
         MyTextField(
-            text = editingText,
-            onTextChange = {
+            value = editingText,
+            onValueChange = {
                 editingText = it
             },
             interactionSource = textFieldInteractionSource,
@@ -644,7 +651,7 @@ fun AddressField(
             keyboardActions = KeyboardActions(
                 onGo = {
                     isEditing = false
-                    onNewPageRequested(editingText)
+                    onNewPageRequested(editingText.text)
                 },
             ),
             end = {
@@ -654,7 +661,7 @@ fun AddressField(
                     modifier = Modifier
                         .clickable {
                             ClipboardUtil.read()?.let {
-                                editingText = it
+                                editingText = TextFieldValue(it, selection = TextRange(it.length))
                             }
                         }
                         .fillMaxHeight()
@@ -665,8 +672,8 @@ fun AddressField(
                     contentDescription = null,
                     modifier = Modifier
                         .clickable {
-                            if (editingText.isNotEmpty()) {
-                                editingText = ""
+                            if (editingText.text.isNotEmpty()) {
+                                editingText = TextFieldValue("")
                             } else {
                                 isEditing = false
                             }

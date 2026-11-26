@@ -236,15 +236,27 @@ fun RenderTextStatus(
     modifier: Modifier,
 ) {
     val status = createStatusStringWithReason(itemState, errorReason)
-    Text(
-        status.rememberString(),
-        color = if (errorReason != null) {
-            myColors.error
-        } else {
-            LocalContentColor.current
-        },
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
         modifier = modifier,
-    )
+    ) {
+        if (errorReason != null) {
+            Box(
+                Modifier
+                    .size(6.dp)
+                    .background(myColors.error, CircleShape)
+            )
+            Spacer(Modifier.width(4.dp))
+        }
+        Text(
+            status.rememberString(),
+            color = if (errorReason != null) {
+                myColors.error
+            } else {
+                LocalContentColor.current
+            },
+        )
+    }
 }
 
 @Composable

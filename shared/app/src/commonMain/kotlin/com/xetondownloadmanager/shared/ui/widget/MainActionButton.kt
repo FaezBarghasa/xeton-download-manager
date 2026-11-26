@@ -16,8 +16,11 @@ fun PrimaryMainActionButton(
     onClick: () -> Unit,
 ) {
     val backgroundColor = Brush.horizontalGradient(
+        myColors.primaryGradientColors
+    )
+    val disabledBackgroundColor = Brush.horizontalGradient(
         myColors.primaryGradientColors.map {
-            it / 30
+            it / 50
         }
     )
     val borderColor = Brush.horizontalGradient(
@@ -35,8 +38,9 @@ fun PrimaryMainActionButton(
         onClick = onClick,
         onLongClick = onLongClick,
         backgroundColor = backgroundColor,
-        disabledBackgroundColor = backgroundColor,
+        disabledBackgroundColor = disabledBackgroundColor,
         borderColor = borderColor,
         disabledBorderColor = disabledBorderColor,
+        contentColor = myColors.onPrimary,
     )
 }

@@ -1,6 +1,7 @@
 package com.xetondownloadmanager.android.pages.browser
 
 import android.content.Context
+import org.mozilla.geckoview.ContentBlocking
 import org.mozilla.geckoview.GeckoRuntime
 import org.mozilla.geckoview.GeckoRuntimeSettings
 import org.mozilla.geckoview.WebExtension
@@ -36,8 +37,18 @@ object GeckoEngineProvider {
             .consoleOutput(false)
             .doubleTapZoomingEnabled(false)
             .inputAutoZoomEnabled(false)
-            // Privacy Hardening: enforce HTTPS and strict tracking protection
-            .allowInsecureConnections(GeckoRuntimeSettings.ALLOW_ALL)
+            // Privacy Hardening: enforce HTTPS-Only and strict tracking protection
+            .allowInsecureConnections(GeckoRuntimeSettings.HTTPS_ONLY)
+            .contentBlocking(
+                ContentBlocking.Settings.Builder()
+                    .enhancedTrackingProtectionLevel(ContentBlocking.EtpLevel.STRICT)
+                    .antiTracking(ContentBlocking.AntiTracking.STRICT)
+                    .cookieBehavior(ContentBlocking.CookieBehavior.ACCEPT_FIRST_PARTY_AND_ISOLATE_OTHERS)
+                    .cookiePurging(true)
+                    .strictSocialTrackingProtection(true)
+                    .queryParameterStrippingEnabled(true)
+                    .build()
+            )
             .build()
 
         return GeckoRuntime.create(appContext, settings)

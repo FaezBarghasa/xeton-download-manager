@@ -35,6 +35,7 @@ import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.takeOrElse
@@ -137,6 +138,123 @@ fun MyTextField(
                     androidx.compose.animation.AnimatedVisibility(
                         text.isEmpty(),
 //                modifier = Modifier.matchParentSize(),
+                        enter = fadeIn(),
+                        exit = fadeOut(),
+                    ) {
+                        Text(
+                            text = placeholder,
+                            maxLines = 1,
+                            color = contentColor / 50,
+                            fontSize = textSize
+                        )
+                    }
+                    it()
+                }
+            },
+            cursorBrush = SolidColor(myColors.primary),
+            keyboardActions = keyboardActions,
+            keyboardOptions = keyboardOptions,
+        )
+        end?.let {
+            it()
+        }
+    }
+}
+
+@Composable
+fun MyTextField(
+    value: TextFieldValue,
+    onValueChange: (TextFieldValue) -> Unit,
+    placeholder: String,
+    modifier: Modifier,
+    background: Color = myColors.surface,
+    contentColor: Color = myColors.getContentColorFor(background).takeIf { it.isSpecified }
+        ?: LocalContentColor.current,
+    focusedBorderColor: Color = myColors.primary,
+    borderColor: Color = myColors.onBackground / 0.1f,
+    shape: Shape = myShapes.defaultRounded,
+    textPadding: PaddingValues = PaddingValues(8.dp),
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    fontSize: TextUnit = TextUnit.Unspecified,
+    enabled: Boolean = true,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    singleLine: Boolean = true,
+    maxLines: Int = if (singleLine) 1 else Int.MAX_VALUE,
+    minLines: Int = 1,
+    start: @Composable (RowScope.() -> Unit)? = null,
+    end: @Composable (RowScope.() -> Unit)? = null,
+) {
+    val focusRequester = remember { FocusRequester() }
+    val fm = LocalFocusManager.current
+    val isFocused by interactionSource.collectIsFocusedAsState()
+
+    val textSize = fontSize.takeOrElse { LocalTextStyle.current.fontSize }
+    Row(
+        modifier
+            .ifThen(!enabled) {
+                alpha(0.5f)
+            }
+            .clip(shape)
+            .heightIn(mySpacings.thumbSize)
+            .height(IntrinsicSize.Max)
+            .pointerHoverIcon(
+                if (enabled) PointerIcon.Text
+                else PointerIcon.Default
+            )
+            .onKeyEvent {
+                if (it.key == Key.Escape) {
+                    fm.clearFocus()
+                    true
+                } else false
+            }
+            .clickable(
+                indication = null,
+                interactionSource = null,
+            ) {
+                focusRequester.requestFocus()
+            }
+            .border(
+                1.dp,
+                animateColorAsState(
+                    if (isFocused) focusedBorderColor
+                    else borderColor
+                ).value,
+                shape
+            )
+            .ifThen(background.isSpecified) {
+                background(background)
+            },
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        start?.let {
+            it()
+        }
+
+        BasicTextField(
+            value = value,
+            singleLine = singleLine,
+            maxLines = maxLines,
+            minLines = minLines,
+            onValueChange = onValueChange,
+            interactionSource = interactionSource,
+            enabled = enabled,
+            modifier = Modifier
+                .weight(1f)
+                .padding(textPadding)
+                .focusRequester(focusRequester),
+            textStyle = LocalTextStyle.current.merge(
+                TextStyle(
+                    color = LocalContentColor.current.ifThen(!enabled) {
+                        copy(0.5f)
+                    },
+                    fontSize = fontSize
+                )
+            ),
+            decorationBox = {
+                Box {
+                    androidx.compose.animation.AnimatedVisibility(
+                        value.text.isEmpty(),
                         enter = fadeIn(),
                         exit = fadeOut(),
                     ) {

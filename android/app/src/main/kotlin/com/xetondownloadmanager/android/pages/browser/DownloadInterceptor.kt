@@ -115,7 +115,7 @@ class DownloadInterceptor(
         val geckoHeaders = XetonWebExtensionBridge.getHeadersFor(url)
         val cookieFromBridge = geckoHeaders["cookie"]
         val cookieFromCookieManager =
-            cookieFromBridge ?: CookieManager.getInstance().getCookie(url)?.takeIf { it.isNotBlank() } ?: return request
+            cookieFromBridge ?: runCatching { CookieManager.getInstance().getCookie(url) }.getOrNull()?.takeIf { it.isNotBlank() } ?: return request
         val cookieKey = "Cookie"
         val currentCookie = request.headers[cookieKey]?.takeIf { it.isNotBlank() }
         val mergedHeaders = request.headers.toMutableMap()
